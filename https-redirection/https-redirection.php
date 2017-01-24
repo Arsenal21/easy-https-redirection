@@ -1,4 +1,5 @@
 <?php
+
 /*
   Plugin Name: Easy HTTPS (SSL) Redirection
   Plugin URI:
@@ -9,19 +10,15 @@
   License: GPLv2 or later
  */
 
-if (!defined('ABSPATH'))exit; //Exit if accessed directly
+if (!defined('ABSPATH')) {
+    exit; //Exit if accessed directly
+}
 
 include_once('https-rules-helper.php');
 include_once('https-redirection-settings.php');
 
-function add_httpsrdrctn_admin_menu() {
-    add_submenu_page('options-general.php', 'HTTPS Redirection', 'HTTPS Redirection', 'manage_options', 'https-redirection', 'httpsrdrctn_settings_page', plugins_url("images/px.png", __FILE__), 1001);
-}
-
 function httpsrdrctn_plugin_init() {
     global $httpsrdrctn_options;
-    /* Internationalization, first(!) */
-    load_plugin_textdomain('https_redirection', false, dirname(plugin_basename(__FILE__)) . '/languages/');
     if (empty($httpsrdrctn_options)) {
         $httpsrdrctn_options = get_option('httpsrdrctn_options');
     }
@@ -29,13 +26,32 @@ function httpsrdrctn_plugin_init() {
     //Do force resource embedded using HTTPS
     if (isset($httpsrdrctn_options['force_resources']) && $httpsrdrctn_options['force_resources'] == '1') {
         //Handle the appropriate content filters to force the static resources to use HTTPS URL
-        //TODO 1
-        add_filter( 'the_content', 'httpsrdrctn_the_content' );
-        add_filter( 'get_the_content', 'httpsrdrctn_the_content' );
-        add_filter( 'the_excerpt', 'httpsrdrctn_the_content' );
-        add_filter( 'get_the_excerpt', 'httpsrdrctn_the_content' );
+        if (is_admin()) {
+            add_action("admin_init", "httpsrdrctn_start_buffer");
+        } else {
+            add_action("init", "httpsrdrctn_start_buffer");
+            add_action("init", "httpsrdrctn_init_time_tasks");
+        }
+        add_action("shutdown", "httpsrdrctn_end_buffer");
     }
+}
 
+function httpsrdrctn_start_buffer() {
+    ob_start("httpsrdrctn_the_content");
+}
+
+function httpsrdrctn_end_buffer() {
+    if (ob_get_length())
+        ob_end_flush();
+}
+
+function httpsrdrctn_init_time_tasks() {
+    httpsrdrctn_load_language();
+}
+
+function httpsrdrctn_load_language() {
+    /* Internationalization */
+    load_plugin_textdomain('https_redirection', false, dirname(plugin_basename(__FILE__)) . '/languages/');
 }
 
 function httpsrdrctn_plugin_admin_init() {
@@ -44,12 +60,12 @@ function httpsrdrctn_plugin_admin_init() {
     $httpsrdrctn_plugin_info = get_plugin_data(__FILE__, false);
 
     /* Call register settings function */
-    if (isset($_GET['page']) && "https-redirection" == $_GET['page']){
+    if (isset($_GET['page']) && "https-redirection" == $_GET['page']) {
         register_httpsrdrctn_settings();
     }
 }
 
-/* register settings function */
+/* Register settings function */
 function register_httpsrdrctn_settings() {
     global $wpmu, $httpsrdrctn_options, $httpsrdrctn_plugin_info;
 
@@ -97,48 +113,67 @@ function httpsrdrctn_plugin_action_links($links, $file) {
     return $links;
 }
 
-
-if (!function_exists('httpsrdrctn_register_plugin_links')) {
-
-    function httpsrdrctn_register_plugin_links($links, $file) {
-        $base = plugin_basename(__FILE__);
-        if ($file == $base) {
-            $links[] = '<a href="admin.php?page=https-redirection">' . __('Settings', 'https_redirection') . '</a>';
-        }
-        return $links;
+function httpsrdrctn_register_plugin_links($links, $file) {
+    $base = plugin_basename(__FILE__);
+    if ($file == $base) {
+        $links[] = '<a href="admin.php?page=https-redirection">' . __('Settings', 'https_redirection') . '</a>';
     }
-
+    return $links;
 }
 
-/* 
+/*
  * Function that changes "http" embeds to "https" 
  * TODO - Need to make it better so it only does it for static resources like JS, CSS and Images
  */
+function httpsrdrctn_filter_content($content) {
+    //filter buffer
+    $home_no_www = str_replace("://www.", "://", get_option('home'));
+    $home_yes_www = str_replace("://", "://www.", $home_no_www);
+
+    $http_urls = array(
+        str_replace("https://", "http://", $home_yes_www),
+        str_replace("https://", "http://", $home_no_www),
+        "src='http://",
+        'src="http://',
+    );
+    $ssl_array = str_replace("http://", "https://", $http_urls);
+    //now replace these links
+    $str = str_replace($http_urls, $ssl_array, $content);
+
+    //replace all http links except hyperlinks
+    //all tags with src attr are already fixed by str_replace
+    $pattern = array(
+        '/url\([\'"]?\K(http:\/\/)(?=[^)]+)/i',
+        '/<link .*?href=[\'"]\K(http:\/\/)(?=[^\'"]+)/i',
+        '/<meta property="og:image" .*?content=[\'"]\K(http:\/\/)(?=[^\'"]+)/i',
+        '/<form [^>]*?action=[\'"]\K(http:\/\/)(?=[^\'"]+)/i',
+    );
+    $str = preg_replace($pattern, 'https://', $str);
+    return $str;
+}
+
 function httpsrdrctn_the_content($content) {
     global $httpsrdrctn_options;
     if (empty($httpsrdrctn_options)) {
         $httpsrdrctn_options = get_option('httpsrdrctn_options');
     }
+
+    $current_page = sanitize_post($GLOBALS['wp_the_query']->get_queried_object());
+    // Get the page slug
+    $slug = $current_page->post_name;
+
     if ($httpsrdrctn_options['force_resources'] == '1' && $httpsrdrctn_options['https'] == 1) {
         if ($httpsrdrctn_options['https_domain'] == 1) {
-            if (strpos(home_url(), 'https') !== false) {
-                $http_domain = str_replace('https', 'http', home_url());
-                $https_domain = home_url();
-            } else {
-                $http_domain = home_url();
-                $https_domain = str_replace('http', 'https', home_url());
-            }
-            $content = str_replace($http_domain, $https_domain, $content);
+            $content = httpsrdrctn_filter_content($content);
         } else if (!empty($httpsrdrctn_options['https_pages_array'])) {
             foreach ($httpsrdrctn_options['https_pages_array'] as $https_page) {
-                if (strpos(home_url(), 'https') !== false) {
-                    $http_domain = str_replace('https', 'http', home_url());
-                    $https_domain = home_url();
-                } else {
+                if ($https_page == $slug) { //if we are on the page that is in the array, let's replace all contents to https
+                    $content = httpsrdrctn_filter_content($content);
+                } else { //if not - let's replace all links to that page only to https
                     $http_domain = home_url();
-                    $https_domain = str_replace('http', 'https', home_url());
+                    $https_domain = str_replace('http://', 'https://', home_url());
+                    $content = str_replace($http_domain . '/' . $https_page, $https_domain . '/' . $https_page, $content);
                 }
-                $content = str_replace($http_domain . '/' . $https_page, $https_domain . '/' . $https_page, $content);
             }
         }
     }
@@ -166,8 +201,11 @@ if (!function_exists('httpsrdrctn_delete_options')) {
 
 }
 
+function add_httpsrdrctn_admin_menu() {
+    add_submenu_page('options-general.php', 'HTTPS Redirection', 'HTTPS Redirection', 'manage_options', 'https-redirection', 'httpsrdrctn_settings_page', plugins_url("images/px.png", __FILE__), 1001);
+}
+
 add_action('admin_menu', 'add_httpsrdrctn_admin_menu');
-add_action('init', 'httpsrdrctn_plugin_init');
 add_action('admin_init', 'httpsrdrctn_plugin_admin_init');
 add_action('admin_enqueue_scripts', 'httpsrdrctn_admin_head');
 
@@ -178,3 +216,5 @@ add_filter('plugin_row_meta', 'httpsrdrctn_register_plugin_links', 10, 2);
 //add_filter('mod_rewrite_rules', 'httpsrdrctn_mod_rewrite_rules');//TODO 5
 
 register_uninstall_hook(__FILE__, 'httpsrdrctn_delete_options');
+
+httpsrdrctn_plugin_init();
