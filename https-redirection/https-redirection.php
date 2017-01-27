@@ -2,10 +2,10 @@
 
 /*
   Plugin Name: Easy HTTPS (SSL) Redirection
-  Plugin URI:
+  Plugin URI: https://www.tipsandtricks-hq.com/development-center
   Description: The plugin HTTPS Redirection allows an automatic redirection to the "HTTPS" version/URL of the site.
   Author: Tips and Tricks HQ
-  Version: 1.5
+  Version: 1.6
   Author URI: https://www.tipsandtricks-hq.com/
   License: GPLv2 or later
  */
@@ -160,7 +160,7 @@ function httpsrdrctn_the_content($content) {
 
     $current_page = sanitize_post($GLOBALS['wp_the_query']->get_queried_object());
     // Get the page slug
-    $slug = $current_page->post_name;
+    $slug =str_replace(home_url().'/','',get_permalink($current_page));
 
     if ($httpsrdrctn_options['force_resources'] == '1' && $httpsrdrctn_options['https'] == 1) {
         if ($httpsrdrctn_options['https_domain'] == 1) {

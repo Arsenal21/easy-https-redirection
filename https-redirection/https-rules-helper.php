@@ -91,7 +91,7 @@ class HTTPSRDRCTN_RULES {
             $rules .= '<IfModule mod_rewrite.c>' . PHP_EOL;
             $rules .= 'RewriteEngine On' . PHP_EOL;
             
-            $rules .= 'RewriteCond %{HTTPS} off' . PHP_EOL;
+            $rules .= 'RewriteCond %{SERVER_PORT} !^443$' . PHP_EOL; //Alternative is to use RewriteCond %{HTTPS} OFF
             $rules .= 'RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]' . PHP_EOL;
             
             $rules .= '</IfModule>' . PHP_EOL;
@@ -106,7 +106,7 @@ class HTTPSRDRCTN_RULES {
             $rules .= '<IfModule mod_rewrite.c>' . PHP_EOL;
             $rules .= 'RewriteEngine On' . PHP_EOL;
             
-            $rules .= 'RewriteCond %{HTTPS} off' . PHP_EOL;
+            $rules .= 'RewriteCond %{SERVER_PORT} !^443$' . PHP_EOL; //Alternative is to use RewriteCond %{HTTPS} OFF
             
             $count = 0;
             $total_pages = count($httpsrdrctn_options['https_pages_array']);
