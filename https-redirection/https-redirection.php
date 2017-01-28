@@ -123,8 +123,7 @@ function httpsrdrctn_register_plugin_links($links, $file) {
 }
 
 /*
- * Function that changes "http" embeds to "https" 
- * TODO - Need to make it better so it only does it for static resources like JS, CSS and Images
+ * Function that changes static "http" embeds to "https"
  */
 
 function httpsrdrctn_filter_content($content) {
@@ -164,8 +163,6 @@ function httpsrdrctn_the_content($content) {
     // Get the page slug
     $slug = str_replace(home_url() . '/', '', get_permalink($current_page));
     $slug = rtrim($slug, "/"); //remove trailing slash if it's there
-
-    $content.=$slug;
 
     if ($httpsrdrctn_options['force_resources'] == '1' && $httpsrdrctn_options['https'] == 1) {
         if ($httpsrdrctn_options['https_domain'] == 1) {
