@@ -22,7 +22,7 @@ This plugin will help you automatically setup a redirection to the https version
 
 Lets say for example, you want to use HTTPS URL for the following page on your site:
 
-example.com/checkout
+www.example.com/checkout
 
 This plugin will enforce that so if anyone uses an URL like the following in the browser's address bar:
 http://www.example.com/checkout 
@@ -49,6 +49,8 @@ This will help you make the webpage fully compatible with SSL.
 * Actions: Do an auto redirect for the whole domain. So every URL will be redirected to the HTTPS version automatically.
 * Actions: Do an auto redirect for a few pages. The user can enter the URLs that will be auto redirected to the HTTPS version.
 * Force load static files (images, js, css etc) using a HTTPS URL.
+
+View more details on the [HTTPS Redirection plugin](https://www.tipsandtricks-hq.com/wordpress-easy-https-redirection-plugin) page.
 
 == Installation ==
 
