@@ -5,7 +5,7 @@
   Plugin URI: https://www.tipsandtricks-hq.com/wordpress-easy-https-redirection-plugin
   Description: The plugin HTTPS Redirection allows an automatic redirection to the "HTTPS" version/URL of the site.
   Author: Tips and Tricks HQ
-  Version: 1.6
+  Version: 1.7
   Author URI: https://www.tipsandtricks-hq.com/
   License: GPLv2 or later
  */
@@ -123,7 +123,7 @@ function httpsrdrctn_register_plugin_links($links, $file) {
 }
 
 /*
- * Function that changes static "http" embeds to "https"
+ * Function that changes "http" embeds to "https" 
  */
 
 function httpsrdrctn_filter_content($content) {
@@ -171,7 +171,7 @@ function httpsrdrctn_the_content($content) {
             $pages_str = '';
             $on_https_page = false;
             foreach ($httpsrdrctn_options['https_pages_array'] as $https_page) {
-                $pages_str.=preg_quote($https_page, '/') . '[\/|][\'"]|'; //let's add page to the preg expression string in case we'd need it later
+                $pages_str .= preg_quote($https_page, '/') . '[\/|][\'"]|'; //let's add page to the preg expression string in case we'd need it later
                 if ($https_page == $slug) { //if we are on the page that is in the array, let's set the var to true
                     $on_https_page = true;
                 } else { //if not - let's replace all links to that page only to https

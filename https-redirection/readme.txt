@@ -4,7 +4,7 @@ Donate link: http://www.tipsandtricks-hq.com/development-center
 Tags: redirection, https, automatic redirection, htaccess, ssl, https redirection, ssl certificate, secure page, secure, force ssl, force https
 Requires at least: 3.5
 Tested up to: 4.8
-Stable tag: 1.6
+Stable tag: 1.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -92,6 +92,11 @@ Here is an example for German language files.
 1. Plugin settings page.
 
 == Changelog ==
+
+= v1.7 =
+- Additional options are only accessible when "Enable automatic redirection to the "HTTPS" is enabled.
+- https://www.yoursite.com/some-page is replaced with site's actual https address in Settings information box.
+- Added reminder for user to clear cache of optimization plugins similar to W3 Total Cache or WP Super Cache.
 
 = v1.6 =
 - Improved the "Force Load Static Files Using HTTPS" feature.
