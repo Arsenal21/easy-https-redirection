@@ -4,7 +4,7 @@ Donate link: http://www.tipsandtricks-hq.com/development-center
 Tags: redirection, https, automatic redirection, htaccess, ssl, https redirection, ssl certificate, secure page, secure, force ssl, force https
 Requires at least: 3.5
 Tested up to: 4.9
-Stable tag: 1.7
+Stable tag: 1.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -92,6 +92,9 @@ Here is an example for German language files.
 1. Plugin settings page.
 
 == Changelog ==
+
+= v1.8 =
+- Apply HTTPS redirection on the whole domain will be the default selected option after plugin install. You an change this option when you actually go to enable the feature.
 
 = v1.7 =
 - Additional options are only accessible when "Enable automatic redirection to the "HTTPS" is enabled.
