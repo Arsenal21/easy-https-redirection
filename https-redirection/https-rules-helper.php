@@ -76,6 +76,16 @@ class HTTPSRDRCTN_RULES {
         } else { //unsupported server
             return -1;
         }
+	
+	//check if some plugins are active to avoid incompatability issues
+	// WP Fastest Cache
+	if (isset($GLOBALS["wp_fastest_cache"])) {
+	    $wpfc=true;
+	    $wpfc_rules='# WP Fastest Cache compatability'.PHP_EOL;
+	    $wpfc_rules.='RewriteCond %{REQUEST_URI} !wp-content\/cache\/(all|wpfc-mobile-cache)'.PHP_EOL;
+	} else {
+	    $wpfc=false;
+	}
 
         $rules = '';
         $httpsrdrctn_options = get_option('httpsrdrctn_options');
@@ -92,6 +102,9 @@ class HTTPSRDRCTN_RULES {
             $rules .= 'RewriteEngine On' . PHP_EOL;
             
             $rules .= 'RewriteCond %{SERVER_PORT} !^443$' . PHP_EOL; //Alternative is to use RewriteCond %{HTTPS} off
+	    if ($wpfc) {
+		$rules.=$wpfc_rules;
+	    }
             $rules .= 'RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]' . PHP_EOL;
             
             $rules .= '</IfModule>' . PHP_EOL;
@@ -107,7 +120,9 @@ class HTTPSRDRCTN_RULES {
             $rules .= 'RewriteEngine On' . PHP_EOL;
             
             $rules .= 'RewriteCond %{SERVER_PORT} !^443$' . PHP_EOL; //Alternative is to use RewriteCond %{HTTPS} off
-            
+	    if ($wpfc) {
+		$rules.=$wpfc_rules;
+	    }
             $count = 0;
             $total_pages = count($httpsrdrctn_options['https_pages_array']);
             foreach ($httpsrdrctn_options['https_pages_array'] as $https_page) {
