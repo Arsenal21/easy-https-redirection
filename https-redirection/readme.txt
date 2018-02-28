@@ -94,6 +94,7 @@ Here is an example for German language files.
 == Changelog ==
 
 = v1.9 =
+- WP Fastest Cache cache is automatically cleared when plugin settings are changed. This is to prevent "mixed content" warning from browsers.
 - Fixed rare conflict with WP Fastest Cache (thanks to emrevona).
 
 = v1.8 =

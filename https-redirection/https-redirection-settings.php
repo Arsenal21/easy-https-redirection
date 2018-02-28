@@ -28,6 +28,15 @@ function httpsrdrctn_settings_page() {
             $message = __("Settings saved.", 'https_redirection');
             $httpsrdrctn_obj = new HTTPSRDRCTN_RULES();
             $httpsrdrctn_obj->write_to_htaccess();
+	    
+	    //clear caching plugins cache if needed
+	    //WP Fastest Cache
+	    if (isset($GLOBALS["wp_fastest_cache"])) {
+		$wpfc=$GLOBALS["wp_fastest_cache"];
+		if (method_exists($wpfc,'deleteCache') && is_callable(array($wpfc,'deleteCache'))) {
+		    $wpfc->deleteCache(true);
+		}
+	    }
             //httpsrdrctn_generate_htaccess();
         }
     }
@@ -43,7 +52,10 @@ function httpsrdrctn_settings_page() {
                 So before enabling this plugin's feature, visit your site's HTTPS URL <a href="<?php echo $siteSSLurl; ?>" target="_blank"><?php echo $siteSSLurl; ?></a> to make sure the page loads correctly. 
                 Otherwise you may get locked out if your SSL certificate is not installed correctly on your site or the HTTPS URL is not working and this plugin is auto redirecting to the HTTPS URL.
             </p>
-            <p><span style='font-weight:bold;color:red;'>Important!</span> If you're using caching plugins similar to W3 Total Cache or WP Super Cache, you need to clear their cache after you enable or disable automatic redirection option. Failing to do so may result in mixed content warning from browser.</p>
+            <p><span style='font-weight:bold;color:red;'><?php_e('Important!','https_redirection');?></span> If you're using caching plugins similar to W3 Total Cache or WP Super Cache, you need to clear their cache after you enable or disable automatic redirection option. Failing to do so may result in mixed content warning from browser.
+	    <br/>
+	    <?php _e('The plugin will clear WP Fastest Cache cache automatically if it\'s installed.','https_redirection');?>
+	    </p>
         </div>
 
         <?php
