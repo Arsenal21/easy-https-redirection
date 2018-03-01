@@ -50,9 +50,7 @@ function httpsrdrctn_settings_page() {
         <div style="background: #fff6d5; border: 1px solid #d1b655; color: #3f2502; margin: 10px 0; padding: 5px 5px 5px 10px; text-shadow: 1px 1px #ffffff;">
             <p><?php echo sprintf(__("When you enable the HTTPS redirection, the plugin will force redirect the URL to the HTTPS version of the URL. So before enabling this plugin's feature, visit your site's HTTPS URL %s to make sure the page loads correctly. Otherwise you may get locked out if your SSL certificate is not installed correctly on your site or the HTTPS URL is not working and this plugin is auto redirecting to the HTTPS URL.",'https_redirection'),'<a href="'.$siteSSLurl.'" target="_blank">'.$siteSSLurl.'</a>');?>
             </p>
-            <p><span style='font-weight:bold;color:red;'><?php_e('Important!','https_redirection');?></span> <?php _e("If you're using caching plugins similar to W3 Total Cache or WP Super Cache, you need to clear their cache after you enable or disable automatic redirection option. Failing to do so may result in mixed content warning from browser.",'https_redirection');?>
-	    <br/>
-	    <?php _e('The plugin will clear WP Fastest Cache cache automatically if it\'s installed.','https_redirection');?>
+            <p><span style='font-weight:bold;color:red;'><?php _e('Important!','https_redirection');?></span> <?php _e("If you're using caching plugins similar to W3 Total Cache or WP Super Cache, you need to clear their cache after you enable or disable automatic redirection option. Failing to do so may result in mixed content warning from browser.",'https_redirection');?>
 	    </p>
         </div>
 
