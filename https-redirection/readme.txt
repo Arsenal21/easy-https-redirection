@@ -4,7 +4,7 @@ Donate link: http://www.tipsandtricks-hq.com/development-center
 Tags: redirection, https, automatic redirection, htaccess, ssl, https redirection, ssl certificate, secure page, secure, force ssl, force https
 Requires at least: 3.5
 Tested up to: 4.9
-Stable tag: 1.8
+Stable tag: 1.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -92,6 +92,10 @@ Here is an example for German language files.
 1. Plugin settings page.
 
 == Changelog ==
+
+= v1.9 =
+- WP Fastest Cache cache is automatically cleared when plugin settings are changed. This is to prevent "mixed content" warning from browsers.
+- Fixed rare conflict with WP Fastest Cache (thanks to emrevona).
 
 = v1.8 =
 - Apply HTTPS redirection on the whole domain will be the default selected option after plugin install. You an change this option when you actually go to enable the feature.
