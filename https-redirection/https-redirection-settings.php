@@ -44,7 +44,7 @@ function httpsrdrctn_settings_page() {
     /* Display form on the setting page */
     ?>
     <div class="wrap">
-        <div class="icon32 icon32-bws" id="icon-options-general"></div>
+	
         <h2><?php _e('HTTPS Redirection Settings', 'https_redirection'); ?></h2>
 
         <div style="background: #fff6d5; border: 1px solid #d1b655; color: #3f2502; margin: 10px 0; padding: 5px 5px 5px 10px; text-shadow: 1px 1px #ffffff;">
@@ -151,7 +151,11 @@ function httpsrdrctn_settings_page() {
             </div>
             <?php
         }
+	
         ?>
-    </div>
+	<div style="background: #D7E7F5; border: 1px solid #1166BB; color: #333333; margin: 20px 0; padding: 10px;">
+	    You can view the <a href="https://www.tipsandtricks-hq.com/wordpress-easy-https-redirection-plugin" target="_blank">HTTPS Redirection plugin details</a> on our site. Check our other plugins <a href="https://www.tipsandtricks-hq.com/development-center" target="_blank">here</a>.
+	</div>
+    </div><!-- end of wrap -->
     <?php
 }
