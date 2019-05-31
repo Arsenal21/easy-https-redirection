@@ -1,27 +1,27 @@
 <?php
 
-function httpsrdrctn_force_https_embeds( $content ){
-	$files_to_check = array( 'jpg', 'jpeg', 'gif', 'png', 'js', 'css' );
+function httpsrdrctn_force_https_embeds( $content ) {
+    $files_to_check = array( 'jpg', 'jpeg', 'gif', 'png', 'js', 'css' );
 
-	if ( strpos( home_url(), 'https' ) !== false ) {
-		$http_domain = str_replace( 'https', 'http', home_url() );
-	} else {
-		$http_domain = home_url();
+    if ( strpos( home_url(), 'https' ) !== false ) {
+	$http_domain = str_replace( 'https', 'http', home_url() );
+    } else {
+	$http_domain = home_url();
+    }
+
+    $matches = array();
+    $pattern = '/' . str_replace( '/', '\/', quotemeta( $http_domain ) ) . '\/[^\"\']*\.[' . implode( "|", $files_to_check ) . ']+/';
+
+    preg_match_all( $pattern, $content, $matches );
+
+    if ( ! empty( $matches ) ) {
+	foreach ( $matches[ 0 ] as $match ) {
+	    $match_https	 = str_replace( 'http', 'https', $match );
+	    $content	 = str_replace( $match, $match_https, $content );
 	}
-	
-	$matches = array();
-	$pattern = '/' . str_replace( '/', '\/', quotemeta( $http_domain ) ) . '\/[^\"\']*\.[' . implode( "|", $files_to_check ) . ']+/';
+    }
 
-	preg_match_all( $pattern, $content, $matches );
-
-	if( ! empty( $matches ) ){
-		foreach( $matches[0] as $match ){
-			$match_https = str_replace( 'http', 'https', $match );
-			$content = str_replace( $match, $match_https, $content );
-		}
-	}
-
-	return $content;
+    return $content;
 }
 
 /*** 
