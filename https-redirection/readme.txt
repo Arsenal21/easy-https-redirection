@@ -1,4 +1,4 @@
-﻿=== Easy HTTPS Redirection ===
+﻿=== Easy HTTPS Redirection (SSL) ===
 Contributors: Tips and Tricks HQ
 Donate link: http://www.tipsandtricks-hq.com/development-center
 Tags: redirection, https, automatic redirection, htaccess, ssl, https redirection, ssl certificate, secure page, secure, force ssl, force https
@@ -8,7 +8,7 @@ Stable tag: 1.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-The plugin allows an automatic redirection to the "HTTPS" version/URL of the site. Make your site SSL compatible.
+The plugin allows an automatic redirection to the "HTTPS" version/URL of the site. Make your site SSL compatible easily.
 
 == Description ==
 
