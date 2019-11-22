@@ -110,7 +110,7 @@ function httpsrdrctn_plugin_action_links( $links, $file ) {
 	$this_plugin = plugin_basename( __FILE__ );
 
     if ( $file == $this_plugin ) {
-	$settings_link = '<a href="admin.php?page=https-redirection">' . __( 'Settings', 'https_redirection' ) . '</a>';
+	$settings_link = '<a href="options-general.php?page=https-redirection">' . __( 'Settings', 'https_redirection' ) . '</a>';
 	array_unshift( $links, $settings_link );
     }
     return $links;
@@ -119,7 +119,7 @@ function httpsrdrctn_plugin_action_links( $links, $file ) {
 function httpsrdrctn_register_plugin_links( $links, $file ) {
     $base = plugin_basename( __FILE__ );
     if ( $file == $base ) {
-	$links[] = '<a href="admin.php?page=https-redirection">' . __( 'Settings', 'https_redirection' ) . '</a>';
+	$links[] = '<a href="options-general.php?page=https-redirection">' . __( 'Settings', 'https_redirection' ) . '</a>';
     }
     return $links;
 }
