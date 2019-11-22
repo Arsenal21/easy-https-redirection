@@ -5,7 +5,7 @@
   Plugin URI: https://www.tipsandtricks-hq.com/wordpress-easy-https-redirection-plugin
   Description: The plugin HTTPS Redirection allows an automatic redirection to the "HTTPS" version/URL of the site.
   Author: Tips and Tricks HQ
-  Version: 1.9
+  Version: 1.9.1
   Author URI: https://www.tipsandtricks-hq.com/
   License: GPLv2 or later
   Text Domain: https-redirection
@@ -218,7 +218,7 @@ if ( ! function_exists( 'httpsrdrctn_delete_options' ) ) {
 }
 
 function add_httpsrdrctn_admin_menu() {
-    add_submenu_page( 'options-general.php', 'HTTPS Redirection', 'HTTPS Redirection', 'manage_options', 'https-redirection', 'httpsrdrctn_settings_page', plugins_url( "images/px.png", __FILE__ ), 1001 );
+    add_submenu_page( 'options-general.php', 'HTTPS Redirection', 'HTTPS Redirection', 'manage_options', 'https-redirection', 'httpsrdrctn_settings_page' );
 }
 
 add_action( 'admin_menu', 'add_httpsrdrctn_admin_menu' );
