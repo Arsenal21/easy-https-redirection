@@ -34,7 +34,11 @@ So you are always forcing the visitor to view the HTTPS version of the page or s
 
 You can force your entire domain to be auto redirected to the HTTPS URL or selectively choose a few pages to be re-directed.
 
+= Video Tutorials =
+
 https://www.youtube.com/watch?v=oyJgRFCM6u8
+
+https://www.youtube.com/watch?v=LtyBraB64v8
 
 = Force Load Static Files Using HTTPS =
 
