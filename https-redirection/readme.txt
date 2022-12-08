@@ -1,9 +1,9 @@
 ﻿=== Easy HTTPS Redirection (SSL) ===
 Contributors: Tips and Tricks HQ
-Donate link: http://www.tipsandtricks-hq.com/development-center
-Tags: redirection, https, automatic redirection, htaccess, ssl, https redirection, ssl certificate, secure page, secure, force ssl, force https
-Requires at least: 3.5
-Tested up to: 5.5
+Donate link: https://www.tipsandtricks-hq.com/development-center
+Tags: ssl, https, force ssl, insecure content, redirection, automatic redirection, htaccess, https redirection, ssl certificate, secure page, secure, force https
+Requires at least: 5.5
+Tested up to: 6.1
 Stable tag: 1.9.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
