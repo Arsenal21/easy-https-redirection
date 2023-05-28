@@ -101,7 +101,8 @@ class HTTPSRDRCTN_RULES {
 	    $rules	 .= '<IfModule mod_rewrite.c>' . PHP_EOL;
 	    $rules	 .= 'RewriteEngine On' . PHP_EOL;
 
-	    $rules .= 'RewriteCond %{SERVER_PORT} !^443$' . PHP_EOL; //Alternative is to use RewriteCond %{HTTPS} off
+            $rules .= 'RewriteCond %{HTTP:X-Forwarded-Proto} !https' . PHP_EOL; //Handle traffic connecting to your proxy or load balancer
+            $rules .= 'RewriteCond %{HTTPS} off' . PHP_EOL; //Alternative is to use RewriteCond %{SERVER_PORT} !^443$
 	    if ( $wpfc ) {
 		$rules .= $wpfc_rules;
 	    }
@@ -117,7 +118,8 @@ class HTTPSRDRCTN_RULES {
 	    $rules	 .= '<IfModule mod_rewrite.c>' . PHP_EOL;
 	    $rules	 .= 'RewriteEngine On' . PHP_EOL;
 
-	    $rules .= 'RewriteCond %{SERVER_PORT} !^443$' . PHP_EOL; //Alternative is to use RewriteCond %{HTTPS} off
+            $rules .= 'RewriteCond %{HTTP:X-Forwarded-Proto} !https' . PHP_EOL; //Handle traffic connecting to your proxy or load balancer
+            $rules .= 'RewriteCond %{HTTPS} off' . PHP_EOL; //Alternative is to use RewriteCond %{SERVER_PORT} !^443$
 	    if ( $wpfc ) {
 		$rules .= $wpfc_rules;
 	    }
