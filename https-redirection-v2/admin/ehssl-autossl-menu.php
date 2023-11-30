@@ -1,11 +1,11 @@
 <?php
 
-class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
+class EHSSL_AutoSSL_Menu extends EHSSL_Admin_Menu
 {
-    public $menu_page_slug = EHSSL_MAIN_MENU_SLUG;
+    public $menu_page_slug = EHSSL_AUTOSSL_MENU_SLUG;
 
-    /* Specify all the tabs of this menu in the following array */
-    public $dashboard_menu_tabs = array('tab1' => 'Tab One', 'tab2' => 'Tab Two');
+    // Specify all the tabs of this menu in the following array.
+    public $dashboard_menu_tabs = array('tab1' => 'TAB 1', 'tab2' => 'TAB 2');
 
     public function __construct()
     {
@@ -39,7 +39,7 @@ class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
                
         ?>
         <div class="wrap">
-        <h2><?php _e("Dashboard", EHSSL_TEXT_DOMAIN) ?></h2>
+        <h2><?php _e("Auto SSL", EHSSL_TEXT_DOMAIN) ?></h2>
         <h2 class="nav-tab-wrapper"><?php $this->render_page_tabs(); ?></h2>
         <div id="poststuff"><div id="post-body">
         <?php
@@ -83,6 +83,6 @@ class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
             </div><!-- end of inside -->
         </div><!-- end of postbox -->
         <?php
-    } 
+    }    
 
-} //end class
+} // End class

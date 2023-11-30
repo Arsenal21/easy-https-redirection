@@ -57,6 +57,7 @@ if (!class_exists('Easy_HTTPS_SSL')) {
             define('EHSSL_MENU_SLUG_PREFIX', 'ehssl');
             define('EHSSL_MAIN_MENU_SLUG', 'ehssl');
             define('EHSSL_SETTINGS_MENU_SLUG', 'ehssl_settings');
+            define('EHSSL_AUTOSSL_MENU_SLUG', 'ehssl-autossl');
             //global $wpdb;
             //define('DB_NAME_TABLE_TBL', $wpdb->prefix . "define_name_here_tbl");
 
