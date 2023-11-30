@@ -38,30 +38,53 @@ class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
     public function render_dashboard_menu_page()
     {
         $tab = $this->get_current_tab();
+
+        $this->render_dashboard_menu_tabs();        
         ?>
         <div class="wrap">
         <div id="poststuff"><div id="post-body">
         <?php
 
-        $this->render_dashboard_menu_tabs();
         echo "<br />";
         $tab_keys = array_keys($this->dashboard_menu_tabs);
         switch ($tab) {
             case $tab_keys[1]:
-                //include_once('file-to-handle-this-tab-rendering.php');
-                //call_function_to_render_tab2();
-                $this->postbox("test123", "Tab 2 Postbox heading", "Some test content to show how this function can be used to output postbox");
+                //include_once('file-to-handle-this-tab-rendering.php');//If you want to include a file
+                $this->render_dashboard_tab2();
                 break;
             default:
-                //include_once('file-to-handle-this-tab-rendering.php');
-                //call_function_to_render_tab1();
-                $this->postbox("test456", "Tab 1 Postbox heading", "Some test content to show how this function can be used to output postbox");
+                //include_once('file-to-handle-this-tab-rendering.php');//If you want to include a file
+                $this->render_dashboard_tab1();
                 break;
         }
         ?>
         </div></div>
         </div><!-- end or wrap -->
         <?php
-}
+    }
+
+    public function render_dashboard_tab1(){
+        //Render tab 1
+        ?>
+        <div class="postbox">
+            <h3 class="hndle"><label for="title">Tab 1 Heading</label></h3>
+            <div class="inside">
+            <p>Oh hello there! You are in tab 1. Tab 1 looks good right? Yes, I love it.</p>
+            </div><!-- end of inside -->
+        </div><!-- end of postbox -->
+        <?php
+    }
+
+    public function render_dashboard_tab2(){
+        //Render tab 1
+        ?>
+        <div class="postbox">
+            <h3 class="hndle"><label for="title">Tab 2 Heading</label></h3>
+            <div class="inside">
+            <p>Oh hello there! You are in tab 2. Tab 2 looks good right? Sweet tab 2.</p>
+            </div><!-- end of inside -->
+        </div><!-- end of postbox -->
+        <?php
+    }    
 
 } //end class

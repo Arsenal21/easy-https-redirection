@@ -12,15 +12,7 @@ abstract class EHSSL_Admin_Menu
      */
     public function postbox($id, $title, $content)
     {
-        ?>
-        <div id="<?php echo $id; ?>" class="postbox">
-            <div class="handlediv" title="Click to toggle"><br /></div>
-            <h3 class="hndle"><span><?php echo $title; ?></span></h3>
-            <div class="inside">
-            <?php echo $content; ?>
-            </div>
-        </div>
-        <?php
-}
+        echo 'Do not use this old method. Use new HTML code instead.';
+    }
 
 }
