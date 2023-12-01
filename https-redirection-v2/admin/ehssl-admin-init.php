@@ -51,7 +51,7 @@ class EHSSL_Admin_Init
     public function create_admin_menus()
     {
         $menu_icon_url = EASY_HTTPS_SSL_URL . '/images/plugin-icon.png';
-        $this->main_menu_page = add_menu_page(__('Easy HTTPS SSL', EHSSL_TEXT_DOMAIN), __('Easy HTTPS SSL', EHSSL_TEXT_DOMAIN), EHSSL_MANAGEMENT_PERMISSION, EHSSL_MAIN_MENU_SLUG, array(&$this, 'handle_dashboard_menu_rendering'), $menu_icon_url);
+        $this->main_menu_page = add_menu_page(__('Easy HTTPS & SSL', EHSSL_TEXT_DOMAIN), __('Easy HTTPS & SSL', EHSSL_TEXT_DOMAIN), EHSSL_MANAGEMENT_PERMISSION, EHSSL_MAIN_MENU_SLUG, array(&$this, 'handle_dashboard_menu_rendering'), $menu_icon_url);
         add_submenu_page( 'options-general.php', __('HTTPS Redirection',EHSSL_TEXT_DOMAIN), __('HTTPS Redirection',EHSSL_TEXT_DOMAIN), EHSSL_MANAGEMENT_PERMISSION, 'https-redirection', array(&$this, 'handle_settings_menu_rendering_old') );
         add_submenu_page(EHSSL_MAIN_MENU_SLUG, __('Dashboard', EHSSL_TEXT_DOMAIN), __('Dashboard', EHSSL_TEXT_DOMAIN), EHSSL_MANAGEMENT_PERMISSION, EHSSL_MAIN_MENU_SLUG, array(&$this, 'handle_dashboard_menu_rendering'));
         add_submenu_page(EHSSL_MAIN_MENU_SLUG, __('Settings', EHSSL_TEXT_DOMAIN), __('Settings', EHSSL_TEXT_DOMAIN), EHSSL_MANAGEMENT_PERMISSION, EHSSL_SETTINGS_MENU_SLUG, array(&$this, 'handle_settings_menu_rendering'));
