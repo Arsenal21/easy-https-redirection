@@ -55,7 +55,7 @@ class EHSSL_Admin_Init
         add_submenu_page( 'options-general.php', __('HTTPS Redirection',EHSSL_TEXT_DOMAIN), __('HTTPS Redirection',EHSSL_TEXT_DOMAIN), EHSSL_MANAGEMENT_PERMISSION, 'https-redirection', array(&$this, 'handle_settings_menu_rendering_old') );
         add_submenu_page(EHSSL_MAIN_MENU_SLUG, __('Dashboard', EHSSL_TEXT_DOMAIN), __('Dashboard', EHSSL_TEXT_DOMAIN), EHSSL_MANAGEMENT_PERMISSION, EHSSL_MAIN_MENU_SLUG, array(&$this, 'handle_dashboard_menu_rendering'));
         add_submenu_page(EHSSL_MAIN_MENU_SLUG, __('Settings', EHSSL_TEXT_DOMAIN), __('Settings', EHSSL_TEXT_DOMAIN), EHSSL_MANAGEMENT_PERMISSION, EHSSL_SETTINGS_MENU_SLUG, array(&$this, 'handle_settings_menu_rendering'));
-        add_submenu_page(EHSSL_MAIN_MENU_SLUG, __('SSL Management', EHSSL_TEXT_DOMAIN), __('SSL Management', EHSSL_TEXT_DOMAIN), EHSSL_MANAGEMENT_PERMISSION, EHSSL_SSL_MGMT_MENU_SLUG, array(&$this, 'handle_autossl_menu_rendering'));
+        add_submenu_page(EHSSL_MAIN_MENU_SLUG, __('SSL Management', EHSSL_TEXT_DOMAIN), __('SSL Management', EHSSL_TEXT_DOMAIN), EHSSL_MANAGEMENT_PERMISSION, EHSSL_SSL_MGMT_MENU_SLUG, array(&$this, 'handle_ssl_mgmt_menu_rendering'));
         do_action('ehssl_admin_menu_created');
     }
 
@@ -77,10 +77,10 @@ class EHSSL_Admin_Init
         $this->settings_menu = new EHSSL_Settings_Menu_Old();
     }
 
-    public function handle_autossl_menu_rendering()
+    public function handle_ssl_mgmt_menu_rendering()
     {
-        include_once EASY_HTTPS_SSL_PATH. '/admin/ehssl-autossl-menu.php';
-        $this->settings_menu = new EHSSL_AutoSSL_Menu();
+        include_once EASY_HTTPS_SSL_PATH. '/admin/ehssl-ssl-mgmt-menu.php';
+        $this->settings_menu = new EHSSL_SSL_MGMT_Menu();
     }
 
     public function plugin_admin_init()

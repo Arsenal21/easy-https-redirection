@@ -1,6 +1,6 @@
 <?php
 
-class EHSSL_AutoSSL_Menu extends EHSSL_Admin_Menu
+class EHSSL_SSL_MGMT_Menu extends EHSSL_Admin_Menu
 {
     public $menu_page_slug = EHSSL_SSL_MGMT_MENU_SLUG;
 
