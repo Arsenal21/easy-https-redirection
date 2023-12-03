@@ -22,7 +22,7 @@ class EHSSL_Admin_Init
     public function admin_includes()
     {
         include_once 'ehssl-admin-menu.php';
-        include_once EASY_HTTPS_SSL_PATH. '/classes/ehssl-rules-helper.php';
+        include_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-rules-helper.php';
     }
 
     public function admin_menu_page_scripts()
@@ -52,7 +52,7 @@ class EHSSL_Admin_Init
     {
         $menu_icon_url = EASY_HTTPS_SSL_URL . '/images/plugin-icon.png';
         $this->main_menu_page = add_menu_page(__('Easy HTTPS & SSL', EHSSL_TEXT_DOMAIN), __('Easy HTTPS & SSL', EHSSL_TEXT_DOMAIN), EHSSL_MANAGEMENT_PERMISSION, EHSSL_MAIN_MENU_SLUG, array(&$this, 'handle_dashboard_menu_rendering'), $menu_icon_url);
-        add_submenu_page( 'options-general.php', __('HTTPS Redirection',EHSSL_TEXT_DOMAIN), __('HTTPS Redirection',EHSSL_TEXT_DOMAIN), EHSSL_MANAGEMENT_PERMISSION, 'https-redirection', array(&$this, 'handle_settings_menu_rendering_old') );
+        add_submenu_page('options-general.php', __('HTTPS Redirection', EHSSL_TEXT_DOMAIN), __('HTTPS Redirection', EHSSL_TEXT_DOMAIN), EHSSL_MANAGEMENT_PERMISSION, 'https-redirection', array(&$this, 'handle_settings_menu_rendering_old'));
         add_submenu_page(EHSSL_MAIN_MENU_SLUG, __('Dashboard', EHSSL_TEXT_DOMAIN), __('Dashboard', EHSSL_TEXT_DOMAIN), EHSSL_MANAGEMENT_PERMISSION, EHSSL_MAIN_MENU_SLUG, array(&$this, 'handle_dashboard_menu_rendering'));
         add_submenu_page(EHSSL_MAIN_MENU_SLUG, __('Settings', EHSSL_TEXT_DOMAIN), __('Settings', EHSSL_TEXT_DOMAIN), EHSSL_MANAGEMENT_PERMISSION, EHSSL_SETTINGS_MENU_SLUG, array(&$this, 'handle_settings_menu_rendering'));
         add_submenu_page(EHSSL_MAIN_MENU_SLUG, __('SSL Management', EHSSL_TEXT_DOMAIN), __('SSL Management', EHSSL_TEXT_DOMAIN), EHSSL_MANAGEMENT_PERMISSION, EHSSL_SSL_MGMT_MENU_SLUG, array(&$this, 'handle_ssl_mgmt_menu_rendering'));
@@ -61,25 +61,25 @@ class EHSSL_Admin_Init
 
     public function handle_dashboard_menu_rendering()
     {
-        include_once EASY_HTTPS_SSL_PATH. '/admin/ehssl-dashboard-menu.php';
+        include_once EASY_HTTPS_SSL_PATH . '/admin/ehssl-dashboard-menu.php';
         $this->dashboard_menu = new EHSSL_Dashboard_Menu();
     }
 
     public function handle_settings_menu_rendering()
     {
-        include_once EASY_HTTPS_SSL_PATH. '/admin/ehssl-settings-menu.php';
+        include_once EASY_HTTPS_SSL_PATH . '/admin/ehssl-settings-menu.php';
         $this->settings_menu = new EHSSL_Settings_Menu();
     }
-    
+
     public function handle_settings_menu_rendering_old()
     {
-        include_once EASY_HTTPS_SSL_PATH. '/admin/ehssl-settings-menu-old.php';
+        include_once EASY_HTTPS_SSL_PATH . '/admin/ehssl-settings-menu-old.php';
         $this->settings_menu = new EHSSL_Settings_Menu_Old();
     }
 
     public function handle_ssl_mgmt_menu_rendering()
     {
-        include_once EASY_HTTPS_SSL_PATH. '/admin/ehssl-ssl-mgmt-menu.php';
+        include_once EASY_HTTPS_SSL_PATH . '/admin/ehssl-ssl-mgmt-menu.php';
         $this->settings_menu = new EHSSL_SSL_MGMT_Menu();
     }
 
@@ -93,6 +93,8 @@ class EHSSL_Admin_Init
         if (isset($_GET['page']) && "ehssl_settings" == $_GET['page']) {
             $this->register_httpsrdrctn_settings();
         }
+
+        $this->handle_log_file_action();
     }
 
     /**
@@ -143,6 +145,66 @@ class EHSSL_Admin_Init
             wp_enqueue_style('ehssl_stylesheet', EASY_HTTPS_SSL_URL . '/css/style.css', null, wp_rand(1, 10000));
             wp_enqueue_script('ehssl_script', EASY_HTTPS_SSL_URL . '/js/script.js', array('jquery'), wp_rand(1, 10000));
         }
+    }
+
+    public function handle_log_file_action()
+    {
+        // wp_die("Code came there");
+        if (isset($_GET['ehssl-debug-action'])) {
+            // if ( ! user_can( wp_get_current_user(), 'administrator' ) ) {
+            //     // User is not an admin
+            //     return;
+            // }
+
+            switch ($_GET['ehssl-debug-action']) {
+                case 'view_log':
+                    $this->handle_view_log();
+                    break;
+                case 'reset_log':
+                    $this->handle_reset_log();
+                    break;
+            }
+        }
+    }
+
+    public function handle_view_log()
+    {
+        if (!check_admin_referer('ehssl_view_log_nonce')) {
+            //The nonce check failed
+            echo 'Error! Nonce security check failed. Could not reset the log file.';
+            wp_die(0);
+        }
+
+        $filename = EHSSL_Logger::get_log_file();
+        if (file_exists($filename)) {
+            $logfile = fopen(EHSSL_Logger::get_log_file(), 'rb');
+            header('Content-Type: text/plain');
+            fpassthru($logfile);
+        }
+        die;
+    }
+
+    public function handle_reset_log()
+    {
+        if (!current_user_can('manage_options')) {
+            EHSSL_Logger::log("Error! No permission to reset log file.");
+            //No permission for the current user to do this operation.
+            wp_die(0);
+        }
+
+        if (!check_admin_referer('ehssl_reset_log_nonce')) {
+            //The nonce check failed
+            echo 'Error! Nonce security check failed. Could not reset the log file.';
+            wp_die(0);
+        }
+
+        $file_name = EHSSL_Logger::get_log_file_name();
+
+        EHSSL_Logger::reset_log_file($file_name);
+
+        $redirect_to = get_admin_url(null, "admin.php?page=ehssl_settings&tab=tab1");
+
+        EHSSL_Utils::redirect_to_url($redirect_to);
     }
 
 } //End of class
