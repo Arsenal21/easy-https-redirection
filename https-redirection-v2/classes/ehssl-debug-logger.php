@@ -1,86 +1,157 @@
 <?php
-/*
- * Logs debug data to a file. Here is an example usage
- * global $ehssl;
- * $ehssl->debug_logger->log_debug("Log messaged goes here");
+/**
+ * Logs debug data to a file.
  */
 class EHSSL_Logger
 {
-    public $log_folder_path;
-    public $default_log_file = 'ehssl-log.txt';
-    public $debug_enabled = false;
-    public $debug_status = array('SUCCESS', 'STATUS', 'NOTICE', 'WARNING', 'FAILURE', 'CRITICAL');
-    public $section_break_marker = "\n----------------------------------------------------------\n\n";
-    public $log_reset_marker = "-------- Log File Reset --------\n";
+    public static $log_folder_path = EASY_HTTPS_SSL_PATH . '/logs';
+    public static $default_log_file = 'log.txt';
+    public static $debug_status = array('SUCCESS', 'STATUS', 'NOTICE', 'WARNING', 'FAILURE', 'CRITICAL');
+    public static $section_break_marker = "\n----------------------------------------------------------\n\n";
+    public static $log_reset_marker = "-------- Log File Reset --------\n";
 
-    public function __construct()
+    /**
+     * Checks whether debug logging is enabled or not.
+     *
+     * @return boolean
+     */
+    public static function is_logging_enabled()
     {
-        $this->log_folder_path = EASY_HTTPS_SSL_PATH . '/logs';
-        //TODO - check config and if debug is enabled then set the enabled flag to true
-        $this->debug_enabled = true;
+        global $httpsrdrctn_options;
+
+        $enable_debug_logging = isset($httpsrdrctn_options['enable_debug_logging']) ? esc_attr($httpsrdrctn_options['enable_debug_logging']) : 0;
+
+        return $enable_debug_logging == '1';
     }
 
-    public function get_debug_timestamp()
+    /**
+     * Generates a unique suffix for filename.
+     *
+     * @return string File name suffix.
+     */
+    public static function get_log_file_suffix()
+    {
+        global $httpsrdrctn_options;
+
+        $suffix = isset($httpsrdrctn_options['ehssl_logfile_suffix']) ? esc_attr($httpsrdrctn_options['ehssl_logfile_suffix']) : '';
+        if (!empty($suffix)) {
+            return $suffix;
+        }
+
+        $suffix = uniqid();
+        $httpsrdrctn_options['ehssl_logfile_suffix'] = $suffix;
+        update_option('httpsrdrctn_options', $httpsrdrctn_options);
+
+        return $suffix;
+    }
+
+    /**
+     * Get the log file with a unique name.
+     *
+     * @return string Log file name.
+     */
+    public static function get_log_file_name()
+    {
+        return 'log-' . self::get_log_file_suffix() . '.txt';
+    }
+
+    /**
+     * Get the log filename with absolute path.
+     *
+     * @return string Debug log file.
+     */
+    public static function get_log_file()
+    {
+        return self::$log_folder_path . '/' . self::get_log_file_name();
+    }
+
+    public static function get_debug_timestamp()
     {
         return '[' . date('m/d/Y g:i A') . '] - ';
     }
 
-    public function get_debug_status($level)
+    public static function get_debug_status($level)
     {
-        $size = count($this->debug_status);
+        $size = count(self::$debug_status);
         if ($level >= $size) {
             return 'UNKNOWN';
         } else {
-            return $this->debug_status[$level];
+            return self::$debug_status[$level];
         }
     }
 
-    public function get_section_break($section_break)
+    public static function get_section_break($section_break)
     {
         if ($section_break) {
-            return $this->section_break_marker;
+            return self::$section_break_marker;
         }
         return "";
     }
 
-    public function append_to_file($content, $file_name)
+    public static function write_to_file($content, $file_name, $overwrite = false)
     {
         if (empty($file_name)) {
-            $file_name = $this->default_log_file;
+            $file_name = self::$default_log_file;
         }
 
-        $debug_log_file = $this->log_folder_path . '/' . $file_name;
-        $fp = fopen($debug_log_file, 'a');
-        fwrite($fp, $content);
-        fclose($fp);
+        $debug_log_file = self::$log_folder_path . '/' . $file_name;
+
+        //Write to the log file
+        if (!file_put_contents($debug_log_file, $content . "\r\n", ( ! $overwrite ? FILE_APPEND : 0))) {
+            return false;
+        }
+        return true;
     }
 
-    public function reset_log_file($file_name = '')
+    public static function reset_log_file($file_name = '')
     {
         if (empty($file_name)) {
-            $file_name = $this->default_log_file;
+            $file_name = self::$default_log_file;
         }
 
-        $debug_log_file = $this->log_folder_path . '/' . $file_name;
-        $content = $this->get_debug_timestamp() . $this->log_reset_marker;
+        $debug_log_file = self::$log_folder_path . '/' . $file_name;
+        $content = self::get_debug_timestamp() . self::$log_reset_marker;
         $fp = fopen($debug_log_file, 'w');
         fwrite($fp, $content);
         fclose($fp);
     }
 
-    public function log_debug($message, $level = 0, $section_break = false, $file_name = '')
+    /**
+     * Logs the message is a log-<uniqueId>-.txt
+     *
+     * @param string|array $message Data to write to the log file
+     * @param integer $level Specify the log level.
+     * @param boolean $section_break Whether to add a line break.
+     * @param boolean $overwrite Whether to overwrite the file content.
+     * @return boolean True if file write is success, false if not.
+     */
+    public static function log($message, $level = 0, $section_break = false,  $overwrite = false)
     {
-        if (!$this->debug_enabled) {
+        if (!self::is_logging_enabled()) {
             return;
         }
 
+        $file_name = self::get_log_file_name();
+
         //Timestamp
-        $content = $this->get_debug_timestamp();
+        $content = self::get_debug_timestamp();
         //Debug status
-        $content .= $this->get_debug_status($level);
+        $content .= self::get_debug_status($level);
         $content .= ' : ';
-        $content .= $message . "\n";
-        $content .= $this->get_section_break($section_break);
-        $this->append_to_file($content, $file_name);
+
+        if (is_array($message)) {
+            // Put the array content into a string.
+            ob_start();
+            print_r($message);
+            $var = ob_get_contents();
+            ob_end_clean();
+
+            $content .= $var . "\n";
+        }else{
+            $content .= $message . "\n";
+        }
+
+        $content .= self::get_section_break($section_break);
+        return self::write_to_file($content, $file_name, $overwrite);
     }
 }

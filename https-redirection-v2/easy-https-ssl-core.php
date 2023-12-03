@@ -67,9 +67,12 @@ if (!class_exists('Easy_HTTPS_SSL')) {
         {
             //Load common files for everywhere
             include_once 'classes/ehssl-debug-logger.php';
+            include_once 'classes/ehssl-utility-functions.php';
+
             if (is_admin()) { //Load admin side only files
                 include_once 'admin/ehssl-admin-init.php';
-            } else { //Load front end side only files
+            } else { 
+                //Load front end side only files
             }
         }
 

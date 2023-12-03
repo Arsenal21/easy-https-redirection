@@ -105,12 +105,12 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                             <br />
                             <p class="description"><?php _e("Check this option to enable debug logging.", EHSSL_TEXT_DOMAIN);?></p>
                             <p class="description">
-                                <a href="<?php get_admin_url() . '?wpec-debug-action=view_log'; ?>" target="_blank">
+                                <a href="<?php echo wp_nonce_url(get_admin_url() . '?ehssl-debug-action=view_log', 'ehssl_view_log_nonce'); ?>" target="_blank">
                                     <?php _e( 'Click here', EHSSL_TEXT_DOMAIN ) ?>
                                 </a>
                                 <?php _e( ' to view log file.', EHSSL_TEXT_DOMAIN );?>
                                 <br>
-                                <a id="wpec-reset-log" href="#0" style="color: red">
+                                <a href="<?php echo wp_nonce_url(get_admin_url() . '?ehssl-debug-action=reset_log', 'ehssl_reset_log_nonce'); ?>" style="color: red">
                                     <?php  _e( 'Click here', EHSSL_TEXT_DOMAIN ); ?>
                                 </a>
                                 <?php _e( ' to reset log file.', EHSSL_TEXT_DOMAIN ); ?>
@@ -335,5 +335,5 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
             </div>
         </div>
     <?php
-    } 
+    }
 } // End class
