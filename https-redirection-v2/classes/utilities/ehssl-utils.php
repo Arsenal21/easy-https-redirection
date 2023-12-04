@@ -45,7 +45,7 @@ class EHSSL_Utils
 			exit;
 		}
 	}
-	
+
 }
 
 /***

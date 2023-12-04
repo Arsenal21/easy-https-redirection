@@ -95,6 +95,8 @@ class EHSSL_Admin_Init
         }
 
         $this->handle_log_file_action();
+
+        add_action( 'wp_ajax_ehssl_reset_log', array( $this, 'handle_reset_log' ) );
     }
 
     /**
@@ -149,21 +151,12 @@ class EHSSL_Admin_Init
 
     public function handle_log_file_action()
     {
-        // wp_die("Code came there");
-        if (isset($_GET['ehssl-debug-action'])) {
-            // if ( ! user_can( wp_get_current_user(), 'administrator' ) ) {
-            //     // User is not an admin
-            //     return;
-            // }
-
-            switch ($_GET['ehssl-debug-action']) {
-                case 'view_log':
-                    $this->handle_view_log();
-                    break;
-                case 'reset_log':
-                    $this->handle_reset_log();
-                    break;
+        if (isset($_GET['ehssl-debug-action']) && esc_attr($_GET['ehssl-debug-action']) === 'view_log') {
+            if ( ! user_can( wp_get_current_user(), 'administrator' ) ) {
+                // User is not an admin
+                return;
             }
+            $this->handle_view_log();
         }
     }
 
@@ -192,7 +185,7 @@ class EHSSL_Admin_Init
             wp_die(0);
         }
 
-        if (!check_admin_referer('ehssl_reset_log_nonce')) {
+        if (!check_ajax_referer('ehssl_settings_ajax_nonce', 'nonce', false)) {
             //The nonce check failed
             echo 'Error! Nonce security check failed. Could not reset the log file.';
             wp_die(0);
@@ -202,9 +195,8 @@ class EHSSL_Admin_Init
 
         EHSSL_Logger::reset_log_file($file_name);
 
-        $redirect_to = get_admin_url(null, "admin.php?page=ehssl_settings&tab=tab1");
-
-        EHSSL_Utils::redirect_to_url($redirect_to);
+        echo '1';
+		wp_die();
     }
 
 } //End of class

@@ -66,11 +66,12 @@ if (!class_exists('Easy_HTTPS_SSL')) {
         public function includes()
         {
             //Load common files for everywhere
-            include_once 'classes/ehssl-debug-logger.php';
-            include_once 'classes/ehssl-utility-functions.php';
+            include_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-debug-logger.php';
+            include_once EASY_HTTPS_SSL_PATH . '/classes/utilities/ehssl-utils.php';
+            include_once EASY_HTTPS_SSL_PATH . '/classes/utilities/ehssl-ssl-utils.php';
 
             if (is_admin()) { //Load admin side only files
-                include_once 'admin/ehssl-admin-init.php';
+                include_once EASY_HTTPS_SSL_PATH. '/admin/ehssl-admin-init.php';
             } else { 
                 //Load front end side only files
             }
