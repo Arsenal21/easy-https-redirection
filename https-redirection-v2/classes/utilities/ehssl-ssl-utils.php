@@ -82,7 +82,6 @@ class EHSSL_SSL_Utils
         $dateTime->setTimestamp($timestamp);
         // $dateTime->setTimezone($timezone);
 
-        // Format the date and time
         // $formatted_date_time = $dateTime->format('l, F j, Y \a\t g:i:s A');
         $formatted_date_time = $dateTime->format('l, F j, Y');
 

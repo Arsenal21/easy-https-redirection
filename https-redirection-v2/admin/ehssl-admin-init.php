@@ -97,6 +97,7 @@ class EHSSL_Admin_Init
         $this->handle_log_file_action();
 
         add_action( 'wp_ajax_ehssl_reset_log', array( $this, 'handle_reset_log' ) );
+        add_action('wp_ajax_ehssl_save_dashboard_order', array($this, 'handle_save_dashboard_sorting_order'));
     }
 
     /**
@@ -143,10 +144,10 @@ class EHSSL_Admin_Init
 
     public function plugin_admin_head()
     {
-        if (isset($_REQUEST['page']) && 'ehssl_settings' == $_REQUEST['page']) {
-            wp_enqueue_style('ehssl_stylesheet', EASY_HTTPS_SSL_URL . '/css/style.css', null, wp_rand(1, 10000));
-            wp_enqueue_script('ehssl_script', EASY_HTTPS_SSL_URL . '/js/script.js', array('jquery'), wp_rand(1, 10000));
-        }
+        // if (isset($_GET['page']) && 'ehssl_settings' == $_GET['page']) {
+        //     wp_enqueue_style('ehssl_stylesheet', EASY_HTTPS_SSL_URL . '/css/style.css', null, EASY_HTTPS_SSL_VERSION);
+        //     wp_enqueue_script('ehssl_script', EASY_HTTPS_SSL_URL . '/js/script.js', array('jquery'), EASY_HTTPS_SSL_VERSION);
+        // }
     }
 
     public function handle_log_file_action()
@@ -197,6 +198,22 @@ class EHSSL_Admin_Init
 
         echo '1';
 		wp_die();
+    }
+
+    public function handle_save_dashboard_sorting_order(){
+        global $httpsrdrctn_options;
+
+        if (isset($_POST['ehssl_sort_order']) && ! empty($_POST['ehssl_sort_order'])) {
+            $sorting_data = $_POST['ehssl_sort_order'];
+            $httpsrdrctn_options['dashboard_widget_sort_order'] = json_encode($sorting_data);
+            update_option('httpsrdrctn_options', $httpsrdrctn_options);
+            wp_send_json_success( $httpsrdrctn_options['dashboard_widget_sort_order'] );
+          } else {
+            wp_send_json_error("Invalid request");
+          }
+
+          // Always exit to avoid further execution
+          wp_die();
     }
 
 } //End of class
