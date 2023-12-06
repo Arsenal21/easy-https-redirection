@@ -169,13 +169,20 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
         <div class="postbox">
             <h3 class="hndle"><label for="title"><?php _e("Mixed Contents", EHSSL_TEXT_DOMAIN);?></label></h3>
             <div class="inside">
+                <?php if(!$is_https_redirection_enabled){ ?>
+                    <div style="background: #fff6d5; border: 1px solid #d1b655; color: #3f2502; margin: 10px 0; padding: 0px 5px 0px 10px; text-shadow: 1px 1px #ffffff;">
+                        <p>
+                            <?php _e("HTTPS redirection is turned off. Turn it on first to change these settings below!", EHSSL_TEXT_DOMAIN);?>
+                        </p>
+                    </div>
+                <?php } ?>
                 <form action="" method="POST">
                     <table class="form-table">
                         <tr valign="top">
                             <th scope="row"><?php _e('Force resources to use HTTPS URL', 'https_redirection');?></th>
                             <td>
                                 <label>
-                                    <input type="checkbox" <?php if (!$is_https_redirection_enabled) {echo "disabled";}?> name="httpsrdrctn_force_resources" value="1" <?php if (isset($httpsrdrctn_options['force_resources']) && $httpsrdrctn_options['force_resources'] == '1' && $is_https_redirection_enabled) {
+                                    <input type="checkbox" <?php if (!$is_https_redirection_enabled) {echo "disabled";}?> name="httpsrdrctn_force_resources" value="1" <?php if (isset($httpsrdrctn_options['force_resources']) && $httpsrdrctn_options['force_resources'] == '1') {
             echo "checked=\"checked\" ";
         }
         ?> />
@@ -184,7 +191,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                             </td>
                         </tr>
                     </table>
-                    <input type="submit" name="ehssl_mixed_content_form_submit" class="button-primary" value="<?php _e('Save Changes')?>" />
+                    <input type="submit" name="ehssl_mixed_content_form_submit" class="button-primary" value="<?php _e('Save Changes')?>" <?php if (!$is_https_redirection_enabled) {echo "disabled";}?>/>
                     <?php wp_nonce_field('ehssl_mixed_content_settings_nonce');?>
                 </form>
             </div><!-- end of inside -->
