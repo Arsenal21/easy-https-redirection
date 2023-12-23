@@ -5,7 +5,7 @@ class EHSSL_SSL_MGMT_Menu extends EHSSL_Admin_Menu
     public $menu_page_slug = EHSSL_SSL_MGMT_MENU_SLUG;
 
     // Specify all the tabs of this menu in the following array.
-    public $dashboard_menu_tabs = array('tab1' => 'TAB 1', 'tab2' => 'TAB 2');
+    public $dashboard_menu_tabs = array('tab1' => 'Get SSL', 'tab2' => 'Install SSL');
 
     public function __construct()
     {
@@ -63,11 +63,68 @@ class EHSSL_SSL_MGMT_Menu extends EHSSL_Admin_Menu
 
     public function render_tab_1(){
         //Render tab 1
+
+        if(EHSSL_Utils::get_domain()=="localhost" || filter_var(EHSSL_Utils::get_domain(), FILTER_VALIDATE_IP))
+        {
+            _e("The SSL Certificates required for HTTPS cannot be issued for WordPress sites that are based on 'localhost' or use an IP address. To effectively utilize SSL certificates, and hence to make the most from our plugin, you should operate your WordPress site on a standard domain. This limitation is not specific from our plugin but is a general rule in the issuance of SSL certificates.",EHSSL_TEXT_DOMAIN);
+            wp_die();
+        }
+
+        global $httpsrdrctn_options;
+
+
+          // Save data for tab 1
+          if (isset($_POST['ehssl_get_ssl_form_submit']) && check_admin_referer('ehssl_get_ssl_nonce')) {
+            $httpsrdrctn_options['ehssl_email_for_ssl_certificate'] = isset($_POST['ehssl_email_for_ssl_certificate']) ? esc_attr($_POST['ehssl_email_for_ssl_certificate']) : get_option( 'admin_email' );
+
+            update_option('httpsrdrctn_options', $httpsrdrctn_options);
+
+             //EHSSL_SSL_Certificate
+             $ssl_certificate = new EHSSL_SSL_Certificate();
+             $ssl_certificate_status= $ssl_certificate->handle_ssl_installation($httpsrdrctn_options['ehssl_email_for_ssl_certificate']);
+
+             if(is_wp_error($ssl_certificate_status))
+             {?>
+                <div class="notice notice-error">
+                    <p><?php _e("Error getting SSL:", EHSSL_TEXT_DOMAIN);?> <?php echo $ssl_certificate_status->get_error_message() ;?></p>
+                </div>
+             <?php
+             }
+             else{ ?>
+            <div class="notice notice-success">
+                    <p><?php _e($ssl_certificate_status, EHSSL_TEXT_DOMAIN);?> </p>
+                    <?php
+                        $certificate_urls= EHSSL_SSL_Certificate::get_certificate_urls();
+                       
+                        echo "<ul>";
+                        foreach($certificate_urls as $key=>$url){
+                            echo "<li><a href='{$url}'>{$key}</a></li>";
+                        }
+                        echo "</ul>";
+                    ?>
+                </div>
+             <?php
+             }
+            ?>         
+            <?php
+        }
+
         ?>
         <div class="postbox">
-            <h3 class="hndle"><label for="title">Tab 1 Heading</label></h3>
+            <h3 class="hndle"><label for="title">Get SSL</label></h3>
             <div class="inside">
-            <p>Oh hello there! You are in tab 1. Tab 1 looks good right? Yes, I love it.</p>
+                <form method="post" action="">
+                    <p>
+                        SSL certificate will be generated for the domain: <b><?php echo EHSSL_Utils::get_domain();?></b>
+                    </p>
+                    <!-- Email address field -->
+                    <label for="email"><?php _e('Email Address:', EHSSL_TEXT_DOMAIN);?></label>
+                    <input type="email" id="ehssl_email_for_ssl_certificate" value="<?=$httpsrdrctn_options['ehssl_email_for_ssl_certificate']?>" name="ehssl_email_for_ssl_certificate" required>
+
+                    <!-- Submit button -->
+                    <input type="submit" name="ehssl_get_ssl_form_submit" class="button-primary" value="<?php _e('Get SSL',EHSSL_TEXT_DOMAIN)?>" />
+                    <?php wp_nonce_field('ehssl_get_ssl_nonce');?>
+                </form>
             </div><!-- end of inside -->
         </div><!-- end of postbox -->
         <?php
@@ -77,9 +134,30 @@ class EHSSL_SSL_MGMT_Menu extends EHSSL_Admin_Menu
         //Render tab 1
         ?>
         <div class="postbox">
-            <h3 class="hndle"><label for="title">Tab 2 Heading</label></h3>
+            <h3 class="hndle"><label for="title">Install SSL</label></h3>
+            <?php
+                global $httpsrdrctn_options ;                
+                $certificate_urls= EHSSL_SSL_Certificate::get_certificate_urls();
+                if(is_wp_error($certificate_urls))
+                {
+                    echo $certificate_urls->get_error_message();
+                    wp_die();
+                }
+            ?>
             <div class="inside">
-            <p>Oh hello there! You are in tab 2. Tab 2 looks good right? Sweet tab 2.</p>
+            <p>Please follow <a href="">this guide</a> to install SSL certificate</p>
+            <p>Download certificates:</p>
+            <p>Certificate Expiry: <?php echo isset($httpsrdrctn_options['ehssl_expiry_ssl_certificate'])?$httpsrdrctn_options['ehssl_expiry_ssl_certificate']:"" ?></p>
+            <?php
+                        
+                        echo "<ul>";
+                        foreach($certificate_urls as $key=>$url){
+                            echo "<li><a href='{$url}'>{$key}</a></li>";
+                        }
+                        echo "</ul>";
+                    ?>
+
+
             </div><!-- end of inside -->
         </div><!-- end of postbox -->
         <?php

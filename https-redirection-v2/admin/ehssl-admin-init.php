@@ -23,6 +23,8 @@ class EHSSL_Admin_Init
     {
         include_once 'ehssl-admin-menu.php';
         include_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-rules-helper.php';
+        require_once EASY_HTTPS_SSL_PATH."/vendor/autoload.php";
+        include_once EASY_HTTPS_SSL_PATH . '/classes/ehss-ssl-certificate.php';
     }
 
     public function admin_menu_page_scripts()

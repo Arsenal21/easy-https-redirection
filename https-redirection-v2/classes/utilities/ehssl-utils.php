@@ -46,6 +46,21 @@ class EHSSL_Utils
 		}
 	}
 
+    public static function get_domain()
+    {
+        
+        // Get the home URL
+        $home_url = get_home_url();        
+
+        // Parse the URL to extract components
+        $parsed_url = parse_url($home_url);
+
+        // Get the host part of the URL
+        $domain = $parsed_url['host'];
+
+        return $domain;
+    }
+
 }
 
 /***
