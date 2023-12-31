@@ -28,9 +28,19 @@ class EHSSL_SSL_Certificate
     ]);
 
     try{
-        
+        $domains = array();
         $domain = EHSSL_Utils::get_domain();
-        $order = $client->createOrder([$domain]);
+        $domain_variant = EHSSL_Utils::get_domain_variant($domain);
+
+        $domains[]=$domain;
+
+        //check if domain variant is accessible
+        if(EHSSL_Utils::is_domain_accessible($domain_variant))
+        {
+            $domains[]=$domain_variant;
+        }
+
+        $order = $client->createOrder($domains);
 
         // Prove ownership (HTTP or DNS validation)
         $authorizations = $client->authorize($order);

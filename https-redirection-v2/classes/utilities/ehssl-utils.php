@@ -61,6 +61,34 @@ class EHSSL_Utils
         return $domain;
     }
 
+    //returns www domain if passed domain is without www
+    //other wise return without domain
+    public static function get_domain_variant($domain)
+    {   
+        // Check if the domain starts with 'www.'
+        if (substr($domain, 0, 4) === 'www.') {
+            // Remove 'www.' from the domain
+            return substr($domain, 4);
+        } else {
+            // Add 'www.' to the domain
+            return 'www.' . $domain;
+        }
+    }
+
+
+    public static function is_domain_accessible($url) {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_HEADER, true);    // we want headers
+        curl_setopt($ch, CURLOPT_NOBODY, true);    // we don't need body
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+        curl_setopt($ch, CURLOPT_TIMEOUT,10);
+        $output = curl_exec($ch);
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+    
+        return ($httpcode >= 200 && $httpcode < 400);
+    }
+
 }
 
 /***

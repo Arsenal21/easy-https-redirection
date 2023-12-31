@@ -63,7 +63,6 @@ class EHSSL_SSL_MGMT_Menu extends EHSSL_Admin_Menu
 
     public function render_tab_1(){
         //Render tab 1
-
         if(EHSSL_Utils::get_domain()=="localhost" || filter_var(EHSSL_Utils::get_domain(), FILTER_VALIDATE_IP))
         {
             _e("The SSL Certificates required for HTTPS cannot be issued for WordPress sites that are based on 'localhost' or use an IP address. To effectively utilize SSL certificates, and hence to make the most from our plugin, you should operate your WordPress site on a standard domain. This limitation is not specific from our plugin but is a general rule in the issuance of SSL certificates.",EHSSL_TEXT_DOMAIN);
@@ -115,7 +114,15 @@ class EHSSL_SSL_MGMT_Menu extends EHSSL_Admin_Menu
             <div class="inside">
                 <form method="post" action="">
                     <p>
-                        SSL certificate will be generated for the domain: <b><?php echo EHSSL_Utils::get_domain();?></b>
+                        SSL certificate will be generated for the domain:<br>
+                        <b><?php echo EHSSL_Utils::get_domain();?></b>
+                        <?php 
+                            $domain_variant = EHSSL_Utils::get_domain_variant(EHSSL_Utils::get_domain());
+                            if(EHSSL_Utils::is_domain_accessible($domain_variant))
+                            {
+                                echo "<br><b>".$domain_variant."</b>";
+                            }
+                            ?>
                     </p>
                     <!-- Email address field -->
                     <label for="email"><?php _e('Email Address:', EHSSL_TEXT_DOMAIN);?></label>
