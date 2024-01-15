@@ -332,6 +332,11 @@ class Client
         $data = json_decode((string)$response->getBody(), true);
 
         $certifate_url="";
+        $certifate_url= wp_remote_get($order->getURL());
+         if (is_array($certifate_url) && !is_wp_error($certifate_url)) {
+                $certifate_url = json_decode(wp_remote_retrieve_body($certifate_url),true);
+                $certifate_url=isset($certifate_url["certificate"])?$certifate_url["certificate"]:"";
+            }
         if($data["status"]=="processing")
         {            
             $order=$this->getOrder($order_id);

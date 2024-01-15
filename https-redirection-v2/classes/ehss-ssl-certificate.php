@@ -24,7 +24,9 @@ class EHSSL_SSL_Certificate
     $client = new Afosto\Acme\Client([
         'username' => $email,
         'fs'       => $filesystem,
-        'mode'     => Afosto\Acme\Client::MODE_STAGING, //Change when plugin gets live
+        'mode'     => Afosto\Acme\Client::MODE_LIVE, //Change when plugin gets live
+        //Client::MODE_STAGING
+        //Client::MODE_LIVE
     ]);
 
     try{
