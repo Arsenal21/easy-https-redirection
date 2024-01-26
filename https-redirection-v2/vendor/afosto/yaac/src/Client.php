@@ -7,6 +7,7 @@ use Afosto\Acme\Data\Authorization;
 use Afosto\Acme\Data\Certificate;
 use Afosto\Acme\Data\Challenge;
 use Afosto\Acme\Data\Order;
+use EHSSL_Logger;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
@@ -122,6 +123,9 @@ class Client
      * @type string $source_ip The source IP for Guzzle (via curl.options) to bind to (defaults to 0.0.0.0 [OS default])
      * }
      */
+
+    private $debug_logger=null;
+
     public function __construct($config = [])
     {
         $this->config = $config;
@@ -135,6 +139,8 @@ class Client
             throw new \LogicException('Username not provided');
         }
 
+        $this->debug_logger = new EHSSL_Logger();
+
         $this->init();
     }
 
@@ -147,8 +153,12 @@ class Client
      */
     public function getOrder($id): Order
     {
+        $this->debug_logger->log("getOrder() started");
+
         $url = str_replace('new-order', 'order', $this->getUrl(self::DIRECTORY_NEW_ORDER));
         $url = $url . '/' . $this->getAccount()->getId() . '/' . $id;
+
+        $this->debug_logger->log("Making request to URL: " . $url);
         $response = $this->request($url, $this->signPayloadKid(null, $url));
         $data = json_decode((string)$response->getBody(), true);
 
@@ -177,7 +187,9 @@ class Client
      */
     public function isReady(Order $order): bool
     {
+        $this->debug_logger->log("Checking if order status == ready");
         $order = $this->getOrder($order->getId());
+        $this->debug_logger->log("Order status: ".$order->getStatus());
         return $order->getStatus() == 'ready';
     }
 
@@ -191,6 +203,7 @@ class Client
      */
     public function createOrder(array $domains): Order
     {
+        $this->debug_logger->log("Creating new order for domains: ".implode(",",$domains));
         $identifiers = [];
         foreach ($domains as $domain) {
             $identifiers[] =
@@ -201,6 +214,7 @@ class Client
         }
 
         $url = $this->getUrl(self::DIRECTORY_NEW_ORDER);
+        $this->debug_logger->log("Sending new order request to URL: ".$url);
         $response = $this->request($url, $this->signPayloadKid(
             [
                 'identifiers' => $identifiers,
@@ -232,8 +246,11 @@ class Client
      */
     public function authorize(Order $order): array
     {
+        $this->debug_logger->log("Getting authorizations for the order");
         $authorizations = [];
         foreach ($order->getAuthorizationURLs() as $authorizationURL) {
+
+            $this->debug_logger->log("Sending get authorization request to URL: ".$authorizationURL);
             $response = $this->request(
                 $authorizationURL,
                 $this->signPayloadKid(null, $authorizationURL)
@@ -241,6 +258,7 @@ class Client
             $data = json_decode((string)$response->getBody(), true);
             $authorization = new Authorization($data['identifier']['value'], $data['expires'], $this->getDigest());
 
+            $this->debug_logger->log("Adding challenges in Challenge class");
             foreach ($data['challenges'] as $challengeData) {
                 $challenge = new Challenge(
                     $authorizationURL,
@@ -249,6 +267,9 @@ class Client
                     $challengeData['url'],
                     $challengeData['token']
                 );
+                $this->debug_logger->log("Challenge type: ".$challengeData['type']);
+                $this->debug_logger->log("Challenge status: ".$challengeData['status']);
+                $this->debug_logger->log("Challenge url: ".$challengeData['url']);
                 $authorization->addChallenge($challenge);
             }
             $authorizations[] = $authorization;
@@ -284,6 +305,12 @@ class Client
      */
     public function validate(Challenge $challenge, int $maxAttempts = 15): bool
     {
+        $this->debug_logger->log("Max Attempts to validate a challenge: ".$maxAttempts);
+        $this->debug_logger->log("Sending request to validate challenge");
+        $this->debug_logger->log("Challenge type: ".$challenge->getType());
+        $this->debug_logger->log("Challenge status: ".$challenge->getStatus());
+        $this->debug_logger->log("Challenge url: ".$challenge->getUrl());
+
         $this->request(
             $challenge->getUrl(),
             $this->signPayloadKid([
@@ -292,13 +319,14 @@ class Client
         );
 
         $data = [];
-        do {
+        do {            
             $response = $this->request(
                 $challenge->getAuthorizationURL(),
                 $this->signPayloadKid(null, $challenge->getAuthorizationURL())
             );
             $data = json_decode((string)$response->getBody(), true);
             if ($maxAttempts > 1 && $data['status'] != 'valid') {
+                $this->debug_logger->log("Authorization status is not valid. Sending request again");
                 sleep(ceil(15 / $maxAttempts));
             }
             $maxAttempts--;
@@ -316,11 +344,14 @@ class Client
      */
     public function getCertificate(Order $order): Certificate
     {
+        $this->debug_logger->log("getCertificate() started");
+
         $order_id = $order->getId();
         $privateKey = Helper::getNewKey($this->getOption('key_length', 4096));        
         $csr = Helper::getCsr($order->getDomains(), $privateKey);        
         $der = Helper::toDer($csr);
         
+        $this->debug_logger->log("Sending request to Finalize URL: ".$order->getFinalizeURL());
         $response = $this->request(
             $order->getFinalizeURL(),
             $this->signPayloadKid(
@@ -332,30 +363,40 @@ class Client
         $data = json_decode((string)$response->getBody(), true);
 
         $certifate_url="";
+        $this->debug_logger->log("Sending request to get certificate URL");
         $certifate_url= wp_remote_get($order->getURL());
-         if (is_array($certifate_url) && !is_wp_error($certifate_url)) {
+         if (is_array($certifate_url) && !is_wp_error($certifate_url)) {                
                 $certifate_url = json_decode(wp_remote_retrieve_body($certifate_url),true);
                 $certifate_url=isset($certifate_url["certificate"])?$certifate_url["certificate"]:"";
+                $this->debug_logger->log("Certificate url: ".$certifate_url);
             }
         if($data["status"]=="processing")
         {            
+            $this->debug_logger->log("Order status == processing");
             $order=$this->getOrder($order_id);
+
+            $this->debug_logger->log("Getting order again to check if order status == valid");
             
             $order_status_count=1;
             while($order->getStatus()!="valid")
             {                
+                $this->debug_logger->log("Order status not valid.");
                 if($order_status_count==1000)
                 {
+                    $this->debug_logger->log("Tried 1000 times to get the order, but it's status is still not valid.");
+                    $this->debug_logger->log("Exiting the loop");
                     //if loop has run for 1000 times, and we didn't get order status = valid. Break out of it, so user can request again
                     //without putting too much load on the server
                     throw new \Exception('1005: Order status is not valid');
                     break;
                 }
+                $this->debug_logger->log("Sending request to get order again, to check status");
                 $order=$this->getOrder($order_id);
                 $order_status_count++;
             }
             
             //order is valid, getting certificate
+            $this->debug_logger->log("Order status is valid, getting certificate");
             $certifate_url= wp_remote_get($order->getURL());
 
             if (is_array($certifate_url) && !is_wp_error($certifate_url)) {
@@ -368,9 +409,12 @@ class Client
                 
             }
             else{                
+                $this->debug_logger->log("Exception: 1006: error getting certificate url");
                 throw new \Exception('1006: error getting certificate url');
             }
         }
+
+        $this->debug_logger->log("Sending request to get Certificate from URL: ".$certifate_url);
 
         $certificateResponse = $this->request(
             $certifate_url,

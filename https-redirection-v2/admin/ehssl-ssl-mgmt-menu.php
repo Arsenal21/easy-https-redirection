@@ -83,9 +83,15 @@ class EHSSL_SSL_MGMT_Menu extends EHSSL_Admin_Menu
              $ssl_certificate_status= $ssl_certificate->handle_ssl_installation($httpsrdrctn_options['ehssl_email_for_ssl_certificate']);
 
              if(is_wp_error($ssl_certificate_status))
-             {?>
+             {
+                $certificate_error = $ssl_certificate_status->get_error_message();
+                if (stripos($certificate_error, '429 Too many Requests') !== false)
+                {
+                    $certificate_error="Too many certificate requests, try again in few hours";
+                }
+                ?>
                 <div class="notice notice-error">
-                    <p><?php _e("Error getting SSL:", EHSSL_TEXT_DOMAIN);?> <?php echo $ssl_certificate_status->get_error_message() ;?></p>
+                    <p><?php _e("Error getting SSL:", EHSSL_TEXT_DOMAIN);?> <?php echo $certificate_error;?></p>
                 </div>
              <?php
              }
