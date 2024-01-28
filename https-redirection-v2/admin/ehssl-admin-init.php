@@ -81,7 +81,7 @@ class EHSSL_Admin_Init
 
     public function handle_ssl_mgmt_menu_rendering()
     {
-        include_once EASY_HTTPS_SSL_PATH . '/admin/ehssl-ssl-mgmt-menu.php';
+        include_once EASY_HTTPS_SSL_PATH . '/admin/ehssl-ssl-management-menu.php';
         $this->settings_menu = new EHSSL_SSL_MGMT_Menu();
     }
 
