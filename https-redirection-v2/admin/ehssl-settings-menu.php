@@ -39,7 +39,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
 
         ?>
         <div class="wrap">
-            <h2><?php _e("Settings", EHSSL_TEXT_DOMAIN)?></h2>
+            <h2><?php _e("Settings", 'https_redirection')?></h2>
             <h2 class="nav-tab-wrapper"><?php $this->render_page_tabs();?></h2>
             <div id="poststuff"><div id="post-body">
             <?php
@@ -79,7 +79,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
 
             ?>
             <div class="notice notice-success">
-                <p><?php _e("Settings Saved.", EHSSL_TEXT_DOMAIN);?></p>
+                <p><?php _e("Settings Saved.", 'https_redirection');?></p>
             </div>
             <?php
         }
@@ -88,33 +88,33 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
 
         ?>
         <div class="postbox">
-            <h3 class="hndle"><label for="title"><?php _e("Debug Logging", EHSSL_TEXT_DOMAIN);?></label></h3>
+            <h3 class="hndle"><label for="title"><?php _e("Debug Logging", 'https_redirection');?></label></h3>
             <div class="inside">
             <p>
-                <?php _e('Debug logging can be useful to troubleshoot transaction processing related issues on your site. keep it disabled unless you are troubleshooting.', EHSSL_TEXT_DOMAIN);?>
+                <?php _e('Debug logging can be useful to troubleshoot transaction processing related issues on your site. keep it disabled unless you are troubleshooting.', 'https_redirection');?>
             </p>
             <form id="ehssl_debug_settings_form" method="post" action="">
                 <table class="form-table">
                     <tr valign="top">
                         <th scope="row">
                             <label for="ehssl-debug-enable-checkbox">
-                                <?php _e('Enable Debug Logging', EHSSL_TEXT_DOMAIN);?>
+                                <?php _e('Enable Debug Logging', 'https_redirection');?>
                             </label>
                         </th>
                         <td>
                             <input type="checkbox" id="ehssl-debug-enable-checkbox" name="enable_debug_logging" value="1" <?php if ('1' == $is_debug_logging_enabled) {echo "checked=\"checked\" ";}?> />
                             <br />
-                            <p class="description"><?php _e("Check this option to enable debug logging.", EHSSL_TEXT_DOMAIN);?></p>
+                            <p class="description"><?php _e("Check this option to enable debug logging.", 'https_redirection');?></p>
                             <p class="description">
                                 <a href="<?php echo wp_nonce_url(get_admin_url() . '?ehssl-debug-action=view_log', 'ehssl_view_log_nonce'); ?>" target="_blank">
-                                    <?php _e('Click here', EHSSL_TEXT_DOMAIN)?>
+                                    <?php _e('Click here', 'https_redirection')?>
                                 </a>
-                                <?php _e(' to view log file.', EHSSL_TEXT_DOMAIN);?>
+                                <?php _e(' to view log file.', 'https_redirection');?>
                                 <br>
                                 <a id="ehssl-reset-log" href="#0" style="color: red">
-                                    <?php _e('Click here', EHSSL_TEXT_DOMAIN);?>
+                                    <?php _e('Click here', 'https_redirection');?>
                                 </a>
-                                <?php _e(' to reset log file.', EHSSL_TEXT_DOMAIN);?>
+                                <?php _e(' to reset log file.', 'https_redirection');?>
                             </p>
                         </td>
                     </tr>
@@ -138,9 +138,9 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                             },
                             function( result ) {
                                 if ( result === '1' ) {
-                                    alert( wp.i18n.__("Log file has been reset.", "<?php echo EHSSL_TEXT_DOMAIN ?>") );
+                                    alert( wp.i18n.__("Log file has been reset.", "<?php echo 'https_redirection' ?>") );
                                 } else {
-                                    alert(  wp.i18n.__('Error trying to reset log: ' + result , "<?php echo EHSSL_TEXT_DOMAIN ?>"));
+                                    alert(  wp.i18n.__('Error trying to reset log: ' + result , "<?php echo 'https_redirection' ?>"));
                                 }
                             } );
                 } );
@@ -161,18 +161,18 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
 
             ?>
             <div class="notice notice-success">
-                <p><?php _e("Settings Saved.", EHSSL_TEXT_DOMAIN);?></p>
+                <p><?php _e("Settings Saved.", 'https_redirection');?></p>
             </div>
             <?php
 }
         ?>
         <div class="postbox">
-            <h3 class="hndle"><label for="title"><?php _e("Mixed Contents", EHSSL_TEXT_DOMAIN);?></label></h3>
+            <h3 class="hndle"><label for="title"><?php _e("Mixed Contents", 'https_redirection');?></label></h3>
             <div class="inside">
                 <?php if(!$is_https_redirection_enabled){ ?>
                     <div style="background: #fff6d5; border: 1px solid #d1b655; color: #3f2502; margin: 10px 0; padding: 0px 5px 0px 10px; text-shadow: 1px 1px #ffffff;">
                         <p>
-                            <?php _e("HTTPS redirection is turned off. Turn it on first to change these settings below!", EHSSL_TEXT_DOMAIN);?>
+                            <?php _e("HTTPS redirection is turned off. Turn it on first to change these settings below!", 'https_redirection');?>
                         </p>
                     </div>
                 <?php } ?>
