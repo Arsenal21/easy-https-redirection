@@ -24,6 +24,6 @@ abstract class EHSSL_Admin_Menu
             You can view the <a href="https://www.tipsandtricks-hq.com/wordpress-easy-https-redirection-plugin" target="_blank">HTTPS Redirection plugin details</a> on our site.
             Check out our other <a href="https://www.tipsandtricks-hq.com/development-center" target="_blank">WordPress plugins</a> and <a href="https://www.appthemes.com/" target="_blank">WordPress themes</a>.
         </div>
-        <?
+        <?php
     }
 }
