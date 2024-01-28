@@ -41,7 +41,7 @@ class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
         $tab = $this->get_current_tab();
         ?>
         <div class="wrap">
-            <h2><?php _e("Dashboard", EHSSL_TEXT_DOMAIN) ?></h2>
+            <h2><?php _e("Dashboard", 'https_redirection') ?></h2>
             <h2 class="nav-tab-wrapper"><?php $this->render_page_tabs(); ?></h2>
             <div id="poststuff">
                 <div id="post-body">
@@ -117,7 +117,7 @@ class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
     ?>
         <div id="ehssl_dashboard_ssl_status" class="sortable-item postbox"  data-item-id="1">
             <div class="postbox-header handle">
-                <h2><?php _e("SSL Status", EHSSL_TEXT_DOMAIN); ?></h2>
+                <h2><?php _e("SSL Status", 'https_redirection'); ?></h2>
             </div>
 
             <div class="inside">
@@ -127,14 +127,14 @@ class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
                             <span class="dashicons dashicons-lock" style="transform: scale(4); transform-origin: top center;"></span>
                         </div>
                         <div>
-                            <?php _e('Your site is protected!', EHSSL_TEXT_DOMAIN) ?>
+                            <?php _e('Your site is protected!', 'https_redirection') ?>
                         </div>
                     <?php } else { ?>
                         <div style="color: #cc0000; height: 5rem">
                             <span class="dashicons dashicons-dismiss" style="transform: scale(4); transform-origin: top center;"></span>
                         </div>
                         <div>
-                            <?php _e('No SSL found!', EHSSL_TEXT_DOMAIN) ?>
+                            <?php _e('No SSL found!', 'https_redirection') ?>
                         </div>
                     <?php } ?>
                 </div>
@@ -149,7 +149,7 @@ class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
     ?>
         <div id="ehssl_dashboard_ssl_info" class="sortable-item postbox" data-item-id="2">
             <div class="postbox-header handle">
-                <h2><?php _e("SSL Information", EHSSL_TEXT_DOMAIN); ?></h2>
+                <h2><?php _e("SSL Information", 'https_redirection'); ?></h2>
             </div>
             <div class="inside">
                 <table>
@@ -157,7 +157,7 @@ class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
                         <tr valign="top" style="margin: 24px 0;">
                             <td scope="row">
                                 <b style="font-weight: bold;">
-                                    <?php _e($section, EHSSL_TEXT_DOMAIN); ?>
+                                    <?php _e($section, 'https_redirection'); ?>
                                 </b>
                             </td>
                             <th></th>
@@ -165,7 +165,7 @@ class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
                         </tr>
                         <?php foreach ($fields as $field => $value) { ?>
                             <tr valign="top">
-                                <td><?php _e($field, EHSSL_TEXT_DOMAIN); ?></td>
+                                <td><?php _e($field, 'https_redirection'); ?></td>
                                 <td> : </td>
                                 <td><?php echo $value ?></td>
                             </tr>

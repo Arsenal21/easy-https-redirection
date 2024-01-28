@@ -243,7 +243,7 @@ if (!class_exists('Easy_HTTPS_SSL')) {
         public function ehssl_load_language()
         {
             // Internationalization
-            load_plugin_textdomain(EHSSL_TEXT_DOMAIN, false, EASY_HTTPS_SSL_PATH . '/languages/');
+            load_plugin_textdomain('https_redirection', false, EASY_HTTPS_SSL_PATH . '/languages/');
         }
 
     } // End of class.

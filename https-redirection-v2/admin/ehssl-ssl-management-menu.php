@@ -39,7 +39,7 @@ class EHSSL_SSL_MGMT_Menu extends EHSSL_Admin_Menu
 
 ?>
         <div class="wrap">
-            <h2><?php _e("SSL Management", EHSSL_TEXT_DOMAIN) ?></h2>
+            <h2><?php _e("SSL Management", 'https_redirection') ?></h2>
             <h2 class="nav-tab-wrapper"><?php $this->render_page_tabs(); ?></h2>
             <div id="poststuff">
                 <div id="post-body">
@@ -67,7 +67,7 @@ class EHSSL_SSL_MGMT_Menu extends EHSSL_Admin_Menu
     {
         //Render tab 1
         if (EHSSL_Utils::get_domain() == "localhost" || filter_var(EHSSL_Utils::get_domain(), FILTER_VALIDATE_IP)) {
-            _e("The SSL Certificates required for HTTPS cannot be issued for WordPress sites that are based on 'localhost' or use an IP address. To effectively utilize SSL certificates, and hence to make the most from our plugin, you should operate your WordPress site on a standard domain. This limitation is not specific from our plugin but is a general rule in the issuance of SSL certificates.", EHSSL_TEXT_DOMAIN);
+            _e("The SSL Certificates required for HTTPS cannot be issued for WordPress sites that are based on 'localhost' or use an IP address. To effectively utilize SSL certificates, and hence to make the most from our plugin, you should operate your WordPress site on a standard domain. This limitation is not specific from our plugin but is a general rule in the issuance of SSL certificates.", 'https_redirection');
             wp_die();
         }
 
@@ -91,12 +91,12 @@ class EHSSL_SSL_MGMT_Menu extends EHSSL_Admin_Menu
                 }
         ?>
                 <div class="notice notice-error">
-                    <p><?php _e("Error getting SSL:", EHSSL_TEXT_DOMAIN); ?> <?php echo $certificate_error; ?></p>
+                    <p><?php _e("Error getting SSL:", 'https_redirection'); ?> <?php echo $certificate_error; ?></p>
                 </div>
             <?php
             } else { ?>
                 <div class="notice notice-success">
-                    <p><?php _e($ssl_certificate_status, EHSSL_TEXT_DOMAIN); ?> </p>
+                    <p><?php _e($ssl_certificate_status, 'https_redirection'); ?> </p>
                     <?php
                     $certificate_urls = EHSSL_SSL_Certificate::get_certificate_urls();
 
@@ -131,11 +131,11 @@ class EHSSL_SSL_MGMT_Menu extends EHSSL_Admin_Menu
                         ?>
                     </p>
                     <!-- Email address field -->
-                    <label for="email"><?php _e('Email Address:', EHSSL_TEXT_DOMAIN); ?></label>
+                    <label for="email"><?php _e('Email Address:', 'https_redirection'); ?></label>
                     <input type="email" id="ehssl_email_for_ssl_certificate" value="<?php echo esc_attr($ehssl_ssl_certificate_generator_email) ?>" name="ehssl_email_for_ssl_certificate" required>
 
                     <!-- Submit button -->
-                    <input type="submit" name="ehssl_get_ssl_form_submit" class="button-primary" value="<?php _e('Get SSL', EHSSL_TEXT_DOMAIN) ?>" />
+                    <input type="submit" name="ehssl_get_ssl_form_submit" class="button-primary" value="<?php _e('Get SSL', 'https_redirection') ?>" />
                     <?php wp_nonce_field('ehssl_get_ssl_nonce'); ?>
                 </form>
             </div><!-- end of inside -->
