@@ -36,8 +36,7 @@ class EHSSL_SSL_MGMT_Menu extends EHSSL_Admin_Menu
     public function render_menu_page()
     {
         $tab = $this->get_current_tab();
-
-?>
+        ?>
         <div class="wrap">
             <h2><?php _e("SSL Management", 'https_redirection') ?></h2>
             <h2 class="nav-tab-wrapper"><?php $this->render_page_tabs(); ?></h2>
@@ -73,16 +72,17 @@ class EHSSL_SSL_MGMT_Menu extends EHSSL_Admin_Menu
 
         global $httpsrdrctn_options;
 
-
         // Save data for tab 1
         if (isset($_POST['ehssl_get_ssl_form_submit']) && check_admin_referer('ehssl_get_ssl_nonce')) {
             $httpsrdrctn_options['ehssl_email_for_ssl_certificate'] = isset($_POST['ehssl_email_for_ssl_certificate']) ? sanitize_email($_POST['ehssl_email_for_ssl_certificate']) : get_option('admin_email');
-
+            $httpsrdrctn_options['ehssl_ssl_certificate_mode'] = isset($_POST['ehssl_ssl_certificate_mode']) ? sanitize_text_field($_POST['ehssl_ssl_certificate_mode']) : '';
             update_option('httpsrdrctn_options', $httpsrdrctn_options);
+
+            $is_live_ssl_mode = $httpsrdrctn_options['ehssl_ssl_certificate_mode'] === 'live';
 
             //EHSSL_SSL_Certificate
             $ssl_certificate = new EHSSL_SSL_Certificate();
-            $ssl_certificate_status = $ssl_certificate->handle_ssl_installation($httpsrdrctn_options['ehssl_email_for_ssl_certificate']);
+            $ssl_certificate_status = $ssl_certificate->handle_ssl_installation($httpsrdrctn_options['ehssl_email_for_ssl_certificate'], $is_live_ssl_mode);
 
             if (is_wp_error($ssl_certificate_status)) {
                 $certificate_error = $ssl_certificate_status->get_error_message();
@@ -114,6 +114,8 @@ class EHSSL_SSL_MGMT_Menu extends EHSSL_Admin_Menu
         }
 
         $ehssl_ssl_certificate_generator_email = isset($httpsrdrctn_options['ehssl_email_for_ssl_certificate']) ? sanitize_email($httpsrdrctn_options['ehssl_email_for_ssl_certificate']) : '';
+        $ehssl_ssl_certificate_mode = isset($httpsrdrctn_options['ehssl_ssl_certificate_mode']) ? sanitize_text_field($httpsrdrctn_options['ehssl_ssl_certificate_mode']) : 'staging';
+
 
         ?>
         <div class="postbox">
@@ -130,13 +132,33 @@ class EHSSL_SSL_MGMT_Menu extends EHSSL_Admin_Menu
                         }
                         ?>
                     </p>
-                    <!-- Email address field -->
-                    <label for="email"><?php _e('Email Address:', 'https_redirection'); ?></label>
-                    <input type="email" id="ehssl_email_for_ssl_certificate" value="<?php echo esc_attr($ehssl_ssl_certificate_generator_email) ?>" name="ehssl_email_for_ssl_certificate" required>
+                    
+                    <table class="form-table">
+                        <!-- Certificate mode field -->
+                        <tr valign="top">
+                            <th scope="row">
+                               <span><?php _e('SSL certificate mode:', 'https_redirection'); ?></span>
+                            </th>
+                            <td>
+                                <label><input type="radio" name="ehssl_ssl_certificate_mode" value="staging" style="margin-left: 12px;" <?php if ('staging' == $ehssl_ssl_certificate_mode) {echo "checked=\"checked\" ";}?>><?php _e('Staging', 'https_redirection') ?></label>
+                                <label><input type="radio" name="ehssl_ssl_certificate_mode" value="live" style="margin-left: 12px;" <?php if ('live' == $ehssl_ssl_certificate_mode) {echo "checked=\"checked\" ";}?>><?php _e('Live', 'https_redirection') ?></label>
+                            </td>
+                        </tr>
+                         <!-- Email address field -->
+                        <tr valign="top">
+                            <th scope="row">
+                                <label for="ehssl_email_for_ssl_certificate"><?php _e('Email Address:', 'https_redirection'); ?></label>
+                            </th>
+                            <td>
+                                <input type="email" id="ehssl_email_for_ssl_certificate" value="<?php echo esc_attr($ehssl_ssl_certificate_generator_email) ?>" name="ehssl_email_for_ssl_certificate" style="margin-left: 12px;" required>
+                            </td>
+                        </tr>
+                    </table>
 
                     <!-- Submit button -->
-                    <input type="submit" name="ehssl_get_ssl_form_submit" class="button-primary" value="<?php _e('Get SSL', 'https_redirection') ?>" />
+                    <input type="submit" name="ehssl_get_ssl_form_submit" class="button-primary" value="<?php _e('Generate SSL Certificate', 'https_redirection') ?>" />
                     <?php wp_nonce_field('ehssl_get_ssl_nonce'); ?>
+                                
                 </form>
             </div><!-- end of inside -->
         </div><!-- end of postbox -->
@@ -162,16 +184,36 @@ class EHSSL_SSL_MGMT_Menu extends EHSSL_Admin_Menu
                     </div>
                 <?php } else { ?>
                     <p>Please follow <a href="">this guide</a> to install SSL certificate</p>
-                    <p>Download certificates:</p>
                     <p>Certificate Expiry: <?php echo isset($httpsrdrctn_options['ehssl_expiry_ssl_certificate']) ? esc_attr($httpsrdrctn_options['ehssl_expiry_ssl_certificate']) : "" ?></p>
-                    
-                    <?php
-                    echo "<ul>";
-                    foreach ($certificate_urls as $key => $url) {
-                        echo "<li><a href='{$url}'>{$key}</a></li>";
-                    }
-                    echo "</ul>";
-                } ?>
+                    <ol>
+                        <li>
+                            <h4><?php _e('Get Certificate Files', 'https_redirection')?></h4>
+                            <p><?php _e('Some documentation goes here...' , 'https_redirection') ?></p>
+                            <table class="form-table">
+                                <?php foreach ($certificate_urls as $key => $file) { ?>
+                                    <tr>
+                                        <th><?php esc_attr_e($key) ?></th>
+                                        <td>
+                                            <input type="text" style="width: 80%; margin-right: 4px" readonly value="<?php echo esc_url($file['path']); ?>" /><button class="button-primary"><?php _e('Copy File Path', 'https_redirection') ?></button>
+                                        </td>
+                                        <td>
+                                            <a href='<?php echo esc_url($file['url'])?>' class="button-secondary"><?php _e('Download File', 'https_redirection') ?></a>
+                                            <a href='#' class="button-secondary"><?php _e('Copy File Content', 'https_redirection') ?></a>
+                                        </td>
+                                    </tr>
+                                <?php } ?>
+                            </table>
+                        </li>
+                        <li>
+                            <h4><?php _e('Add the certificate file paths', 'https_redirection')?></h4>
+                            <p><?php _e('Some documentation goes here...' , 'https_redirection') ?></p>
+                        </li>
+                        <li>
+                            <h4><?php _e('Restart the server', 'https_redirection')?></h4>
+                            <p><?php _e('Some documentation goes here...' , 'https_redirection') ?></p>
+                        </li>
+                    </ol>
+                    <?php } ?>
 
             </div><!-- end of inside -->
         </div><!-- end of postbox -->
