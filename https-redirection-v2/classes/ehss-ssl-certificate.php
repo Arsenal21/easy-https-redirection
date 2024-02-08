@@ -7,11 +7,11 @@ class EHSSL_SSL_Certificate
 
     }
 
-    public function handle_ssl_installation($email)
+    public function handle_ssl_installation($email, $live_mode = false)
     {
         global $httpsrdrctn_options;
 
-        EHSSL_Logger::log("SSL certificate function started");
+        EHSSL_Logger::log("Starting SSL certificate generation process...");
         $well_known_dir_path = ABSPATH . ".well-known";
         $acme_challenge_dir_path = $well_known_dir_path . "/acme-challenge";
         $certificate_dir_path = $well_known_dir_path . "/certificate";
@@ -25,18 +25,18 @@ class EHSSL_SSL_Certificate
             return $certificate_directories;
         }
 
-
         // Instantiate the YAAC client.
         // Save account keys in .well-kown/account.
         $adapter = new League\Flysystem\Local\LocalFilesystemAdapter($well_known_dir_path . "/account");
         $filesystem = new League\Flysystem\Filesystem($adapter);
 
-        EHSSL_Logger::log("Initialling certificate Request");
+        $mode = $live_mode ? Afosto\Acme\Client::MODE_LIVE : Afosto\Acme\Client::MODE_STAGING;
+        EHSSL_Logger::log("Initiating Certificate Request for " . strtoupper($mode) . " Mode.");
 
         $client = new Afosto\Acme\Client([
             'username' => $email,
             'fs'       => $filesystem,
-            'mode'     => Afosto\Acme\Client::MODE_LIVE
+            'mode'     => $mode,
         ]);
 
         try {
@@ -125,13 +125,23 @@ class EHSSL_SSL_Certificate
         }
 
         // Convert file system paths to URLs.
+        // $well_known_dir_path = realpath('.well-known');
         $well_known_dir_url = site_url('.well-known');
         $certificate_dir_url = $well_known_dir_url . '/certificate';
 
         return array(
-            "certificate.crt" => $certificate_dir_url . '/certificate.crt',
-            "cabundle.crt" => $certificate_dir_url . '/cabundle.crt',
-            "private.pem" => $certificate_dir_url . '/private.pem'
+            "certificate.crt" => array(
+                'path' => realpath($certificate_file),
+                'url' => $certificate_dir_url . '/certificate.crt',
+            ),
+            "cabundle.crt" => array(
+                'path' => realpath($ca_bundle),
+                'url' => $certificate_dir_url . '/cabundle.crt',
+            ),
+            "private.pem" => array(
+                'path' => realpath($private_key_file),
+                'url' => $certificate_dir_url . '/private.pem',
+            )
         );
     }
 
