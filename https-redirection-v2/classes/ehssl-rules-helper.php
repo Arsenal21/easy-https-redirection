@@ -71,11 +71,11 @@ class EHSSL_Htaccess
         @ini_set('auto_detect_line_endings', true);
 
         //figure out what server they're using
-        if (strstr(strtolower(filter_var($_SERVER['SERVER_SOFTWARE'], FILTER_SANITIZE_STRING)), 'apache')) {
+        if (strstr(strtolower( sanitize_text_field( $_SERVER['SERVER_SOFTWARE'] ) ), 'apache')) {
             $server_type = 'apache';
-        } else if (strstr(strtolower(filter_var($_SERVER['SERVER_SOFTWARE'], FILTER_SANITIZE_STRING)), 'nginx')) {
+        } else if (strstr(strtolower( sanitize_text_field( $_SERVER['SERVER_SOFTWARE'] ) ), 'nginx')) {
             $server_type = 'nginx';
-        } else if (strstr(strtolower(filter_var($_SERVER['SERVER_SOFTWARE'], FILTER_SANITIZE_STRING)), 'litespeed')) {
+        } else if (strstr(strtolower( sanitize_text_field( $_SERVER['SERVER_SOFTWARE'] ) ), 'litespeed')) {
             $server_type = 'litespeed';
         } else { //unsupported server
             return -1;

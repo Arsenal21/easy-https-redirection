@@ -273,18 +273,22 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                     <p><?php echo $error; ?></p>
                 </div>
                 <form id="httpsrdrctn_settings_form" method="post" action="">
-                    <table class="form-table">
-                        <tr valign="top">
-                            <th scope="row"><?php _e('Enable automatic redirection to the "HTTPS"', 'https_redirection');?></th>
-                            <td>
-                                <label>
-                                    <input type="checkbox" id="httpsrdrctn-checkbox" name="httpsrdrctn_https" value="1" <?php if ('1' == $httpsrdrctn_options['https']) {echo "checked=\"checked\" ";}?> />
-                                </label>
-                                <br />
-                                <p class="description"><?php _e("Use this option to make your webpage(s) load in HTTPS version only. If someone enters a non-https URL in the browser's address bar then the plugin will automatically redirect to the HTTPS version of that URL.", 'https_redirection');?></p>
-                            </td>
-                        </tr>
-                    </table>
+                    <div style="position: relative">
+                        <table class="form-table">
+                            <tr valign="top">
+                                <th scope="row"><?php _e('Enable automatic redirection to the "HTTPS"', 'https_redirection');?></th>
+                                <td>
+                                    <label>
+                                        <input type="checkbox" id="httpsrdrctn-checkbox" name="httpsrdrctn_https" value="1" <?php if ('1' == $httpsrdrctn_options['https']) {echo "checked=\"checked\" ";}?> />
+                                    </label>
+                                    <br />
+                                    <p class="description"><?php _e("Use this option to make your webpage(s) load in HTTPS version only. If someone enters a non-https URL in the browser's address bar then the plugin will automatically redirect to the HTTPS version of that URL.", 'https_redirection');?></p>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div class="ehssl-enable-automatic-redirection httpsrdrctn-overlay <?php echo (is_ssl() ? 'hidden' : ''); ?>"></div>
+                    </div>
 
                     <div style="position: relative">
                         <table class="form-table">
@@ -305,20 +309,9 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                                     </span>
                                 </td>
                             </tr>
-
                         </table>
-                        <style>
-                            #httpsrdrctn-overlay {
-                                position: absolute;
-                                top: 10px;
-                                background-color: white;
-                                width: 100%;
-                                height: 100%;
-                                opacity: 0.5;
-                                text-align: center;
-                            }
-                        </style>
-                        <div id="httpsrdrctn-overlay" <?php echo ($httpsrdrctn_options['https'] == 1 ? ' class="hidden"' : ''); ?>></div>
+
+                        <div class="ehssl-apply-redirection-on httpsrdrctn-overlay <?php echo ($httpsrdrctn_options['https'] == 1 ? 'hidden' : ''); ?>"></div>
                     </div>
 
                     <input type="hidden" name="httpsrdrctn_form_submit" value="submit" />
@@ -332,12 +325,23 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                 <script>
                     jQuery('input#httpsrdrctn-checkbox').change(function() {
                         if (jQuery(this).is(':checked')) {
-                            jQuery('div#httpsrdrctn-overlay').fadeOut('fast');
+                            jQuery('div.ehssl-apply-redirection-on.httpsrdrctn-overlay').fadeOut('fast');
                         } else {
-                            jQuery('div#httpsrdrctn-overlay').fadeIn('fast');
+                            jQuery('div.ehssl-apply-redirection-on.httpsrdrctn-overlay').fadeIn('fast');
                         }
                     });
                 </script>
+                <style>
+                    .httpsrdrctn-overlay {
+                        position: absolute;
+                        top: 10px;
+                        background-color: white;
+                        width: 100%;
+                        height: 100%;
+                        opacity: 0.5;
+                        text-align: center;
+                    }
+                </style>
 
                 <div style="background: #FFEBE8; border: 1px solid #CC0000; color: #333333; margin: 10px 0; padding: 5px 5px 5px 10px;">
                     <p><strong><?php _e("Notice:", 'https_redirection');?></strong> <?php _e("It is very important to be extremely attentive when making changes to .htaccess file.", 'https_redirection');?></p>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="MessDetectorOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
+  <component name="PHPCSFixerOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
+  <component name="PHPCodeSnifferOptionsConfiguration">
+    <option name="highlightLevel" value="WARNING" />
+    <option name="transferred" value="true" />
+  </component>
+  <component name="PhpIncludePathManager">
+    <include_path>
+      <path value="C:/laragon/www/wordpress" />
+      <path value="$PROJECT_DIR$/https-redirection-v2/vendor/league/flysystem" />
+      <path value="$PROJECT_DIR$/https-redirection-v2/vendor/league/flysystem-local" />
+      <path value="$PROJECT_DIR$/https-redirection-v2/vendor/composer" />
+      <path value="$PROJECT_DIR$/https-redirection-v2/vendor/ralouphie/getallheaders" />
+      <path value="$PROJECT_DIR$/https-redirection-v2/vendor/league/mime-type-detection" />
+      <path value="$PROJECT_DIR$/https-redirection-v2/vendor/psr/http-message" />
+      <path value="$PROJECT_DIR$/https-redirection-v2/vendor/guzzlehttp/promises" />
+      <path value="$PROJECT_DIR$/https-redirection-v2/vendor/psr/http-factory" />
+      <path value="$PROJECT_DIR$/https-redirection-v2/vendor/guzzlehttp/psr7" />
+      <path value="$PROJECT_DIR$/https-redirection-v2/vendor/psr/http-client" />
+      <path value="$PROJECT_DIR$/https-redirection-v2/vendor/guzzlehttp/guzzle" />
+      <path value="$PROJECT_DIR$/https-redirection-v2/vendor/symfony/deprecation-contracts" />
+      <path value="$PROJECT_DIR$/https-redirection-v2/vendor/afosto/yaac" />
+    </include_path>
+  </component>
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.2" />
+  <component name="PhpStanOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
+  <component name="PsalmOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
+</project>
