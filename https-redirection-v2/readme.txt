@@ -13,3 +13,9 @@ One line description here....
 == Description ==
 
 == Installation ==
+
+== v2 WIP ==
+* CSS file names fixed. 
+* Added some default styles for the plugin.
+* Applied the standard yellow, red, blue box styles to the plugin.
+

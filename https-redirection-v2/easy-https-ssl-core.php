@@ -1,10 +1,8 @@
 <?php
 
-if (!class_exists('Easy_HTTPS_SSL')) {
+if ( !class_exists('Easy_HTTPS_SSL') ) {
     class Easy_HTTPS_SSL
     {
-        public $version = '1.0';
-        public $db_version = '1.0';
         public $plugin_url;
         public $plugin_path;
         public $plugin_configs; //TODO - Does it need to be static?
@@ -48,19 +46,14 @@ if (!class_exists('Easy_HTTPS_SSL')) {
 
         public function define_constants()
         {
-            define('EASY_HTTPS_SSL_VERSION', $this->version);
             define('EASY_HTTPS_SSL_URL', $this->plugin_url());
             define('EASY_HTTPS_SSL_PATH', $this->plugin_path());
-            define('EASY_HTTPS_SSL_DB_VERSION', $this->db_version);
             define('EHSSL_TEXT_DOMAIN', 'https_redirection');
             define('EHSSL_MANAGEMENT_PERMISSION', 'add_users');
             define('EHSSL_MENU_SLUG_PREFIX', 'ehssl');
             define('EHSSL_MAIN_MENU_SLUG', 'ehssl');
             define('EHSSL_SETTINGS_MENU_SLUG', 'ehssl_settings');
             define('EHSSL_SSL_MGMT_MENU_SLUG', 'ehssl-ssl-mgmt');
-            //global $wpdb;
-            //define('DB_NAME_TABLE_TBL', $wpdb->prefix . "define_name_here_tbl");
-
         }
 
         public function includes()
@@ -105,12 +98,13 @@ if (!class_exists('Easy_HTTPS_SSL')) {
 
         public function do_db_upgrade_check()
         {
-            if (is_admin()) { //Check if DB needs to be updated
-                if (get_option('ehssl_db_version') != EASY_HTTPS_SSL_DB_VERSION) {
-                    //include_once ('file-name-installer.php');
-                    //easy_https_run_db_upgrade();
-                }
-            }
+            //Check if DB needs to be updated
+            // if (is_admin()) { 
+            //     if (get_option('ehssl_db_version') != EASY_HTTPS_SSL_DB_VERSION) {
+            //         //include_once ('file-name-installer.php');
+            //         //easy_https_run_db_upgrade();
+            //     }
+            // }
         }
 
         public function plugins_loaded_handler()

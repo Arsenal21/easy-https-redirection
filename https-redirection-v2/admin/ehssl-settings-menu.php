@@ -170,7 +170,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
             <h3 class="hndle"><label for="title"><?php _e("Mixed Contents", 'https_redirection');?></label></h3>
             <div class="inside">
                 <?php if(!$is_https_redirection_enabled){ ?>
-                    <div style="background: #fff6d5; border: 1px solid #d1b655; color: #3f2502; margin: 10px 0; padding: 0px 5px 0px 10px; text-shadow: 1px 1px #ffffff;">
+                    <div class="ehssl-yellow-box">
                         <p>
                             <?php _e("HTTPS redirection is turned off. Turn it on first to change these settings below!", 'https_redirection');?>
                         </p>
@@ -245,12 +245,12 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
         }
         $siteSSLurl = get_home_url(null, '', 'https');
         ?>
-        <div style="background: #fff6d5; border: 1px solid #d1b655; color: #3f2502; margin: 10px 0; padding: 5px 5px 5px 10px; text-shadow: 1px 1px #ffffff;">
+        <div class="ehssl-yellow-box">
             <p>
                 <?php echo sprintf(__("When you enable the HTTPS redirection, the plugin will force redirect the URL to the HTTPS version of the URL. So before enabling this plugin's feature, visit your site's HTTPS URL %s to make sure the page loads correctly. Otherwise you may get locked out if your SSL certificate is not installed correctly on your site or the HTTPS URL is not working and this plugin is auto redirecting to the HTTPS URL.", 'https_redirection'), '<a href="' . $siteSSLurl . '" target="_blank">' . $siteSSLurl . '</a>'); ?>
             </p>
             <p>
-                <span style='font-weight:bold;color:red;'><?php _e('Important!', 'https_redirection');?></span>
+                <span style="font-weight:bold; color:red;"><?php _e('Important!', 'https_redirection');?></span>
                 <?php _e("If you're using caching plugins similar to W3 Total Cache or WP Super Cache, you need to clear their cache after you enable or disable automatic redirection option. Failing to do so may result in mixed content warning from browser.", 'https_redirection');?>
             </p>
         </div>
@@ -343,7 +343,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                     }
                 </style>
 
-                <div style="background: #FFEBE8; border: 1px solid #CC0000; color: #333333; margin: 10px 0; padding: 5px 5px 5px 10px;">
+                <div class="ehssl-red-box">
                     <p><strong><?php _e("Notice:", 'https_redirection');?></strong> <?php _e("It is very important to be extremely attentive when making changes to .htaccess file.", 'https_redirection');?></p>
                     <p><?php _e('If after making changes your site stops functioning, do the following:', 'https_redirection');?></p>
                     <p><?php _e('Step #1: Open .htaccess file in the root directory of the WordPress install and delete everything between the following two lines', 'https_redirection');?></p>

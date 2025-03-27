@@ -177,10 +177,8 @@ class EHSSL_SSL_MGMT_Menu extends EHSSL_Admin_Menu
             ?>
             <div class="inside">
                 <?php if (is_wp_error($certificate_urls)) { ?>
-                    <div style="background: #fff6d5; border: 1px solid #d1b655; color: #3f2502; margin: 10px 0; padding: 0px 5px 0px 10px; text-shadow: 1px 1px #ffffff;">
-                        <p>
+                    <div class="ehssl-yellow-box">
                             <?php echo $certificate_urls->get_error_message();?>
-                        </p>
                     </div>
                 <?php } else { ?>
                     <p>Please follow <a href="">this guide</a> to install SSL certificate</p>

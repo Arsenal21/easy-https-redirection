@@ -4,20 +4,24 @@ Plugin Name: Easy HTTPS (SSL) Redirection v2
 Plugin URI: https://www.tipsandtricks-hq.com/wordpress-easy-https-redirection-plugin
 Description: The plugin HTTPS Redirection allows an automatic redirection to the "HTTPS" version/URL of the site.
 Author: Tips and Tricks HQ
-Version: 1.9.2
+Version: 1.9.2.t1
 Author URI: https://www.tipsandtricks-hq.com/
 License: GPLv2 or later
 Text Domain: https-redirection
 Domain Path: /languages/
  */
 
-// Slug: ehssl
+// Prefix: ehssl_
 
 if (!defined('ABSPATH')) {
     // Exit if accessed directly.
     exit;
 }
 
+define('EASY_HTTPS_SSL_VERSION', '1.9.2.t1');
+define('EASY_HTTPS_SSL_DB_VERSION', '1.0');
+
+// Load the core class.
 include_once 'easy-https-ssl-core.php';
 
 // Activation hook.
