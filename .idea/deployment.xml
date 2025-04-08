@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="adilarham.com" remoteFilesAllowedToDisappearOnAutoupload="false" confirmBeforeUploading="false">
+  <component name="PublishConfigData" serverName="testWP" remoteFilesAllowedToDisappearOnAutoupload="false" confirmBeforeUploading="false">
     <option name="confirmBeforeUploading" value="false" />
     <serverData>
-      <paths name="adilarham.com">
+      <paths name="betatest">
         <serverdata>
           <mappings>
-            <mapping deploy="/ssltest.adilarham.com/wp-content/plugins" local="$PROJECT_DIR$" web="/" />
+            <mapping local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
@@ -17,10 +17,17 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="ssltest.adilarham.com">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/ssltest.adilarham.com/wp-content/plugins" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="testWP">
         <serverdata>
           <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/test.adilarham.com/wp-content/plugins" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>

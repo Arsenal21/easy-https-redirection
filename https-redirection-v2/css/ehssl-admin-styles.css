@@ -114,26 +114,16 @@
     clear: both;
 }
 
-.rewrite_delete_item {
-	background: url("../images/status-icons.png") no-repeat scroll 0 0 transparent;
-	font-size: 11px;
-    padding: 0 6px 0 5px;
+.rewrite_item_delete_btn, .rewrite_item_add_btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    padding-left: 6px !important;
+    padding-right: 6px !important;
 	cursor: pointer;
 }
 .rewrite_select_item .rewrite_delete_select_item{
 	padding: 0 6px 0 6px;
-}
-.rewrite_add_item {
-	background: url("../images/status-icons.png") no-repeat scroll 0 -16px transparent;
-    font-size: 12px;
-    padding: 0 6px 0 6px;
-	cursor: pointer;
-}
-.rewrite_delete_item:hover {
-	background-position: -14px 0;
-}
-.rewrite_add_item:hover {
-	background-position: -15px -16px;
 }
 
 .rewrite_item_blank_error{

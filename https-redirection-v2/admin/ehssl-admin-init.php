@@ -23,8 +23,10 @@ class EHSSL_Admin_Init
     {
         include_once 'ehssl-admin-menu.php';
         include_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-rules-helper.php';
-        require_once EASY_HTTPS_SSL_PATH."/vendor/autoload.php";
-        include_once EASY_HTTPS_SSL_PATH . '/classes/ehss-ssl-certificate.php';
+
+	    // TODO: Need to work on this.
+        // require_once EASY_HTTPS_SSL_PATH."/vendor/autoload.php";
+        // include_once EASY_HTTPS_SSL_PATH . '/classes/ehss-ssl-certificate.php';
     }
 
     public function admin_menu_page_scripts()
@@ -57,7 +59,9 @@ class EHSSL_Admin_Init
         add_submenu_page('options-general.php', __('HTTPS Redirection', 'https_redirection'), __('HTTPS Redirection', 'https_redirection'), EHSSL_MANAGEMENT_PERMISSION, 'https-redirection', array(&$this, 'handle_settings_menu_rendering_old'));
         add_submenu_page(EHSSL_MAIN_MENU_SLUG, __('Dashboard', 'https_redirection'), __('Dashboard', 'https_redirection'), EHSSL_MANAGEMENT_PERMISSION, EHSSL_MAIN_MENU_SLUG, array(&$this, 'handle_dashboard_menu_rendering'));
         add_submenu_page(EHSSL_MAIN_MENU_SLUG, __('Settings', 'https_redirection'), __('Settings', 'https_redirection'), EHSSL_MANAGEMENT_PERMISSION, EHSSL_SETTINGS_MENU_SLUG, array(&$this, 'handle_settings_menu_rendering'));
-        add_submenu_page(EHSSL_MAIN_MENU_SLUG, __('SSL Management', 'https_redirection'), __('SSL Management', 'https_redirection'), EHSSL_MANAGEMENT_PERMISSION, EHSSL_SSL_MGMT_MENU_SLUG, array(&$this, 'handle_ssl_mgmt_menu_rendering'));
+
+		// TODO: Need to work on this menu.
+		// add_submenu_page(EHSSL_MAIN_MENU_SLUG, __('SSL Management', 'https_redirection'), __('SSL Management', 'https_redirection'), EHSSL_MANAGEMENT_PERMISSION, EHSSL_SSL_MGMT_MENU_SLUG, array(&$this, 'handle_ssl_mgmt_menu_rendering'));
         do_action('ehssl_admin_menu_created');
     }
 
@@ -146,10 +150,9 @@ class EHSSL_Admin_Init
 
     public function plugin_admin_head()
     {
-        // if (isset($_GET['page']) && 'ehssl_settings' == $_GET['page']) {
-        //     wp_enqueue_style('ehssl_stylesheet', EASY_HTTPS_SSL_URL . '/css/style.css', null, EASY_HTTPS_SSL_VERSION);
-        //     wp_enqueue_script('ehssl_script', EASY_HTTPS_SSL_URL . '/js/script.js', array('jquery'), EASY_HTTPS_SSL_VERSION);
-        // }
+         if (isset($_GET['page']) && $_GET['page'] == 'ehssl_settings') {
+             wp_enqueue_script('ehssl_script', EASY_HTTPS_SSL_URL . '/js/script.js', array('jquery'), EASY_HTTPS_SSL_VERSION);
+         }
     }
 
     public function handle_log_file_action()
