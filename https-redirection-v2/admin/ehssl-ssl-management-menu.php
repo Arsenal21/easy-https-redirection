@@ -5,7 +5,7 @@ class EHSSL_SSL_MGMT_Menu extends EHSSL_Admin_Menu
     public $menu_page_slug = EHSSL_SSL_MGMT_MENU_SLUG;
 
     // Specify all the tabs of this menu in the following array.
-    public $dashboard_menu_tabs = array('tab1' => 'Get SSL', 'tab2' => 'Install SSL');
+    public $dashboard_menu_tabs = array('get-ssl' => 'Get SSL', 'install-ssl' => 'Install SSL');
 
     public function __construct()
     {
@@ -43,13 +43,12 @@ class EHSSL_SSL_MGMT_Menu extends EHSSL_Admin_Menu
             <div id="poststuff">
                 <div id="post-body">
                     <?php
-
-                    $tab_keys = array_keys($this->dashboard_menu_tabs);
                     switch ($tab) {
-                        case $tab_keys[1]:
+                        case 'install-ssl':
                             //include_once('file-to-handle-this-tab-rendering.php');//If you want to include a file
                             $this->render_tab_2();
                             break;
+                        case 'get-ssl':
                         default:
                             //include_once('file-to-handle-this-tab-rendering.php');//If you want to include a file
                             $this->render_tab_1();

@@ -5,7 +5,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
     public $menu_page_slug = EHSSL_SETTINGS_MENU_SLUG;
 
     // Specify all the tabs of this menu in the following array.
-    public $dashboard_menu_tabs = array('tab1' => 'General', 'tab2' => 'HTTPS Redirection', 'tab3' => 'Mixed Contents');
+    public $dashboard_menu_tabs = array('general' => 'General', 'https-redirection' => 'HTTPS Redirection', 'mixed-contents' => 'Mixed Contents');
 
     public function __construct()
     {
@@ -44,17 +44,17 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
             <div id="poststuff"><div id="post-body">
             <?php
 
-        $tab_keys = array_keys($this->dashboard_menu_tabs);
         switch ($tab) {
-            case $tab_keys[1]:
-                //include_once('file-to-handle-this-tab-rendering.php');//If you want to include a file
-                $this->render_https_redirection_tab();
-                break;
-            case $tab_keys[2]:
-                //include_once('file-to-handle-this-tab-rendering.php');//If you want to include a file
-                $this->render_mixed_content_tab();
-                break;
-            default:
+	        case 'https-redirection':
+		        //include_once('file-to-handle-this-tab-rendering.php');//If you want to include a file
+		        $this->render_https_redirection_tab();
+		        break;
+	        case 'mixed-contents':
+		        //include_once('file-to-handle-this-tab-rendering.php');//If you want to include a file
+		        $this->render_mixed_content_tab();
+		        break;
+	        case 'general':
+	        default:
                 //include_once('file-to-handle-this-tab-rendering.php');//If you want to include a file
                 $this->render_general_tab();
                 break;
@@ -295,18 +295,20 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                             <tr>
                                 <th scope="row"><?php _e('Apply HTTPS redirection on:', 'https_redirection');?></th>
                                 <td>
-                                    <label><input type="radio" name="httpsrdrctn_https_domain" value="1" <?php if ('1' == $httpsrdrctn_options['https_domain']) {echo "checked=\"checked\" ";}?> /> <?php _e('The whole domain', 'https_redirection');?></label>
-                                    <br />
-                                    <label><input type="radio" name="httpsrdrctn_https_domain" value="0" <?php if ('0' == $httpsrdrctn_options['https_domain']) {echo "checked=\"checked\" ";}?> /> <?php _e('A few pages', 'https_redirection');?></label>
-                                    <br />
+                                    <div style="margin-bottom: 6px">
+                                        <label><input type="radio" name="httpsrdrctn_https_domain" value="1" <?php if ('1' == $httpsrdrctn_options['https_domain']) {echo "checked=\"checked\" ";}?> /> <?php _e('The whole domain', 'https_redirection');?></label>
+                                    </div>
+                                    <div style="margin-bottom: 6px">
+                                        <label><input type="radio" name="httpsrdrctn_https_domain" value="0" <?php if ('0' == $httpsrdrctn_options['https_domain']) {echo "checked=\"checked\" ";}?> /> <?php _e('A few pages', 'https_redirection');?></label>
+                                    </div>
                                     <?php foreach ($httpsrdrctn_options['https_pages_array'] as $https_page) {?>
-                                        <span>
-                                            <?php echo str_replace("http://", "https://", home_url()); ?>/<input type="text" name="httpsrdrctn_https_pages_array[]" value="<?php echo $https_page; ?>" /> <span class="rewrite_delete_item">&nbsp;</span> <span class="rewrite_item_blank_error"><?php _e('Please, fill field', 'list');?></span><br />
-                                        </span>
+                                        <div style="margin-bottom: 4px">
+                                            <?php echo str_replace("http://", "https://", home_url()); ?>/<input type="text" name="httpsrdrctn_https_pages_array[]" value="<?php echo $https_page; ?>" /> <span class="button-secondary rewrite_item_delete_btn"><i class="dashicons dashicons-trash"></i></span> <span class="rewrite_item_blank_error"><?php _e('Please, fill field', 'list');?></span>
+                                        </div>
                                     <?php }?>
-                                    <span class="rewrite_new_item">
-                                        <?php echo str_replace("http://", "https://", home_url()); ?>/<input type="text" name="httpsrdrctn_https_pages_array[]" value="" /> <span class="rewrite_add_item">&nbsp;</span> <span class="rewrite_item_blank_error"><?php _e('Please, fill field', 'list');?></span><br />
-                                    </span>
+                                    <div class="rewrite_new_item">
+                                        <?php echo str_replace("http://", "https://", home_url()); ?>/<input type="text" name="httpsrdrctn_https_pages_array[]" value="" /> <span class="button-secondary rewrite_item_add_btn"><i class="dashicons dashicons-plus-alt2"></i></span> <span class="rewrite_item_blank_error"><?php _e('Please, fill field', 'list');?></span>
+                                    </div>
                                 </td>
                             </tr>
                         </table>
@@ -317,7 +319,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                     <input type="hidden" name="httpsrdrctn_form_submit" value="submit" />
 
                     <p class="submit">
-                        <input type="submit" class="button-primary" value="<?php _e('Save Changes')?>" />
+                        <input type="submit" class="button-primary" value="<?php _e('Save Changes')?>"  <?php echo !is_ssl() ? 'disabled' : '' ?>/>
                     </p>
                     <?php wp_nonce_field(plugin_basename(__FILE__), 'httpsrdrctn_nonce_name');?>
                 </form>

@@ -6,7 +6,7 @@ class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
 
     // Specify all the tabs of this menu in the following array
     public $dashboard_menu_tabs = array(
-        'tab1' => 'Status',
+        'status' => 'Status',
         // 'tab2' => 'Tab Two'
     );
 
@@ -48,11 +48,9 @@ class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
                     <?php
                     $tab_keys = array_keys($this->dashboard_menu_tabs);
                     switch ($tab) {
-                        // case $tab_keys[1]:
-                        //     $this->render_tab_2();
-                        //     break;
+                        case 'status':
                         default:
-                            $this->render_tab_1();
+                            $this->render_status_tab();
                             break;
                     }
                     ?>
@@ -62,7 +60,7 @@ class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
         <?php
     }
 
-    public function render_tab_1()
+    public function render_status_tab()
     {
     ?>
         <div id="ehssl-dashboard-widgets-wrap">
@@ -96,19 +94,6 @@ class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
                 margin: 0px 8px 28px;
             }
         </style>
-    <?php
-    }
-
-    public function render_tab_2()
-    {
-        //Render tab 1
-    ?>
-        <div class="postbox">
-            <h3 class="hndle"><label for="title">Tab 2 Heading</label></h3>
-            <div class="inside">
-            <p>Oh hello there! You are in tab 2. Tab 2 looks good right? Sweet tab 2.</p>
-            </div>
-        </div>
     <?php
     }
 
