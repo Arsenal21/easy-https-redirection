@@ -53,6 +53,7 @@ if ( !class_exists('Easy_HTTPS_SSL') ) {
             define('EHSSL_MENU_SLUG_PREFIX', 'ehssl');
             define('EHSSL_MAIN_MENU_SLUG', 'ehssl');
             define('EHSSL_SETTINGS_MENU_SLUG', 'ehssl_settings');
+            define('EHSSL_CERTIFICATE_EXPIRY_MENU_SLUG', 'ehssl_certificate_expiry');
             define('EHSSL_SSL_MGMT_MENU_SLUG', 'ehssl-ssl-mgmt');
         }
 
@@ -62,6 +63,8 @@ if ( !class_exists('Easy_HTTPS_SSL') ) {
             include_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-debug-logger.php';
             include_once EASY_HTTPS_SSL_PATH . '/classes/utilities/ehssl-utils.php';
             include_once EASY_HTTPS_SSL_PATH . '/classes/utilities/ehssl-ssl-utils.php';
+            include_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-cronjob.php';
+            include_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-custom-post-types.php';
 
             if (is_admin()) { //Load admin side only files
                 include_once EASY_HTTPS_SSL_PATH. '/admin/ehssl-admin-init.php';
@@ -80,9 +83,12 @@ if ( !class_exists('Easy_HTTPS_SSL') ) {
             }
         }
 
-        public static function plugin_activate_handler()
-        {
-            
+        public static function plugin_activate_handler() {
+	        wp_schedule_event(time(), 'daily', 'ehssl_daily_cron_event');
+        }
+
+        public static function plugin_deactivate_handler() {
+	        wp_clear_scheduled_hook('ehssl_daily_cron_event');
         }
 
         public static function plugin_uninstall_handler()
@@ -142,6 +148,8 @@ if ( !class_exists('Easy_HTTPS_SSL') ) {
                 add_action("shutdown", array($this, "ehssl_end_buffer"));
             }
 
+			// Register custom post types.
+			EHSSL_Custom_Post_Types::get_instance()->register_custom_post_types();
         }
 
         public function ehssl_start_buffer()

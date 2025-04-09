@@ -130,7 +130,7 @@ class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
 
     public function widget_ssl_info()
     {
-        $ssl_info = EHSSL_SSL_Utils::get_parsed_ssl_info();
+        $ssl_info = EHSSL_SSL_Utils::get_parsed_current_ssl_info_for_dashbaord();
     ?>
         <div id="ehssl_dashboard_ssl_info" class="sortable-item postbox" data-item-id="2">
             <div class="postbox-header handle">
