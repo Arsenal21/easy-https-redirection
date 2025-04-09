@@ -25,7 +25,9 @@ define('EASY_HTTPS_SSL_DB_VERSION', '1.0');
 include_once 'easy-https-ssl-core.php';
 
 // Activation hook.
-register_activation_hook(__FILE__, array('Easy_HTTPS_SSL', 'plugin_activate_handler')); 
+register_activation_hook(__FILE__, array('Easy_HTTPS_SSL', 'plugin_activate_handler'));
+// Deactivation hook
+register_deactivation_hook(__FILE__, array('Easy_HTTPS_SSL', 'plugin_deactivate_handler'));
 
 // Uninstall hook.
 register_uninstall_hook(__FILE__, array('Easy_HTTPS_SSL', 'plugin_uninstall_handler'));
