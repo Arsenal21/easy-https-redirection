@@ -65,6 +65,7 @@ if ( !class_exists('Easy_HTTPS_SSL') ) {
             include_once EASY_HTTPS_SSL_PATH . '/classes/utilities/ehssl-ssl-utils.php';
             include_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-cronjob.php';
             include_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-custom-post-types.php';
+            include_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-email-handler.php';
 
             if (is_admin()) { //Load admin side only files
                 include_once EASY_HTTPS_SSL_PATH. '/admin/ehssl-admin-init.php';

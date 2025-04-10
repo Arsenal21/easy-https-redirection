@@ -13,10 +13,25 @@
                 }
             });
         });
+
         $(document).on('click', '.rewrite_item_delete_btn', function () {
             $(this).each(function () {
                 $(this).parent().remove();
             });
+        });
+
+        // Toggle merge tag hints
+        $(document).on('click', 'a.ehssl-toggle', function (e) {
+            e.preventDefault();
+            var div = $(this).siblings('div');
+            if (div.is(':visible')) {
+                $(this).removeClass('toggled-on');
+                $(this).addClass('toggled-off');
+            } else {
+                $(this).removeClass('toggled-off');
+                $(this).addClass('toggled-on');
+            }
+            div.slideToggle('fast');
         });
     });
 })(jQuery);
