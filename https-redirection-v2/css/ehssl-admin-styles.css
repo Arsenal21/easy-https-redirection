@@ -130,3 +130,43 @@
 	color: red;
 	display: none;
 }
+
+/*----- Email tags hint ----- */
+
+.ehssl-tags-table-cont {
+    margin-top: 10px;
+}
+
+a.ehssl-toggle {
+    text-decoration: none;
+    border-bottom: 1px dashed;
+}
+
+a.ehssl-toggle.toggled-on::after {
+    content: " ↑";
+}
+
+a.ehssl-toggle.toggled-off::after {
+    content: " ↓";
+}
+
+table.ehssl-tags-hint td, table.ehssl-tags-hint th {
+    padding: 5px 10px;
+}
+
+table.ehssl-tags-hint {
+    background: #fff;
+    width: 100%;
+}
+
+table.ehssl-tags-hint td.ehssl-tag-name {
+    width: 150px;
+    border-bottom: 1px solid #ededed;
+}
+
+table.ehssl-tags-hint td.ehssl-tag-descr {
+    width: 70%;
+    border-bottom: 1px solid #ededed;
+}
+
+/*----- END Email tags hint ----- */

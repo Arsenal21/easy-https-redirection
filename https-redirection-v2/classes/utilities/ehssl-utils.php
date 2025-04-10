@@ -89,6 +89,39 @@ class EHSSL_Utils
         return ($httpcode >= 200 && $httpcode < 400);
     }
 
+	public static function parse_timestamp( $timestamp ) {
+		$timestamp = intval($timestamp);
+
+		$dateTime = new DateTime();
+		$dateTime->setTimestamp( $timestamp );
+
+		$formatted_date_time = $dateTime->format( get_option('date_format') . ' \a\t ' . get_option( 'time_format' ) );
+
+		return $formatted_date_time;
+	}
+
+	public static function parse_date( $timestamp ) {
+		$timestamp = intval($timestamp);
+
+		$dateTime = new DateTime();
+		$dateTime->setTimestamp( $timestamp );
+
+		$formatted_date_time = $dateTime->format( get_option('date_format') );
+
+		return $formatted_date_time;
+	}
+
+	public static function parse_time( $timestamp ) {
+		$timestamp = intval($timestamp);
+
+		$dateTime = new DateTime();
+		$dateTime->setTimestamp( $timestamp );
+
+		$formatted_date_time = $dateTime->format( get_option('time_format') );
+
+		return $formatted_date_time;
+	}
+
 }
 
 /***

@@ -157,9 +157,7 @@ class EHSSL_Admin_Init
 
     public function plugin_admin_head()
     {
-         if (isset($_GET['page']) && $_GET['page'] == 'ehssl_settings') {
-             wp_enqueue_script('ehssl_script', EASY_HTTPS_SSL_URL . '/js/script.js', array('jquery'), EASY_HTTPS_SSL_VERSION);
-         }
+         wp_enqueue_script('ehssl_script', EASY_HTTPS_SSL_URL . '/js/script.js', array('jquery'), EASY_HTTPS_SSL_VERSION);
     }
 
     public function handle_log_file_action()
