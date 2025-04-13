@@ -60,14 +60,16 @@ class EHSSL_SSL_Utils {
 			}
 
 			$subject    = isset($cert_info['subject']['CN']) ? $cert_info['subject']['CN'] : $domain;
-			$id = substr( md5( $domain ), 0, 7 ); // Generate a short ID
+			$cert_hash = md5( $issuer . $valid_from . $valid_to );
+			$id = substr( $cert_hash, 0, 7 ); // Generate a short ID for Expiry Certificate list table.
+
 			$parsed_cert_info = array(
 				'id'         => $id,
 				'label'      => $subject,
 				'issuer'     => $issuer,
 				'issued_on'  => $valid_from,
 				'expires_on' => $valid_to,
-				'cert_hash' => md5( $id . $issuer . $valid_from ),
+				'cert_hash'  => $cert_hash,
 			);
 		}
 
