@@ -15,7 +15,9 @@ One line description here....
 == Installation ==
 
 == v2 WIP ==
-* CSS file names fixed. 
+* CSS file names fixed.
 * Added some default styles for the plugin.
 * Applied the standard yellow, red, blue box styles to the plugin.
-
+* Dashboard menu added for quick SSL info.
+* New SSL certificate expiry notification email feature added.
+* New Expiry Notification list table added.

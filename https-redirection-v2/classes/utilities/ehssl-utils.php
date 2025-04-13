@@ -92,8 +92,11 @@ class EHSSL_Utils
 	public static function parse_timestamp( $timestamp ) {
 		$timestamp = intval($timestamp);
 
+		$timezone_string = new DateTimeZone(wp_timezone_string());
+
 		$dateTime = new DateTime();
 		$dateTime->setTimestamp( $timestamp );
+		$dateTime->setTimezone( $timezone_string );
 
 		$formatted_date_time = $dateTime->format( get_option('date_format') . ' \a\t ' . get_option( 'time_format' ) );
 
@@ -103,8 +106,11 @@ class EHSSL_Utils
 	public static function parse_date( $timestamp ) {
 		$timestamp = intval($timestamp);
 
+		$timezone_string = new DateTimeZone(wp_timezone_string());
+
 		$dateTime = new DateTime();
 		$dateTime->setTimestamp( $timestamp );
+		$dateTime->setTimezone( $timezone_string );
 
 		$formatted_date_time = $dateTime->format( get_option('date_format') );
 
@@ -114,8 +120,11 @@ class EHSSL_Utils
 	public static function parse_time( $timestamp ) {
 		$timestamp = intval($timestamp);
 
+		$timezone_string = new DateTimeZone(wp_timezone_string());
+
 		$dateTime = new DateTime();
 		$dateTime->setTimestamp( $timestamp );
+		$dateTime->setTimezone( $timezone_string );
 
 		$formatted_date_time = $dateTime->format( get_option('time_format') );
 
