@@ -60,14 +60,16 @@ class EHSSL_SSL_Utils {
 			}
 
 			$subject    = isset($cert_info['subject']['CN']) ? $cert_info['subject']['CN'] : $domain;
-			$id = substr( md5( $domain ), 0, 7 ); // Generate a short ID
+			$cert_hash = md5( $issuer . $valid_from . $valid_to );
+			$id = substr( $cert_hash, 0, 7 ); // Generate a short ID for Expiry Certificate list table.
+
 			$parsed_cert_info = array(
 				'id'         => $id,
 				'label'      => $subject,
 				'issuer'     => $issuer,
 				'issued_on'  => $valid_from,
 				'expires_on' => $valid_to,
-				'cert_hash' => md5( $id . $issuer . $valid_from ),
+				'cert_hash'  => $cert_hash,
 			);
 		}
 
@@ -168,7 +170,7 @@ class EHSSL_SSL_Utils {
 		) );
 
 		if ( empty( $posts ) ) {
-			EHSSL_Logger::log( 'Scanning for SSL certificate info...' );
+			EHSSL_Logger::log( 'Scanning for SSL certificate info...', 1 );
 
 			$post_id = wp_insert_post( array(
 				'post_title'    => $cert_hash,
@@ -178,7 +180,7 @@ class EHSSL_SSL_Utils {
 			) );
 
 			if ( is_wp_error( $post_id ) ) {
-				EHSSL_Logger::log($post_id->get_error_message(), false);
+				EHSSL_Logger::log($post_id->get_error_message(), 4);
 				return;
 			}
 
@@ -188,7 +190,7 @@ class EHSSL_SSL_Utils {
 			update_post_meta($post_id, 'issued_on', $cert['issued_on']);
 			update_post_meta($post_id, 'expires_on', $cert['expires_on']);
 
-			EHSSL_Logger::log( 'New certificate info captured. ID: ' . $cert['id'], true);
+			EHSSL_Logger::log( 'New certificate info captured. ID: ' . $cert['id']);
 		}
 	}
 
@@ -210,7 +212,7 @@ class EHSSL_SSL_Utils {
 			return;
 		}
 
-		EHSSL_Logger::log( 'Checking if notification email need to be send...', true);
+		EHSSL_Logger::log( 'Checking if notification email need to be send...', 1);
 
 		$expiry_timestamp = $cert['expires_on'];
 

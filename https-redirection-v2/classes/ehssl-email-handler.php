@@ -10,7 +10,7 @@ class EHSSL_Email_handler {
 		$to           = isset( $settings['ehssl_expiry_notification_email_to'] ) ? sanitize_email( $settings['ehssl_expiry_notification_email_to'] ) : '';
 
 		if ( empty( $to ) ) {
-			EHSSL_Logger::log( 'Recipient email address could not be found to send expiry notification email.', false );
+			EHSSL_Logger::log( 'Recipient email address could not be found to send expiry notification email.', 4 );
 
 			return false;
 		}
@@ -29,11 +29,11 @@ class EHSSL_Email_handler {
 
 		try {
 			wp_mail( $to, $subj, $body, $headers );
-			EHSSL_Logger::log( 'SSL Certificate expiry notification email sent to : ' . $to . ', From email address used: ' . $from, true );
+			EHSSL_Logger::log( 'SSL Certificate expiry notification email sent to : ' . $to . ', From email address used: ' . $from );
 
 			return true;
 		} catch ( \Exception $e ) {
-			EHSSL_Logger::log( 'SSL Certificate expiry notification email couldn\'t be sent to : ' . $to . ', From email address used: ' . $from, false );
+			EHSSL_Logger::log( 'SSL Certificate expiry notification email couldn\'t be sent to : ' . $to . ', From email address used: ' . $from, 4 );
 		}
 
 		return false;
