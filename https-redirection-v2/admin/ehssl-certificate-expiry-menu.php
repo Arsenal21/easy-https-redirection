@@ -79,7 +79,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
 		?>
         <div class="postbox">
             <h3 class="hndle">
-                <label for="title"><?php _e( "Expiring Certificates", 'https_redirection' ); ?></label>
+                <label for="title"><?php _e( "Certificates", 'https_redirection' ); ?></label>
             </h3>
             <div class="inside">
                 <form action="" method="post">
@@ -180,8 +180,9 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
 
 		?>
         <div class="postbox">
-            <h3 class="hndle"><label
-                        for="title"><?php _e( "Expiry Notification", 'https_redirection' ); ?></label></h3>
+            <h3 class="hndle">
+                <label for="title"><?php _e( "Notification Email Settings", 'https_redirection' ); ?></label>
+            </h3>
             <div class="inside">
                 <form method="post" action="">
                     <table class="form-table">
