@@ -92,16 +92,7 @@ if ( !class_exists('Easy_HTTPS_SSL') ) {
 	        wp_clear_scheduled_hook('ehssl_daily_cron_event');
         }
 
-        public static function plugin_uninstall_handler()
-        {
-            self::ehssl_delete_options();
-        }
-
-        public static function ehssl_delete_options()
-        {
-            delete_option('httpsrdrctn_options');
-            delete_site_option('httpsrdrctn_options');
-        }
+        public static function plugin_uninstall_handler() {}
 
         public function do_db_upgrade_check()
         {
