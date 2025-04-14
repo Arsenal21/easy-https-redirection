@@ -16,10 +16,10 @@ class EHSSL_Settings_Menu_Old extends EHSSL_Admin_Menu
             <h2><?php _e("HTTPS Redirection Settings", 'https_redirection') ?></h2>
 			<div class="notice notice-warning">
 				<p>
-				<?php _e('The HTTPS Redirection settings was upgraded and moved to the <strong>Easy HTTPS & SSL</strong> > <b>Settings</b> page with some new features. Click the link below to navigate to the new page.','https_redirection');?>
+				<?php _e('The HTTPS Redirection settings have been upgraded and relocated to a new menu page titled <strong>Easy HTTPS & SSL</strong>. We have also added new features to enhance the plugin. Click the link below to access the new settings page.','https_redirection');?>
 				<br>
 				<br>
-				<a class="button-primary" href="admin.php?page=ehssl_settings"><?php _e('Go to new settings page','https_redirection');?></a>
+				<a class="button-primary" href="admin.php?page=ehssl_settings"><?php _e('Go to the New Settings Page','https_redirection');?></a>
 				</p>
 			</div>
         </div>

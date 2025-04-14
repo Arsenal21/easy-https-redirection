@@ -21,7 +21,7 @@ abstract class EHSSL_Admin_Menu
     public function documentation_link_box(){
         ?>
         <div class="ehssl-blue-box">
-            You can view the <a href="https://www.tipsandtricks-hq.com/wordpress-easy-https-redirection-plugin" target="_blank">HTTPS Redirection plugin details</a> on our site.
+            You can view the <a href="https://www.tipsandtricks-hq.com/wordpress-easy-https-redirection-plugin" target="_blank">Easy HTTPS Redirection & SSL</a> plugin details on our site.
             Check out our other <a href="https://www.tipsandtricks-hq.com/development-center" target="_blank">WordPress plugins</a>.
         </div>
         <?php
