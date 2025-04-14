@@ -39,9 +39,6 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
 		?>
         <div class="wrap">
             <h2><?php _e( "Certificate Expiry", 'https_redirection' ) ?></h2>
-            <p>
-		        <?php _e( 'Use this page to configure all settings related to certificate renewal, such as when certificates are considered due and overdue, who receives notifications, and how.', 'https_redirection' ); ?>
-            </p>
             <h2 class="nav-tab-wrapper"><?php $this->render_page_tabs(); ?></h2>
             <div id="poststuff">
                 <div id="post-body">
@@ -72,7 +69,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
 
 			EHSSL_SSL_Utils::check_and_save_current_cert_info();
 
-			echo '<div class="notice notice-success"><p>'. __('Success fully scanned for available SSL certificates.', 'https_redirection') .'</p></div>';
+			echo '<div class="notice notice-success"><p>'. __('SSL certificate scan completed successfully.', 'https_redirection') .'</p></div>';
 		}
 
         $certs_info = EHSSL_SSL_Utils::get_all_saved_certificates_info();
@@ -86,7 +83,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
 		            <?php wp_nonce_field('ehssl_scan_for_ssl_nonce') ?>
 
                     <div class="ehssl-blue-box">
-                        <div><?php _e('Click the button to manually scan for available SSL certificates.', 'https_redirection') ?></div>
+                        <div><?php _e('Click the Scan button to manually scan for available SSL certificates.', 'https_redirection') ?></div>
                         <br>
                         <input type="submit" class="button-primary" value="<?php _e('Scan Now', 'https_redirection') ?>" name="ehssl_scan_for_ssl_submit">
                     </div>
@@ -121,7 +118,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                 </table>
                 <?php } else { ?>
                 <p class="description">
-                    <?php _e('No SSL certificate info found.', 'https_redirection') ?>
+                    <?php _e('No SSL certificate information found.', 'https_redirection') ?>
                 </p>
                 <?php } ?>
             </div><!-- end of inside -->

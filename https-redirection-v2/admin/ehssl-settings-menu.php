@@ -147,7 +147,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                         <div style="position: relative">
                             <table class="form-table">
                                 <tr valign="top">
-                                    <th scope="row"><?php _e('Enable automatic redirection to the "HTTPS"', 'https_redirection');?></th>
+                                    <th scope="row"><?php _e('Enable Automatic Redirection to HTTPS', 'https_redirection');?></th>
                                     <td>
                                         <label>
                                             <input type="checkbox" id="httpsrdrctn-checkbox" name="httpsrdrctn_https" value="1" <?php if ('1' == $settings['https']) {echo "checked=\"checked\" ";}?> />
@@ -164,7 +164,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                         <div style="position: relative">
                             <table class="form-table">
                                 <tr>
-                                    <th scope="row"><?php _e('Apply HTTPS redirection on:', 'https_redirection');?></th>
+                                    <th scope="row"><?php _e('Apply HTTPS Redirection To:', 'https_redirection');?></th>
                                     <td>
                                         <div style="margin-bottom: 6px">
                                             <label><input type="radio" name="httpsrdrctn_https_domain" value="1" <?php if ('1' == $settings['https_domain']) {echo "checked=\"checked\" ";}?> /> <?php _e('The whole domain', 'https_redirection');?></label>
@@ -172,13 +172,13 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                                         <div style="margin-bottom: 6px">
                                             <label><input type="radio" name="httpsrdrctn_https_domain" value="0" <?php if ('0' == $settings['https_domain']) {echo "checked=\"checked\" ";}?> /> <?php _e('A few pages', 'https_redirection');?></label>
                                         </div>
-									    <?php foreach ($settings['https_pages_array'] as $https_page) {?>
-                                            <div style="margin-bottom: 4px">
-											    <?php echo str_replace("http://", "https://", home_url()); ?>/<input type="text" name="httpsrdrctn_https_pages_array[]" value="<?php echo $https_page; ?>" /> <span class="button-secondary rewrite_item_delete_btn"><i class="dashicons dashicons-trash"></i></span> <span class="rewrite_item_blank_error"><?php _e('Please, fill field', 'list');?></span>
+									    <?php foreach ($settings['https_pages_array'] as $https_page) { ?>
+                                            <div style="margin-bottom: 5px">
+											    <?php echo str_replace("http://", "https://", home_url()); ?>/<input type="text" name="httpsrdrctn_https_pages_array[]" value="<?php echo $https_page; ?>" /> <span class="button-secondary rewrite_item_delete_btn"><i class="dashicons dashicons-trash"></i></span> <span class="rewrite_item_blank_error"><?php _e('Please enter a page slug value in the field before adding it.', 'https_redirection');?></span>
                                             </div>
-									    <?php }?>
+									    <?php } ?>
                                         <div class="rewrite_new_item">
-										    <?php echo str_replace("http://", "https://", home_url()); ?>/<input type="text" name="httpsrdrctn_https_pages_array[]" value="" /> <span class="button-secondary rewrite_item_add_btn"><i class="dashicons dashicons-plus-alt2"></i></span> <span class="rewrite_item_blank_error"><?php _e('Please, fill field', 'list');?></span>
+										    <?php echo str_replace("http://", "https://", home_url()); ?>/<input type="text" name="httpsrdrctn_https_pages_array[]" placeholder="<?php _e('Enter the page slug','https_redirection'); ?>" value="" /> <span class="button-secondary rewrite_item_add_btn"><i class="dashicons dashicons-plus-alt2"></i></span> <span class="rewrite_item_blank_error"><?php _e('Please enter a page slug value in the field before adding it.', 'https_redirection');?></span>
                                         </div>
                                     </td>
                                 </tr>
@@ -243,7 +243,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
             <h3 class="hndle"><label for="title"><?php _e("Debug Logging", 'https_redirection');?></label></h3>
             <div class="inside">
             <p>
-                <?php _e('Debug logging can be useful to troubleshoot transaction processing related issues on your site. keep it disabled unless you are troubleshooting.', 'https_redirection');?>
+                <?php _e('Debug logging can be useful to troubleshoot issues on your site. keep it disabled unless you are troubleshooting.', 'https_redirection');?>
             </p>
             <form id="ehssl_debug_settings_form" method="post" action="">
                 <table class="form-table">
@@ -331,7 +331,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                 <form action="" method="POST">
                     <table class="form-table">
                         <tr valign="top">
-                            <th scope="row"><?php _e('Force resources to use HTTPS URL', 'https_redirection');?></th>
+                            <th scope="row"><?php _e('Force Resources to Use HTTPS URL', 'https_redirection');?></th>
                             <td>
                                 <label>
                                     <input type="checkbox" <?php echo !$is_https_redirection_enabled ? "disabled" : ''; ?> name="httpsrdrctn_force_resources" value="1" <?php echo (isset($httpsrdrctn_options['force_resources']) && $httpsrdrctn_options['force_resources'] == '1') ? 'checked="checked"' : ''; ?> />
