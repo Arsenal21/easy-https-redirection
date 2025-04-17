@@ -73,9 +73,9 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
 		}
 
         // TODO: debug purpose only
-        if (isset($_GET['delete-certs'])){
-            EHSSL_SSL_Utils::delete_all_certificate_info();
-        }
+        //if (isset($_GET['delete-certs'])){
+        //    EHSSL_SSL_Utils::delete_all_certificate_info();
+        //}
 
         $certs_info = EHSSL_SSL_Utils::get_all_saved_certificates_info();
 		?>
