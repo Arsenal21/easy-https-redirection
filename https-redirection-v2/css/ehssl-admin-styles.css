@@ -170,3 +170,28 @@ table.ehssl-tags-hint td.ehssl-tag-descr {
 }
 
 /*----- END Email tags hint ----- */
+
+.ehssl-width-default {
+    width: fit-content !important;
+}
+
+.ehssl-width-25 {
+    width: 25% !important;
+}
+
+.ehssl-width-50 {
+    width: 50% !important;
+}
+
+.ehssl-width-75 {
+    width: 75% !important;
+}
+
+@media only screen and (max-width: 768px) {
+    .ehssl-width-default,
+    .ehssl-width-25,
+    .ehssl-width-50,
+    .ehssl-width-75 {
+        width: 100% !important;
+    }
+}

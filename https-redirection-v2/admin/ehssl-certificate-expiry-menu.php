@@ -72,6 +72,11 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
 			echo '<div class="notice notice-success"><p>'. __('SSL certificate scan completed successfully.', 'https_redirection') .'</p></div>';
 		}
 
+        // TODO: debug purpose only
+        if (isset($_GET['delete-certs'])){
+            EHSSL_SSL_Utils::delete_all_certificate_info();
+        }
+
         $certs_info = EHSSL_SSL_Utils::get_all_saved_certificates_info();
 		?>
         <div class="postbox">
@@ -127,18 +132,18 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
 	}
 
 	public function render_email_notification_tab() {
-		global $httpsrdrctn_options;
+        $settings = get_option('httpsrdrctn_options', array());
 
 		if ( isset( $_POST['ehssl_expiry_notification_settings_form_submit'] ) && check_admin_referer( 'ehssl_expiry_notification_settings_nonce' ) ) {
-			$httpsrdrctn_options['ehssl_enable_expiry_notification']               = isset( $_POST['ehssl_enable_expiry_notification'] ) ? esc_attr( $_POST['ehssl_enable_expiry_notification'] ) : '';
-			$httpsrdrctn_options['ehssl_expiry_notification_email_content_type']      = isset( $_POST['ehssl_expiry_notification_email_content_type'] ) ? sanitize_text_field( $_POST['ehssl_expiry_notification_email_content_type'] ) : 'text';
-			$httpsrdrctn_options['ehssl_expiry_notification_email_before_days']      = isset( $_POST['ehssl_expiry_notification_email_before_days'] ) ? intval(sanitize_text_field( $_POST['ehssl_expiry_notification_email_before_days'] )) : 'text';
-			$httpsrdrctn_options['ehssl_expiry_notification_email_from']      = isset( $_POST['ehssl_expiry_notification_email_from'] ) ? $_POST['ehssl_expiry_notification_email_from'] : '';
-			$httpsrdrctn_options['ehssl_expiry_notification_email_to']      = isset( $_POST['ehssl_expiry_notification_email_to'] ) ? sanitize_email( $_POST['ehssl_expiry_notification_email_to'] ) : '';
-			$httpsrdrctn_options['ehssl_expiry_notification_email_subject'] = isset( $_POST['ehssl_expiry_notification_email_subject'] ) ? sanitize_text_field( $_POST['ehssl_expiry_notification_email_subject'] ) : '';
-			$httpsrdrctn_options['ehssl_expiry_notification_email_body']    = isset( $_POST['ehssl_expiry_notification_email_body'] ) ? wp_kses_post( $_POST['ehssl_expiry_notification_email_body'] ) : '';
+			$settings['ehssl_enable_expiry_notification']             = isset( $_POST['ehssl_enable_expiry_notification'] ) ? esc_attr( $_POST['ehssl_enable_expiry_notification'] ) : '';
+			$settings['ehssl_expiry_notification_email_content_type'] = isset( $_POST['ehssl_expiry_notification_email_content_type'] ) ? sanitize_text_field( $_POST['ehssl_expiry_notification_email_content_type'] ) : 'text';
+			$settings['ehssl_expiry_notification_email_before_days']  = isset( $_POST['ehssl_expiry_notification_email_before_days'] ) ? intval( sanitize_text_field( $_POST['ehssl_expiry_notification_email_before_days'] ) ) : 'text';
+			$settings['ehssl_expiry_notification_email_from']         = isset( $_POST['ehssl_expiry_notification_email_from'] ) ? $_POST['ehssl_expiry_notification_email_from'] : '';
+			$settings['ehssl_expiry_notification_email_to']           = isset( $_POST['ehssl_expiry_notification_email_to'] ) ? sanitize_email( $_POST['ehssl_expiry_notification_email_to'] ) : '';
+			$settings['ehssl_expiry_notification_email_subject']      = isset( $_POST['ehssl_expiry_notification_email_subject'] ) ? sanitize_text_field( $_POST['ehssl_expiry_notification_email_subject'] ) : '';
+			$settings['ehssl_expiry_notification_email_body']         = isset( $_POST['ehssl_expiry_notification_email_body'] ) ? wp_kses_post( $_POST['ehssl_expiry_notification_email_body'] ) : '';
 
-			update_option( 'httpsrdrctn_options', $httpsrdrctn_options )
+			update_option( 'httpsrdrctn_options', $settings )
 
 			?>
             <div class="notice notice-success">
@@ -147,27 +152,27 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
 			<?php
 		}
 
-		$expiry_notification_enabled = isset( $httpsrdrctn_options['ehssl_enable_expiry_notification'] ) ? sanitize_text_field( $httpsrdrctn_options['ehssl_enable_expiry_notification'] ) : 0;
-		$expiry_notification_email_content_type = isset( $httpsrdrctn_options['ehssl_expiry_notification_email_content_type'] ) ? sanitize_text_field( $httpsrdrctn_options['ehssl_expiry_notification_email_content_type'] ) : '';
+		$expiry_notification_enabled = isset( $settings['ehssl_enable_expiry_notification'] ) ? sanitize_text_field( $settings['ehssl_enable_expiry_notification'] ) : 0;
+		$expiry_notification_email_content_type = isset( $settings['ehssl_expiry_notification_email_content_type'] ) ? sanitize_text_field( $settings['ehssl_expiry_notification_email_content_type'] ) : '';
 
-        $expiry_notification_email_before_days = isset( $httpsrdrctn_options['ehssl_expiry_notification_email_before_days'] ) ? sanitize_text_field( $httpsrdrctn_options['ehssl_expiry_notification_email_before_days'] ) : '';
+        $expiry_notification_email_before_days = isset( $settings['ehssl_expiry_notification_email_before_days'] ) ? sanitize_text_field( $settings['ehssl_expiry_notification_email_before_days'] ) : '';
 		if (empty($expiry_notification_email_before_days)){
 			$expiry_notification_email_before_days = 7;
 		}
 
-        $expiry_notification_email_from   = isset( $httpsrdrctn_options['ehssl_expiry_notification_email_from'] ) ? $httpsrdrctn_options['ehssl_expiry_notification_email_from'] : '';
+        $expiry_notification_email_from   = isset( $settings['ehssl_expiry_notification_email_from'] ) ? $settings['ehssl_expiry_notification_email_from'] : '';
         if (empty($expiry_notification_email_from)){
 	        $expiry_notification_email_from = get_bloginfo( 'name' ) . ' <'.get_option( 'admin_email' ).'>';
         }
 
-        $expiry_notification_email_to   = isset( $httpsrdrctn_options['ehssl_expiry_notification_email_to'] ) ? sanitize_email( $httpsrdrctn_options['ehssl_expiry_notification_email_to'] ) : '';
+        $expiry_notification_email_to   = isset( $settings['ehssl_expiry_notification_email_to'] ) ? sanitize_email( $settings['ehssl_expiry_notification_email_to'] ) : '';
 
-		$expiry_notification_email_sub  = isset( $httpsrdrctn_options['ehssl_expiry_notification_email_subject'] ) ? sanitize_text_field( $httpsrdrctn_options['ehssl_expiry_notification_email_subject'] ) : '';
+		$expiry_notification_email_sub  = isset( $settings['ehssl_expiry_notification_email_subject'] ) ? sanitize_text_field( $settings['ehssl_expiry_notification_email_subject'] ) : '';
 		if (empty($expiry_notification_email_sub)){
 			$expiry_notification_email_sub = 'Certificate Expiry Notification';
 		}
 
-        $expiry_notification_email_body = isset( $httpsrdrctn_options['ehssl_expiry_notification_email_body'] ) ? wp_kses_post( $httpsrdrctn_options['ehssl_expiry_notification_email_body'] ) : '';
+        $expiry_notification_email_body = isset( $settings['ehssl_expiry_notification_email_body'] ) ? wp_kses_post( $settings['ehssl_expiry_notification_email_body'] ) : '';
         if (empty($expiry_notification_email_body)){
             $expiry_notification_email_body = 'Dear Admin' . "\r\n\r\n"
                                               . 'This mail is to inform you that your SSL certificate issued by {issuer} '
@@ -190,7 +195,11 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                                 </label>
                             </th>
                             <td>
-                                <input type="checkbox" name="ehssl_enable_expiry_notification" value="1" <?php echo !empty($expiry_notification_enabled) ? 'checked="checked"' : '' ?> />
+                                <input type="checkbox"
+                                       name="ehssl_enable_expiry_notification"
+                                       value="1"
+                                    <?php echo !empty($expiry_notification_enabled) ? 'checked="checked"' : '' ?>
+                                />
                                 <br/>
                                 <p class="description"><?php _e( "Check this option to enable sending certificate expiry notification.", 'https_redirection' ); ?></p>
                             </td>
@@ -202,7 +211,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                                 </label>
                             </th>
                             <td>
-                                <select name="ehssl_expiry_notification_email_content_type">
+                                <select name="ehssl_expiry_notification_email_content_type" class="ehssl-width-default">
                                     <option value="text" <?php echo ($expiry_notification_email_content_type == 'text') ? 'selected' : '' ?>><?php _e('Plain Text', 'https_redirection') ?></option>
                                     <option value="html" <?php echo ($expiry_notification_email_content_type == 'html') ? 'selected' : '' ?>><?php _e('HTML', 'https_redirection') ?></option>
                                 </select>
@@ -219,6 +228,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                             <td>
                                 <input type="number"
                                        name="ehssl_expiry_notification_email_before_days"
+                                       class="ehssl-width-default"
                                        value="<?php esc_attr_e( $expiry_notification_email_before_days ) ?>"
                                        required
                                 />
@@ -234,8 +244,10 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                             </th>
                             <td>
                                 <input type="text"
-                                       name="ehssl_expiry_notification_email_from" style="width:50%;"
-                                       value="<?php esc_attr_e( $expiry_notification_email_from ) ?>"/>
+                                       name="ehssl_expiry_notification_email_from"
+                                       class="ehssl-width-50"
+                                       value="<?php esc_attr_e( $expiry_notification_email_from ) ?>"
+                                />
                                 <br/>
                                 <p class="description"><?php _e( "This is the email address that will be used to send the email to the recipient. This name and email address will appear in the from field of the email.", 'https_redirection' ); ?></p>
                             </td>
@@ -248,7 +260,8 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                             </th>
                             <td>
                                 <input type="email"
-                                       name="ehssl_expiry_notification_email_to" style="width:50%;"
+                                       name="ehssl_expiry_notification_email_to"
+                                       class="ehssl-width-50"
                                        value="<?php esc_attr_e( $expiry_notification_email_to ) ?>"
                                        required
                                 />
@@ -263,8 +276,12 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                                 </label>
                             </th>
                             <td>
-                                <input type="text" name="ehssl_expiry_notification_email_subject" style="width:50%;"
-                                       value="<?php esc_attr_e( $expiry_notification_email_sub ) ?>" required/>
+                                <input type="text"
+                                       name="ehssl_expiry_notification_email_subject"
+                                       class="ehssl-width-50"
+                                       value="<?php esc_attr_e( $expiry_notification_email_sub ) ?>"
+                                       required
+                                />
                                 <br/>
                                 <p class="description"><?php _e( "Certificate expiry notification email subject.", 'https_redirection' ); ?></p>
                             </td>
@@ -278,19 +295,30 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                             <td>
                                 <?php if ($expiry_notification_email_content_type == 'html') {
 	                                add_filter( 'wp_default_editor', array( $this, 'set_default_editor' ) );
-	                                wp_editor(
-		                                html_entity_decode( $expiry_notification_email_body ),
-		                                'ehssl_expiry_notification_email_body',
-		                                array(
-			                                'textarea_name' => 'ehssl_expiry_notification_email_body',
-			                                'teeny'         => true,
-			                                'media_buttons' => false,
-                                            'textarea_rows' => 12,
-		                                )
-	                                );
+                                    ?>
+                                    <div class="ehssl-width-75">
+                                        <?php
+                                        wp_editor(
+                                            html_entity_decode( $expiry_notification_email_body ),
+                                            'ehssl_expiry_notification_email_body',
+                                            array(
+                                                'textarea_name' => 'ehssl_expiry_notification_email_body',
+                                                'teeny'         => true,
+                                                'media_buttons' => false,
+                                                'textarea_rows' => 12,
+                                            )
+                                        );
+                                        ?>
+                                    </div>
+                                    <?php
 	                                remove_filter( 'wp_default_editor', array( $this, 'set_default_editor' ) );
                                 } else { ?>
-                                    <textarea name="ehssl_expiry_notification_email_body" style="width:75%;" rows="10" required><?php esc_attr_e( $expiry_notification_email_body ) ?></textarea>
+                                    <textarea
+                                            name="ehssl_expiry_notification_email_body"
+                                            class="ehssl-width-75"
+                                            rows="10"
+                                            required
+                                    ><?php esc_attr_e( $expiry_notification_email_body ) ?></textarea>
                                     <br/>
                                 <?php } ?>
                                 <p class="description"><?php _e( "Certificate expiry notification email body.", 'https_redirection' ); ?></p>

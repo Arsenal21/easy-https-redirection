@@ -85,7 +85,7 @@ class EHSSL_Utils
         $output = curl_exec($ch);
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-    
+
         return ($httpcode >= 200 && $httpcode < 400);
     }
 
@@ -131,6 +131,18 @@ class EHSSL_Utils
 		return $formatted_date_time;
 	}
 
+	public static function get_missing_extensions() {
+		$required_extensions = array('curl', 'openssl');
+
+		$missing_extensions = array();
+		foreach ($required_extensions as $extension){
+			if (! extension_loaded($extension)){
+				$missing_extensions[] = $extension;
+			}
+		}
+
+		return $missing_extensions;
+	}
 }
 
 /***

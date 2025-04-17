@@ -17,6 +17,7 @@ if ( !class_exists('Easy_HTTPS_SSL') ) {
             $this->loader_operations();
 
             add_action('init', array(&$this, 'easy_https_plugin_init'), 0);
+            add_action('admin_notices', array(&$this, 'easy_https_plugin_admin_notices'));
             do_action('ehssl_loaded');
         }
 
@@ -143,6 +144,24 @@ if ( !class_exists('Easy_HTTPS_SSL') ) {
 			// Register custom post types.
 			EHSSL_Custom_Post_Types::get_instance()->register_custom_post_types();
         }
+
+		public function easy_https_plugin_admin_notices() {
+			$missing_extensions = EHSSL_Utils::get_missing_extensions();
+			if (!empty($missing_extensions)){
+				$output = '<div class="notice notice-error">';
+				$output .= '<p><b>'.__('NOTE:', 'https_redirection').'</b> ';
+				$output .= __('The following php extensions are missing which is required by this plugin to work properly. Contact you hosting provider enable this.', 'https_redirection');
+				$output .= '<ol>';
+				foreach ($missing_extensions as $ext){
+					$output .= '<li>'. $ext .'</li>';
+				}
+				$output .= '</ol>';
+				$output .= '</p>';
+				$output .= '</div>';
+
+				echo $output;
+			}
+		}
 
         public function ehssl_start_buffer()
         {
