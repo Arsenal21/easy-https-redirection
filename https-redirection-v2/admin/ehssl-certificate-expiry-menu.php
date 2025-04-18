@@ -160,23 +160,25 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
 			$expiry_notification_email_before_days = 7;
 		}
 
-        $expiry_notification_email_from   = isset( $settings['ehssl_expiry_notification_email_from'] ) ? $settings['ehssl_expiry_notification_email_from'] : '';
+        $expiry_notification_email_from = isset( $settings['ehssl_expiry_notification_email_from'] ) ? $settings['ehssl_expiry_notification_email_from'] : '';
         if (empty($expiry_notification_email_from)){
-	        $expiry_notification_email_from = get_bloginfo( 'name' ) . ' <'.get_option( 'admin_email' ).'>';
+            $default_domain_email_address = 'admin@' . EHSSL_Utils::get_domain();
+	        $expiry_notification_email_from = get_bloginfo( 'name' ) . ' <'.$default_domain_email_address.'>';
         }
 
-        $expiry_notification_email_to   = isset( $settings['ehssl_expiry_notification_email_to'] ) ? sanitize_email( $settings['ehssl_expiry_notification_email_to'] ) : '';
+        $expiry_notification_email_to = isset( $settings['ehssl_expiry_notification_email_to'] ) ? sanitize_email( $settings['ehssl_expiry_notification_email_to'] ) : '';
 
-		$expiry_notification_email_sub  = isset( $settings['ehssl_expiry_notification_email_subject'] ) ? sanitize_text_field( $settings['ehssl_expiry_notification_email_subject'] ) : '';
+		$expiry_notification_email_sub = isset( $settings['ehssl_expiry_notification_email_subject'] ) ? sanitize_text_field( $settings['ehssl_expiry_notification_email_subject'] ) : '';
 		if (empty($expiry_notification_email_sub)){
-			$expiry_notification_email_sub = 'Certificate Expiry Notification';
+			$expiry_notification_email_sub = 'SSL Certificate Expiry Notification';
 		}
 
         $expiry_notification_email_body = isset( $settings['ehssl_expiry_notification_email_body'] ) ? wp_kses_post( $settings['ehssl_expiry_notification_email_body'] ) : '';
         if (empty($expiry_notification_email_body)){
-            $expiry_notification_email_body = 'Dear Admin' . "\r\n\r\n"
-                                              . 'This mail is to inform you that your SSL certificate issued by {issuer} '
-                                              . 'is about to expire on {expiry_datetime}.' . "\r\n\r\n"
+            $expiry_notification_email_body = 'Dear Admin,' . "\r\n\r\n"
+                                              . 'This is a reminder that your SSL certificate issued by {issuer} '
+                                              . 'is set to expire on {expiry_datetime}.' . "\r\n\r\n"
+                                              . 'Please take the necessary steps to renew the certificate to avoid any security or accessibility issues.' . "\r\n\r\n"
                                               . 'Thanks';
         }
 
@@ -201,7 +203,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                                     <?php echo !empty($expiry_notification_enabled) ? 'checked="checked"' : '' ?>
                                 />
                                 <br/>
-                                <p class="description"><?php _e( "Check this option to enable sending certificate expiry notification.", 'https_redirection' ); ?></p>
+                                <p class="description"><?php _e( "Enable this option to send SSL certificate expiry notifications.", 'https_redirection' ); ?></p>
                             </td>
                         </tr>
                         <tr valign="top">
@@ -216,7 +218,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                                     <option value="html" <?php echo ($expiry_notification_email_content_type == 'html') ? 'selected' : '' ?>><?php _e('HTML', 'https_redirection') ?></option>
                                 </select>
                                 <br/>
-                                <p class="description"><?php _e( "Choose which format of email to send.", 'https_redirection' ); ?></p>
+                                <p class="description"><?php _e( "Choose whether the SSL expiry notification email should be sent in plain text or HTML format.", 'https_redirection' ); ?></p>
                             </td>
                         </tr>
                         <tr valign="top">
@@ -233,7 +235,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                                        required
                                 />
                                 <br/>
-                                <p class="description"><?php _e( "Enter the number of days before the expiry notification email to send. Default is 7 days.", 'https_redirection' ); ?></p>
+                                <p class="description"><?php _e( "Set how many days in advance the expiry email should be sent. Default is 7 days.", 'https_redirection' ); ?></p>
                             </td>
                         </tr>
                         <tr valign="top">
@@ -249,7 +251,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                                        value="<?php esc_attr_e( $expiry_notification_email_from ) ?>"
                                 />
                                 <br/>
-                                <p class="description"><?php _e( "This is the email address that will be used to send the email to the recipient. This name and email address will appear in the from field of the email.", 'https_redirection' ); ?></p>
+                                <p class="description"><?php _e( "The email address used as the 'From' address in the notification email.", 'https_redirection' ); ?></p>
                             </td>
                         </tr>
                         <tr valign="top">
@@ -266,7 +268,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                                        required
                                 />
                                 <br/>
-                                <p class="description"><?php _e( "Certificate expiry notification email recipient.", 'https_redirection' ); ?></p>
+                                <p class="description"><?php _e( "Email address where expiry notifications will be sent.", 'https_redirection' ); ?></p>
                             </td>
                         </tr>
                         <tr valign="top">

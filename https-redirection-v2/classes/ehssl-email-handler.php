@@ -71,8 +71,7 @@ class EHSSL_Email_handler {
 		ob_start()
 		?>
         <div style="width: 75%">
-            <a href="#"
-               class="ehssl-toggle toggled-off"> <?php _e( 'Click here to toggle tag hints', 'https_redirection' ) ?></a>
+            <a href="#" class="ehssl-toggle toggled-off"> <?php _e( 'Click here to toggle email merge tag hints', 'https_redirection' ) ?></a>
             <div class="ehssl-tags-table-cont hidden">
                 <table class="ehssl-tags-hint widefat striped">
                     <tbody>

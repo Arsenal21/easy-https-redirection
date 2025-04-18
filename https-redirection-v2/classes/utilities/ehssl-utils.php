@@ -46,9 +46,10 @@ class EHSSL_Utils
 		}
 	}
 
-    public static function get_domain()
-    {
-        
+    /*
+     * Get the current domain name. Example: example.com
+     */
+    public static function get_domain(){
         // Get the home URL
         $home_url = get_home_url();        
 
@@ -56,7 +57,7 @@ class EHSSL_Utils
         $parsed_url = parse_url($home_url);
 
         // Get the host part of the URL
-        $domain = $parsed_url['host'];
+        $domain = isset($parsed_url['host']) ? $parsed_url['host'] : '';
 
         return $domain;
     }
