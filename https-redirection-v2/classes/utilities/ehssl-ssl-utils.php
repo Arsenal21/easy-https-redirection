@@ -14,11 +14,7 @@ class EHSSL_SSL_Utils {
 	public static function get_ssl_info( $domain ) {
 		$cert_info = [];
 
-		if(! EHSSL_Utils::is_domain_accessible($domain)){
-			return $cert_info;
-		}
-
-		$get = stream_context_create( array(
+		$stream_context = stream_context_create( array(
 			"ssl" => array(
 				"capture_peer_cert" => true,
 				// "verify_peer" => false,       // Disable verification for testing
@@ -27,11 +23,16 @@ class EHSSL_SSL_Utils {
 			)
 		) );
 
-		$client = @stream_socket_client( "ssl://" . $domain . ":443", $errno, $errstr, 30, STREAM_CLIENT_CONNECT, $get );
+		$err_str = '';
+		$client = @stream_socket_client( "ssl://" . $domain . ":443", $errno, $err_str, 60, STREAM_CLIENT_CONNECT, $stream_context );
 
 		if ( $client ) {
 			$cert     = stream_context_get_params( $client );
 			$cert_info = openssl_x509_parse( $cert['options']['ssl']['peer_certificate'] );
+		}
+
+		if (!empty($err_str)){
+			EHSSL_Logger::log( $err_str, 4 );
 		}
 
 		return $cert_info;
@@ -152,9 +153,15 @@ class EHSSL_SSL_Utils {
 	public static function check_and_save_current_cert_info() {
 		$domain = self::get_current_domain();
 
+		// Check if manual scan button was clicked. else the method ran using a cron event.
+		if (isset($_POST['ehssl_scan_for_ssl_submit'])){
+			EHSSL_Logger::log( 'Manually Scanning SSL certificate info for domain: ' . $domain, 2 );
+		}
+
 		$cert = self::get_parsed_ssl_info($domain);
 		if (empty($cert)){
 			// No ssl certificate found.
+			EHSSL_Logger::log( "No SSL certificate info found for your current domain '".$domain."' !", 1 );
 			return;
 		}
 
@@ -191,6 +198,8 @@ class EHSSL_SSL_Utils {
 			update_post_meta($post_id, 'expires_on', $cert['expires_on']);
 
 			EHSSL_Logger::log( 'New certificate info captured. ID: ' . $cert['id']);
+		} else {
+			EHSSL_Logger::log( 'Current SSL info already saved. No new SSL certificate info found!', 2);
 		}
 	}
 
@@ -242,6 +251,33 @@ class EHSSL_SSL_Utils {
 			$is_sent = EHSSL_Email_handler::send_expiry_notification_email($cert);
 
 			update_post_meta($post->ID, 'expiry_notification_email_sent', $is_sent);
+		}
+	}
+
+	/**
+	 * Should be used for debug purpose only.
+	 */
+	public static function delete_all_certificate_info() {
+		global $wpdb;
+
+		$post_type = 'ehssl_certs_info';
+
+		// Query to get all post IDs of the specified custom post type.
+		$post_ids = $wpdb->get_col( $wpdb->prepare(
+			"SELECT ID FROM {$wpdb->posts} WHERE post_type = %s",
+			$post_type
+		) );
+
+		if ( $post_ids ) {
+			foreach ( $post_ids as $post_id ) {
+				/**
+				 * wp_delete_post() permanently deletes a post.
+				 * The second parameter, 'true', forces deletion bypassing the Trash.
+				 */
+				wp_delete_post( $post_id, true );
+			}
+
+			EHSSL_Logger::log('Successfully deleted all posts of type: '. $post_type);
 		}
 	}
 
