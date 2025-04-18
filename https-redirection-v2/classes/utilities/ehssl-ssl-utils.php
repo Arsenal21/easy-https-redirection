@@ -199,7 +199,7 @@ class EHSSL_SSL_Utils {
 
 			EHSSL_Logger::log( 'New certificate info captured. ID: ' . $cert['id']);
 		} else {
-			EHSSL_Logger::log( 'Current SSL info already saved. No new SSL certificate info found!', 2);
+			EHSSL_Logger::log( 'Current SSL info already saved. No new SSL certificate info found.', 1);
 		}
 	}
 
@@ -217,11 +217,11 @@ class EHSSL_SSL_Utils {
 
 		$cert = self::get_parsed_ssl_info($domain);
 		if (empty($cert)){
-			// No ssl certificate found.
+			// No SSL certificate found.
 			return;
 		}
 
-		EHSSL_Logger::log( 'Checking if notification email need to be send...', 1);
+		EHSSL_Logger::log( 'Checking if certificate expiry notification email need to be sent...', 1);
 
 		$expiry_timestamp = $cert['expires_on'];
 
@@ -230,7 +230,8 @@ class EHSSL_SSL_Utils {
 		$diff   = $now->diff( $expiry );
 
 		if ( $diff->days > intval($expiry_notification_email_before_days) ) {
-			// Still many days left. Don't send email now.
+			// Still many days left for expiry. Nothing to do.
+			EHSSL_Logger::log( 'Certificate expiry date is more than ' . $expiry_notification_email_before_days . ' days away. No email will be sent.', 1);
 			return;
 		}
 

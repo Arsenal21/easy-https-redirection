@@ -29,11 +29,11 @@ class EHSSL_Email_handler {
 
 		try {
 			wp_mail( $to, $subj, $body, $headers );
-			EHSSL_Logger::log( 'SSL Certificate expiry notification email sent to : ' . $to . ', From email address used: ' . $from );
+			EHSSL_Logger::log( 'SSL certificate expiry notification email sent to : ' . $to . ', From email address used: ' . $from );
 
 			return true;
 		} catch ( \Exception $e ) {
-			EHSSL_Logger::log( 'SSL Certificate expiry notification email couldn\'t be sent to : ' . $to . ', From email address used: ' . $from, 4 );
+			EHSSL_Logger::log( 'SSL certificate expiry notification email couldn\'t be sent to : ' . $to . ', From email address used: ' . $from, 4 );
 		}
 
 		return false;

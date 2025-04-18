@@ -8,7 +8,7 @@ class EHSSL_Logger
     public static $default_log_file = 'log.txt';
     public static $debug_status = array('SUCCESS', 'STATUS', 'NOTICE', 'WARNING', 'FAILURE', 'CRITICAL');
     public static $section_break_marker = "\n----------------------------------------------------------\n\n";
-    public static $log_reset_marker = "-------- Log File Reset --------\n";
+    public static $log_reset_marker = "-------- Log File Reset --------\r\n";
 
     /**
      * Checks whether debug logging is enabled or not.
@@ -67,7 +67,7 @@ class EHSSL_Logger
 
     public static function get_debug_timestamp()
     {
-        return '[' . date('m/d/Y g:i A') . '] - ';
+        return '[' . gmdate( 'm/d/Y h:i:s A' ) . ']';
     }
 
     public static function get_debug_status($level)
@@ -110,7 +110,7 @@ class EHSSL_Logger
         }
 
         $debug_log_file = self::$log_folder_path . '/' . $file_name;
-        $content = self::get_debug_timestamp() . self::$log_reset_marker;
+        $content = self::get_debug_timestamp() . ' ' . self::$log_reset_marker;
         $fp = fopen($debug_log_file, 'w');
         fwrite($fp, $content);
         fclose($fp);
@@ -136,19 +136,18 @@ class EHSSL_Logger
         //Timestamp
         $content = self::get_debug_timestamp();
         //Debug status
-        $content .= self::get_debug_status($level);
-        $content .= ' : ';
+        $content .= '[' . self::get_debug_status($level) . ']';
+        $content .= ' - ';
 
         if (is_array($message)) {
-            // Put the array content into a string.
+            // Print the array content into a string.
             ob_start();
             print_r($message);
-            $var = ob_get_contents();
+            $printed_array = ob_get_contents();
             ob_end_clean();
-
-            $content .= $var . "\n";
+            $content .= $printed_array;
         }else{
-            $content .= $message . "\n";
+            $content .= $message;
         }
 
         $content .= self::get_section_break($section_break);
