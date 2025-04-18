@@ -26,7 +26,7 @@ class EHSSL_Admin_Init
 
 	    // TODO: Need to work on this later.
         // require_once EASY_HTTPS_SSL_PATH."/vendor/autoload.php";
-        // include_once EASY_HTTPS_SSL_PATH . '/classes/ehss-ssl-certificate.php';
+        // include_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-ssl-certificate.php';
     }
 
     public function admin_menu_page_scripts()
