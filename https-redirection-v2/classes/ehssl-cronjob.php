@@ -3,7 +3,7 @@
 class EHSSL_Cronjob{
 
 	public function __construct() {
-		add_action('ehssl_daily_cron_event', array( &$this, 'handle_daily_cron_event' ) );
+		add_action('ehssl_daily_cron_event', array( $this, 'handle_daily_cron_event' ) );
 	}
 
 	public function handle_daily_cron_event(){

@@ -12,11 +12,14 @@ class EHSSL_Admin_Init
     public function __construct()
     {
         $this->admin_includes();
-        add_action('admin_print_scripts', array(&$this, 'admin_menu_page_scripts'));
-        add_action('admin_print_styles', array(&$this, 'admin_menu_page_styles'));
-        add_action('admin_menu', array(&$this, 'create_admin_menus'));
-        add_action('admin_init', array(&$this, 'plugin_admin_init'));
-        add_action('admin_enqueue_scripts', array(&$this, 'plugin_admin_head'));
+        add_action('admin_print_scripts', array($this, 'admin_menu_page_scripts'));
+        add_action('admin_print_styles', array($this, 'admin_menu_page_styles'));
+        add_action('admin_menu', array($this, 'create_admin_menus'));
+        add_action('admin_init', array($this, 'plugin_admin_init'));
+        add_action('admin_enqueue_scripts', array($this, 'plugin_admin_head'));
+
+        //Handle any admin notices.
+        add_action('admin_notices', array($this, 'easy_https_plugin_admin_notices'));
     }
 
     public function admin_includes()
@@ -57,16 +60,16 @@ class EHSSL_Admin_Init
         $menu_icon_url = 'dashicons-lock';
         //$menu_icon_url = EASY_HTTPS_SSL_URL . '/images/plugin-icon.png';
 
-        $this->main_menu_page = add_menu_page(__('Easy HTTPS & SSL', 'https_redirection'), __('Easy HTTPS & SSL', 'https_redirection'), EHSSL_MANAGEMENT_PERMISSION, EHSSL_MAIN_MENU_SLUG, array(&$this, 'handle_dashboard_menu_rendering'), $menu_icon_url);
-        add_submenu_page(EHSSL_MAIN_MENU_SLUG, __('Dashboard', 'https_redirection'), __('Dashboard', 'https_redirection'), EHSSL_MANAGEMENT_PERMISSION, EHSSL_MAIN_MENU_SLUG, array(&$this, 'handle_dashboard_menu_rendering'));
-        add_submenu_page(EHSSL_MAIN_MENU_SLUG, __('Settings', 'https_redirection'), __('Settings', 'https_redirection'), EHSSL_MANAGEMENT_PERMISSION, EHSSL_SETTINGS_MENU_SLUG, array(&$this, 'handle_settings_menu_rendering'));
-        add_submenu_page(EHSSL_MAIN_MENU_SLUG, __('Certificate Expiry', 'https_redirection'), __('Certificate Expiry', 'https_redirection'), EHSSL_MANAGEMENT_PERMISSION, EHSSL_CERTIFICATE_EXPIRY_MENU_SLUG, array(&$this, 'handle_certificate_expiry_menu_rendering'));
+        $this->main_menu_page = add_menu_page(__('Easy HTTPS & SSL', 'https_redirection'), __('Easy HTTPS & SSL', 'https_redirection'), EHSSL_MANAGEMENT_PERMISSION, EHSSL_MAIN_MENU_SLUG, array($this, 'handle_dashboard_menu_rendering'), $menu_icon_url);
+        add_submenu_page(EHSSL_MAIN_MENU_SLUG, __('Dashboard', 'https_redirection'), __('Dashboard', 'https_redirection'), EHSSL_MANAGEMENT_PERMISSION, EHSSL_MAIN_MENU_SLUG, array($this, 'handle_dashboard_menu_rendering'));
+        add_submenu_page(EHSSL_MAIN_MENU_SLUG, __('Settings', 'https_redirection'), __('Settings', 'https_redirection'), EHSSL_MANAGEMENT_PERMISSION, EHSSL_SETTINGS_MENU_SLUG, array($this, 'handle_settings_menu_rendering'));
+        add_submenu_page(EHSSL_MAIN_MENU_SLUG, __('Certificate Expiry', 'https_redirection'), __('Certificate Expiry', 'https_redirection'), EHSSL_MANAGEMENT_PERMISSION, EHSSL_CERTIFICATE_EXPIRY_MENU_SLUG, array($this, 'handle_certificate_expiry_menu_rendering'));
 
 		// TODO: Need to work on this menu.
-		// add_submenu_page(EHSSL_MAIN_MENU_SLUG, __('SSL Management', 'https_redirection'), __('SSL Management', 'https_redirection'), EHSSL_MANAGEMENT_PERMISSION, EHSSL_SSL_MGMT_MENU_SLUG, array(&$this, 'handle_ssl_mgmt_menu_rendering'));
+		// add_submenu_page(EHSSL_MAIN_MENU_SLUG, __('SSL Management', 'https_redirection'), __('SSL Management', 'https_redirection'), EHSSL_MANAGEMENT_PERMISSION, EHSSL_SSL_MGMT_MENU_SLUG, array($this, 'handle_ssl_mgmt_menu_rendering'));
         
         //Keeping the old settings menu for now for backwards compatibility. There is a link to the new settings page in the old settings menu.
-        add_submenu_page('options-general.php', __('HTTPS Redirection', 'https_redirection'), __('HTTPS Redirection', 'https_redirection'), EHSSL_MANAGEMENT_PERMISSION, 'https-redirection', array(&$this, 'handle_settings_menu_rendering_old'));
+        add_submenu_page('options-general.php', __('HTTPS Redirection', 'https_redirection'), __('HTTPS Redirection', 'https_redirection'), EHSSL_MANAGEMENT_PERMISSION, 'https-redirection', array($this, 'handle_settings_menu_rendering_old'));
 
         //Trigger the action for the menu creation.
         do_action('ehssl_admin_menu_created');
@@ -230,6 +233,24 @@ class EHSSL_Admin_Init
 
           // Always exit to avoid further execution
           wp_die();
+    }
+
+    public function easy_https_plugin_admin_notices() {
+        $missing_extensions = EHSSL_Utils::get_missing_extensions();
+        if (!empty($missing_extensions)){
+            $output = '<div class="notice notice-error">';
+            $output .= '<p><b>'.__('NOTE:', 'https_redirection').'</b> ';
+            $output .= __('The following php extensions are missing which is required by this plugin to work properly. Contact you hosting provider enable this.', 'https_redirection');
+            $output .= '<ol>';
+            foreach ($missing_extensions as $ext){
+                $output .= '<li>'. $ext .'</li>';
+            }
+            $output .= '</ol>';
+            $output .= '</p>';
+            $output .= '</div>';
+
+            echo $output;
+        }
     }
 
 } //End of class
