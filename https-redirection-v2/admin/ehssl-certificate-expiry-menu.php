@@ -72,10 +72,20 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
 			echo '<div class="notice notice-success"><p>'. __('SSL certificate scan completed successfully.', 'https_redirection') .'</p></div>';
 		}
 
-        // TODO: debug purpose only
-        //if (isset($_GET['delete-certs'])){
-        //    EHSSL_SSL_Utils::delete_all_certificate_info();
-        //}
+		if ( isset( $_POST['ehssl_delete_all_cert_info_submit'] ) ){
+
+			if (!check_admin_referer('ehssl_delete_all_cert_info_nonce')){
+				wp_die('Nonce verification failed!');
+			}
+
+			$is_deleted = EHSSL_SSL_Utils::delete_all_certificate_info();
+
+            if ($is_deleted){
+			    echo '<div class="notice notice-success"><p>'. __('SSL certificate info was deleted successfully.', 'https_redirection') .'</p></div>';
+            } else {
+			    echo '<div class="notice notice-info"><p>'. __('No saved SSL certificate info was detected for deletion.', 'https_redirection') .'</p></div>';
+            }
+		}
 
         $certs_info = EHSSL_SSL_Utils::get_all_saved_certificates_info();
 		?>
@@ -84,16 +94,6 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                 <label for="title"><?php _e( "Certificates", 'https_redirection' ); ?></label>
             </h3>
             <div class="inside">
-                <form action="" method="post">
-		            <?php wp_nonce_field('ehssl_scan_for_ssl_nonce') ?>
-
-                    <div class="ehssl-blue-box">
-                        <div><?php _e('Click the Scan button to manually scan for available SSL certificates.', 'https_redirection') ?></div>
-                        <br>
-                        <input type="submit" class="button-primary" value="<?php _e('Scan Now', 'https_redirection') ?>" name="ehssl_scan_for_ssl_submit">
-                    </div>
-                </form>
-
                 <?php if (!empty($certs_info)) { ?>
                 <table class="widefat striped">
                     <thead>
@@ -126,6 +126,43 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                     <?php _e('No SSL certificate information found.', 'https_redirection') ?>
                 </p>
                 <?php } ?>
+            </div><!-- end of inside -->
+        </div><!-- end of postbox -->
+
+        <div class="postbox">
+            <h3 class="hndle">
+                <label for="title"><?php _e( "Certificate Actions", 'https_redirection' ); ?></label>
+            </h3>
+            <div class="inside">
+                <div class="">
+                    <form action="" method="post">
+                        <div><?php _e('Click the Scan button to manually scan for available SSL certificates.', 'https_redirection') ?></div>
+                        <br>
+                        <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('ehssl_scan_for_ssl_nonce') ?>">
+                        <input type="submit"
+                               class="button-primary"
+                               value="<?php _e('Scan Now', 'https_redirection') ?>"
+                               name="ehssl_scan_for_ssl_submit"
+                        >
+                    </form>
+                </div>
+
+                <br>
+
+                <div class="">
+                    <form action="" method="post" onsubmit="return confirm('<?php _e('Do you really want to delete all saved SSL info?', 'https_redirection') ?>');">
+                        <div><?php _e('Delete all SSL certificates info.', 'https_redirection') ?></div>
+                        <br>
+                        <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('ehssl_delete_all_cert_info_nonce') ?>">
+                        <input type="submit"
+                               class="button-secondary"
+                               style="border-color: #CC0000; color: #CC0000"
+                               value="<?php _e('Delete All SSL Info', 'https_redirection') ?>"
+                               name="ehssl_delete_all_cert_info_submit"
+                        >
+                    </form>
+                </div>
+
             </div><!-- end of inside -->
         </div><!-- end of postbox -->
 		<?php
