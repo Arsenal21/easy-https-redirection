@@ -48,7 +48,7 @@ if ( !class_exists('Easy_HTTPS_SSL') ) {
         public function define_constants() {
             define('EASY_HTTPS_SSL_URL', $this->plugin_url());
             define('EASY_HTTPS_SSL_PATH', $this->plugin_path());
-            define('EHSSL_TEXT_DOMAIN', 'https_redirection');
+            define('EHSSL_TEXT_DOMAIN', 'https-redirection');
             define('EHSSL_MANAGEMENT_PERMISSION', 'add_users');
             define('EHSSL_MENU_SLUG_PREFIX', 'ehssl');
             define('EHSSL_MAIN_MENU_SLUG', 'ehssl');
@@ -102,7 +102,7 @@ if ( !class_exists('Easy_HTTPS_SSL') ) {
         public function ehssl_load_language() {
             // Internationalization.
             // A better practice for text domain is to use dashes instead of underscores.
-            load_plugin_textdomain('https_redirection', false, EASY_HTTPS_SSL_PATH . '/languages/');
+            load_plugin_textdomain('https-redirection', false, EASY_HTTPS_SSL_PATH . '/languages/');
         }
 
         public function plugins_loaded_handler() { 

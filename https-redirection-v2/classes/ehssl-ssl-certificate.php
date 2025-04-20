@@ -70,7 +70,7 @@ class EHSSL_SSL_Certificate
                 // After exposing the challenges (made accessible through HTTP or DNS) we should perform a self test just to be sure it works before asking Let's Encrypt to validate ownership.
                 if (!$client->selfTest($authorization, Afosto\Acme\Client::VALIDATION_HTTP)) {
                     EHSSL_Logger::log("Could not verify ownership via HTTP");
-                    throw new \Exception(__('Could not verify ownership via HTTP', 'https_redirection'));
+                    throw new \Exception(__('Could not verify ownership via HTTP', 'https-redirection'));
                 }
             }
 
@@ -101,7 +101,7 @@ class EHSSL_SSL_Certificate
                 return 'SSL Certificate generated successfully! Download certificate now. Certificate will expire on: ' . $certificate->getExpiryDate()->format('Y-m-d H:i:s');
             }
             EHSSL_Logger::log("SSL Certificate installation failed.");
-            return new WP_Error("1003", __("SSL Certificate installation failed. Check the logs for details.", 'https_redirection'));
+            return new WP_Error("1003", __("SSL Certificate installation failed. Check the logs for details.", 'https-redirection'));
         } catch (Exception $ex) {
             EHSSL_Logger::log("Exception Raised:" . $ex->getMessage());
             return new WP_Error("1004", $ex->getMessage());
@@ -121,7 +121,7 @@ class EHSSL_SSL_Certificate
 
         // Check if the certificate and private key files exist.
         if (!file_exists($certificate_file) || !file_exists($private_key_file) || !file_exists($ca_bundle) || !file_exists($certificate_expiry_file)) {
-            return new WP_Error('file_not_found', __('Certificate or private key file not found. Please generate a certificate first!', 'https_redirection'));
+            return new WP_Error('file_not_found', __('Certificate or private key file not found. Please generate a certificate first!', 'https-redirection'));
         }
 
         // Convert file system paths to URLs.
@@ -152,14 +152,14 @@ class EHSSL_SSL_Certificate
         if (!is_dir($acme_challenge_dir_path)) {
             if (!mkdir($acme_challenge_dir_path, 0755, true)) {
                 EHSSL_Logger::log("Failed to create the acme-challenge directory");
-                return new WP_Error("1001", __("Failed to create the acme-challenge directory", 'https_redirection'));
+                return new WP_Error("1001", __("Failed to create the acme-challenge directory", 'https-redirection'));
             }
         }
 
         if (!is_dir($certificate_dir_path)) {
             if (!mkdir($certificate_dir_path, 0755, true)) {
                 EHSSL_Logger::log("Failed to create the certificate directory");
-                return new WP_Error("1002", __("Failed to create the certificate directory", 'https_redirection'));
+                return new WP_Error("1002", __("Failed to create the certificate directory", 'https-redirection'));
             }
         }
 
