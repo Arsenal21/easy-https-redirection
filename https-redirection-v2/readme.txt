@@ -113,6 +113,16 @@ Here is an example for German language files.
 
 == Changelog ==
 
+= v2.0.0 =
+- The plugin has gone through significant updates and improvements in this version.
+- If you have any issues after you upgrade to this version, please roll back to the previous version and contact us for support.
+- Here is the download link for the previous version: https://downloads.wordpress.org/plugin/https-redirection.1.9.2.zip
+- The plugin now has it's own admin menu labeled "Easy HTTPS & SSL".
+- Added a new option to send SSL expiry notifications to a specific email address.
+- Added a new option to specify how many days in advance the notification should be sent.
+- Added debug logging feature.
+- Updated the translation POT file.
+
 = v1.9.2 =
 - Added rule to handle sites that are sitting behind a reverse-proxy. Thanks to @canadiannaginata for pointing it out.
 

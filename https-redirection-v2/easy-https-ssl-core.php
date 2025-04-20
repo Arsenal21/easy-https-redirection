@@ -48,7 +48,6 @@ if ( !class_exists('Easy_HTTPS_SSL') ) {
         public function define_constants() {
             define('EASY_HTTPS_SSL_URL', $this->plugin_url());
             define('EASY_HTTPS_SSL_PATH', $this->plugin_path());
-            define('EHSSL_TEXT_DOMAIN', 'https-redirection');
             define('EHSSL_MANAGEMENT_PERMISSION', 'add_users');
             define('EHSSL_MENU_SLUG_PREFIX', 'ehssl');
             define('EHSSL_MAIN_MENU_SLUG', 'ehssl');
