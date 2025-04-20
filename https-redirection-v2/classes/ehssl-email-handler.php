@@ -71,45 +71,45 @@ class EHSSL_Email_handler {
 		ob_start()
 		?>
         <div style="width: 75%">
-            <a href="#" class="ehssl-toggle toggled-off"> <?php _e( 'Click here to toggle email merge tag hints', 'https_redirection' ) ?></a>
+            <a href="#" class="ehssl-toggle toggled-off"> <?php _e( 'Click here to toggle email merge tag hints', 'https-redirection' ) ?></a>
             <div class="ehssl-tags-table-cont hidden">
                 <table class="ehssl-tags-hint widefat striped">
                     <tbody>
                     <tr>
                         <td class="ehssl-tag-name"><b>{label}</b></td>
-                        <td class="ehssl-tag-descr"><?php _e('The SSL certificate label', 'https_redirection') ?></td>
+                        <td class="ehssl-tag-descr"><?php _e('The SSL certificate label', 'https-redirection') ?></td>
                     </tr>
                     <tr>
                         <td class="ehssl-tag-name"><b>{issuer}</b></td>
-                        <td class="ehssl-tag-descr"><?php _e('The issuer of SSL certificate', 'https_redirection') ?></td>
+                        <td class="ehssl-tag-descr"><?php _e('The issuer of SSL certificate', 'https-redirection') ?></td>
                     </tr>
                     <tr>
                         <td class="ehssl-tag-name"><b>{issue_date}</b></td>
-                        <td class="ehssl-tag-descr"><?php _e('The issuing date of SSL certificate.', 'https_redirection') ?></td>
+                        <td class="ehssl-tag-descr"><?php _e('The issuing date of SSL certificate.', 'https-redirection') ?></td>
                     </tr>
                     <tr>
                         <td class="ehssl-tag-name"><b>{issue_time}</b></td>
-                        <td class="ehssl-tag-descr"><?php _e('The issuing time of SSL certificate.', 'https_redirection') ?></td>
+                        <td class="ehssl-tag-descr"><?php _e('The issuing time of SSL certificate.', 'https-redirection') ?></td>
                     </tr>
                     <tr>
                         <td class="ehssl-tag-name"><b>{issue_datetime}</b></td>
-                        <td class="ehssl-tag-descr"><?php _e('The issuing datetime of SSL certificate.', 'https_redirection') ?></td>
+                        <td class="ehssl-tag-descr"><?php _e('The issuing datetime of SSL certificate.', 'https-redirection') ?></td>
                     </tr>
                     <tr>
                         <td class="ehssl-tag-name"><b>{expiry_date}</b></td>
-                        <td class="ehssl-tag-descr"><?php _e('The expiry date of SSL certificate.', 'https_redirection') ?></td>
+                        <td class="ehssl-tag-descr"><?php _e('The expiry date of SSL certificate.', 'https-redirection') ?></td>
                     </tr>
                     <tr>
                         <td class="ehssl-tag-name"><b>{expiry_time}</b></td>
-                        <td class="ehssl-tag-descr"><?php _e('The expiry time of SSL certificate.', 'https_redirection') ?></td>
+                        <td class="ehssl-tag-descr"><?php _e('The expiry time of SSL certificate.', 'https-redirection') ?></td>
                     </tr>
                     <tr>
                         <td class="ehssl-tag-name"><b>{expiry_datetime}</b></td>
-                        <td class="ehssl-tag-descr"><?php _e('The expiry datetime of SSL certificate.', 'https_redirection') ?></td>
+                        <td class="ehssl-tag-descr"><?php _e('The expiry datetime of SSL certificate.', 'https-redirection') ?></td>
                     </tr>
                     <tr>
                         <td class="ehssl-tag-name"><b>{status}</b></td>
-                        <td class="ehssl-tag-descr"><?php _e('The current status of SSL certificate.', 'https_redirection') ?></td>
+                        <td class="ehssl-tag-descr"><?php _e('The current status of SSL certificate.', 'https-redirection') ?></td>
                     </tr>
                     </tbody>
                 </table>

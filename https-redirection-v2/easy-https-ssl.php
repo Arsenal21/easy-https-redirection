@@ -44,7 +44,7 @@ function ehssl_plugin_action_links($links, $file)
     }
 
     if ($file == $this_plugin) {
-        $settings_link = '<a href="admin.php?page=ehssl_settings">' . __('Settings', 'https_redirection') . '</a>';
+        $settings_link = '<a href="admin.php?page=ehssl_settings">' . __('Settings', 'https-redirection') . '</a>';
         array_unshift($links, $settings_link);
     }
     return $links;
@@ -58,7 +58,7 @@ function ehssl_register_plugin_links($links, $file)
 {
     $base = plugin_basename(__FILE__);
     if ($file == $base) {
-        $links[] = '<a href="admin.php?page=ehssl_settings">' . __('Settings', 'https_redirection') . '</a>';
+        $links[] = '<a href="admin.php?page=ehssl_settings">' . __('Settings', 'https-redirection') . '</a>';
     }
     return $links;
 }

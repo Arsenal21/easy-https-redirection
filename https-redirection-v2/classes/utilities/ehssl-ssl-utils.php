@@ -278,8 +278,14 @@ class EHSSL_SSL_Utils {
 				wp_delete_post( $post_id, true );
 			}
 
-			EHSSL_Logger::log('Successfully deleted all posts of type: '. $post_type);
+			EHSSL_Logger::log('SSL certificate info was deleted successfully.');
+
+			return true;
 		}
+
+		// No saved ssl certificates info found.
+		EHSSL_Logger::log('No saved SSL certificate info was detected for deletion.');
+		return false;
 	}
 
 }

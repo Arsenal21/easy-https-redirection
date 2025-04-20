@@ -39,7 +39,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
 
         ?>
         <div class="wrap">
-            <h2><?php _e("Settings", 'https_redirection')?></h2>
+            <h2><?php _e("Settings", 'https-redirection')?></h2>
             <h2 class="nav-tab-wrapper"><?php $this->render_page_tabs();?></h2>
             <div id="poststuff"><div id="post-body">
             <?php
@@ -86,7 +86,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
             // Update options in the database.
             update_option('httpsrdrctn_options', $settings, '', 'yes');
 
-            echo '<div class="notice notice-success"><p>'.__("Settings Saved.", 'https_redirection').'</p></div>';
+            echo '<div class="notice notice-success"><p>'.__("Settings Saved.", 'https-redirection').'</p></div>';
 
             $httpsrdrctn_obj = new EHSSL_Htaccess();
             $httpsrdrctn_obj->write_to_htaccess();
@@ -112,7 +112,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
 
             ?>
             <div class="notice notice-success">
-                <p><?php _e("Settings Saved.", 'https_redirection');?></p>
+                <p><?php _e("Settings Saved.", 'https-redirection');?></p>
             </div>
             <?php
         }
@@ -122,15 +122,15 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
         ?>
         <div class="ehssl-yellow-box">
             <p>
-			    <?php echo sprintf(__("When you enable the HTTPS redirection, the plugin will force redirect the URL to the HTTPS version of the URL. So before enabling this plugin's feature, visit your site's HTTPS URL %s to make sure the page loads correctly. Otherwise you may get locked out if your SSL certificate is not installed correctly on your site or the HTTPS URL is not working and this plugin is auto redirecting to the HTTPS URL.", 'https_redirection'), '<a href="' . $siteSSLurl . '" target="_blank">' . $siteSSLurl . '</a>'); ?>
+			    <?php echo sprintf(__("When you enable the HTTPS redirection, the plugin will force redirect the URL to the HTTPS version of the URL. So before enabling this plugin's feature, visit your site's HTTPS URL %s to make sure the page loads correctly. Otherwise you may get locked out if your SSL certificate is not installed correctly on your site or the HTTPS URL is not working and this plugin is auto redirecting to the HTTPS URL.", 'https-redirection'), '<a href="' . $siteSSLurl . '" target="_blank">' . $siteSSLurl . '</a>'); ?>
             </p>
             <p>
-                <span style="font-weight:bold; color:red;"><?php _e('Important!', 'https_redirection');?></span>
-			    <?php _e("If you're using caching plugins similar to W3 Total Cache or WP Super Cache, you need to clear their cache after you enable or disable automatic redirection option. Failing to do so may result in mixed content warning from browser.", 'https_redirection');?>
+                <span style="font-weight:bold; color:red;"><?php _e('Important!', 'https-redirection');?></span>
+			    <?php _e("If you're using caching plugins similar to W3 Total Cache or WP Super Cache, you need to clear their cache after you enable or disable automatic redirection option. Failing to do so may result in mixed content warning from browser.", 'https-redirection');?>
             </p>
         </div>
         <div class="postbox">
-            <h3 class="hndle"><label for="title"><?php _e("HTTPS Redirection", 'https_redirection');?></label></h3>
+            <h3 class="hndle"><label for="title"><?php _e("HTTPS Redirection", 'https-redirection');?></label></h3>
             <div class="inside">
 			    <?php
 			    // Display form on the setting page.
@@ -139,7 +139,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
 				    ?>
                     <div id="httpsrdrctn_settings_notice" class="updated fade" style="display:none">
                         <p>
-                            <strong><?php _e("Notice:", 'https_redirection');?></strong><?php _e("The plugin's settings have been changed. In order to save them please don't forget to click the 'Save Changes' button.", 'https_redirection');?>
+                            <strong><?php _e("Notice:", 'https-redirection');?></strong><?php _e("The plugin's settings have been changed. In order to save them please don't forget to click the 'Save Changes' button.", 'https-redirection');?>
                         </p>
                     </div>
 
@@ -147,13 +147,13 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                         <div style="position: relative">
                             <table class="form-table">
                                 <tr valign="top">
-                                    <th scope="row"><?php _e('Enable Automatic Redirection to HTTPS', 'https_redirection');?></th>
+                                    <th scope="row"><?php _e('Enable Automatic Redirection to HTTPS', 'https-redirection');?></th>
                                     <td>
                                         <label>
                                             <input type="checkbox" id="httpsrdrctn-checkbox" name="httpsrdrctn_https" value="1" <?php if ('1' == $settings['https']) {echo "checked=\"checked\" ";}?> />
                                         </label>
                                         <br />
-                                        <p class="description"><?php _e("Use this option to make your webpage(s) load in HTTPS version only. If someone enters a non-https URL in the browser's address bar then the plugin will automatically redirect to the HTTPS version of that URL.", 'https_redirection');?></p>
+                                        <p class="description"><?php _e("Use this option to make your webpage(s) load in HTTPS version only. If someone enters a non-https URL in the browser's address bar then the plugin will automatically redirect to the HTTPS version of that URL.", 'https-redirection');?></p>
                                     </td>
                                 </tr>
                             </table>
@@ -164,21 +164,21 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                         <div style="position: relative">
                             <table class="form-table">
                                 <tr>
-                                    <th scope="row"><?php _e('Apply HTTPS Redirection To:', 'https_redirection');?></th>
+                                    <th scope="row"><?php _e('Apply HTTPS Redirection To:', 'https-redirection');?></th>
                                     <td>
                                         <div style="margin-bottom: 6px">
-                                            <label><input type="radio" name="httpsrdrctn_https_domain" value="1" <?php if ('1' == $settings['https_domain']) {echo "checked=\"checked\" ";}?> /> <?php _e('The whole domain', 'https_redirection');?></label>
+                                            <label><input type="radio" name="httpsrdrctn_https_domain" value="1" <?php if ('1' == $settings['https_domain']) {echo "checked=\"checked\" ";}?> /> <?php _e('The whole domain', 'https-redirection');?></label>
                                         </div>
                                         <div style="margin-bottom: 6px">
-                                            <label><input type="radio" name="httpsrdrctn_https_domain" value="0" <?php if ('0' == $settings['https_domain']) {echo "checked=\"checked\" ";}?> /> <?php _e('A few pages', 'https_redirection');?></label>
+                                            <label><input type="radio" name="httpsrdrctn_https_domain" value="0" <?php if ('0' == $settings['https_domain']) {echo "checked=\"checked\" ";}?> /> <?php _e('A few pages', 'https-redirection');?></label>
                                         </div>
 									    <?php foreach ($settings['https_pages_array'] as $https_page) { ?>
                                             <div style="margin-bottom: 5px">
-											    <?php echo str_replace("http://", "https://", home_url()); ?>/<input type="text" name="httpsrdrctn_https_pages_array[]" value="<?php echo $https_page; ?>" /> <span class="button-secondary rewrite_item_delete_btn"><i class="dashicons dashicons-trash"></i></span> <span class="rewrite_item_blank_error"><?php _e('Please enter a page slug value in the field before adding it.', 'https_redirection');?></span>
+											    <?php echo str_replace("http://", "https://", home_url()); ?>/<input type="text" name="httpsrdrctn_https_pages_array[]" value="<?php echo $https_page; ?>" /> <span class="button-secondary rewrite_item_delete_btn"><i class="dashicons dashicons-trash"></i></span> <span class="rewrite_item_blank_error"><?php _e('Please enter a page slug value in the field before adding it.', 'https-redirection');?></span>
                                             </div>
 									    <?php } ?>
                                         <div class="rewrite_new_item">
-										    <?php echo str_replace("http://", "https://", home_url()); ?>/<input type="text" name="httpsrdrctn_https_pages_array[]" placeholder="<?php _e('Enter the page slug','https_redirection'); ?>" value="" /> <span class="button-secondary rewrite_item_add_btn"><i class="dashicons dashicons-plus-alt2"></i></span> <span class="rewrite_item_blank_error"><?php _e('Please enter a page slug value in the field before adding it.', 'https_redirection');?></span>
+										    <?php echo str_replace("http://", "https://", home_url()); ?>/<input type="text" name="httpsrdrctn_https_pages_array[]" placeholder="<?php _e('Enter the page slug','https-redirection'); ?>" value="" /> <span class="button-secondary rewrite_item_add_btn"><i class="dashicons dashicons-plus-alt2"></i></span> <span class="rewrite_item_blank_error"><?php _e('Please enter a page slug value in the field before adding it.', 'https-redirection');?></span>
                                         </div>
                                     </td>
                                 </tr>
@@ -216,57 +216,57 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                     </style>
 
                     <div class="ehssl-red-box">
-                        <p><strong><?php _e("Notice:", 'https_redirection');?></strong> <?php _e("It is very important to be extremely attentive when making changes to .htaccess file.", 'https_redirection');?></p>
-                        <p><?php _e('If after making changes your site stops functioning, do the following:', 'https_redirection');?></p>
-                        <p><?php _e('Step #1: Open .htaccess file in the root directory of the WordPress install and delete everything between the following two lines', 'https_redirection');?></p>
+                        <p><strong><?php _e("Notice:", 'https-redirection');?></strong> <?php _e("It is very important to be extremely attentive when making changes to .htaccess file.", 'https-redirection');?></p>
+                        <p><?php _e('If after making changes your site stops functioning, do the following:', 'https-redirection');?></p>
+                        <p><?php _e('Step #1: Open .htaccess file in the root directory of the WordPress install and delete everything between the following two lines', 'https-redirection');?></p>
                         <p style="border: 1px solid #ccc; padding: 10px;">
                             # BEGIN HTTPS Redirection Plugin<br />
                             # END HTTPS Redirection Plugin
                         </p>
-                        <p><?php _e('Step #2: Save the htaccess file (this will erase any change this plugin made to that file).', 'https_redirection');?></p>
-                        <p><?php _e("Step #3: Deactivate the plugin or rename this plugin's folder (which will deactivate the plugin).", 'https_redirection');?></p>
+                        <p><?php _e('Step #2: Save the htaccess file (this will erase any change this plugin made to that file).', 'https-redirection');?></p>
+                        <p><?php _e("Step #3: Deactivate the plugin or rename this plugin's folder (which will deactivate the plugin).", 'https-redirection');?></p>
 
-                        <p><?php _e('The changes will be applied immediately after saving the changes, if you are not sure - do not click the "Save changes" button.', 'https_redirection');?></p>
+                        <p><?php _e('The changes will be applied immediately after saving the changes, if you are not sure - do not click the "Save changes" button.', 'https-redirection');?></p>
                     </div>
 
 			    <?php } else {?>
                     <!-- pretty permalink is NOT enabled. This plugin can't work. -->
                     <div class="error">
-                        <p><?php _e('HTTPS redirection only works if you have pretty permalinks enabled.', 'https_redirection');?></p>
-                        <p><?php _e('To enable pretty permalinks go to <em>Settings > Permalinks</em> and select any option other than "default".', 'https_redirection');?></p>
-                        <p><a href="options-permalink.php"><?php _e('Enable Permalinks', 'https_redirection');?></a></p>
+                        <p><?php _e('HTTPS redirection only works if you have pretty permalinks enabled.', 'https-redirection');?></p>
+                        <p><?php _e('To enable pretty permalinks go to <em>Settings > Permalinks</em> and select any option other than "default".', 'https-redirection');?></p>
+                        <p><a href="options-permalink.php"><?php _e('Enable Permalinks', 'https-redirection');?></a></p>
                     </div>
 			    <?php }?>
             </div>
         </div>
         <div class="postbox">
-            <h3 class="hndle"><label for="title"><?php _e("Debug Logging", 'https_redirection');?></label></h3>
+            <h3 class="hndle"><label for="title"><?php _e("Debug Logging", 'https-redirection');?></label></h3>
             <div class="inside">
             <p>
-                <?php _e('Debug logging can be useful to troubleshoot issues on your site. keep it disabled unless you are troubleshooting.', 'https_redirection');?>
+                <?php _e('Debug logging can be useful to troubleshoot issues on your site. keep it disabled unless you are troubleshooting.', 'https-redirection');?>
             </p>
             <form id="ehssl_debug_settings_form" method="post" action="">
                 <table class="form-table">
                     <tr valign="top">
                         <th scope="row">
                             <label for="ehssl-debug-enable-checkbox">
-                                <?php _e('Enable Debug Logging', 'https_redirection');?>
+                                <?php _e('Enable Debug Logging', 'https-redirection');?>
                             </label>
                         </th>
                         <td>
                             <input type="checkbox" id="ehssl-debug-enable-checkbox" name="enable_debug_logging" value="1" <?php if ('1' == $is_debug_logging_enabled) {echo "checked=\"checked\" ";}?> />
                             <br />
-                            <p class="description"><?php _e("Check this option to enable debug logging.", 'https_redirection');?></p>
+                            <p class="description"><?php _e("Check this option to enable debug logging.", 'https-redirection');?></p>
                             <p class="description">
                                 <a href="<?php echo wp_nonce_url(get_admin_url() . '?ehssl-debug-action=view_log', 'ehssl_view_log_nonce'); ?>" target="_blank">
-                                    <?php _e('Click here', 'https_redirection')?>
+                                    <?php _e('Click here', 'https-redirection')?>
                                 </a>
-                                <?php _e(' to view log file.', 'https_redirection');?>
+                                <?php _e(' to view log file.', 'https-redirection');?>
                                 <br>
                                 <a id="ehssl-reset-log" href="#0" style="color: red">
-                                    <?php _e('Click here', 'https_redirection');?>
+                                    <?php _e('Click here', 'https-redirection');?>
                                 </a>
-                                <?php _e(' to reset log file.', 'https_redirection');?>
+                                <?php _e(' to reset log file.', 'https-redirection');?>
                             </p>
                         </td>
                     </tr>
@@ -290,9 +290,9 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                             },
                             function( result ) {
                                 if ( result === '1' ) {
-                                    alert( wp.i18n.__("Log file has been reset.", "<?php echo 'https_redirection' ?>") );
+                                    alert( '<?php _e('Log file has been reset.', 'https-redirection') ?>' );
                                 } else {
-                                    alert(  wp.i18n.__('Error trying to reset log: ' + result , "<?php echo 'https_redirection' ?>"));
+                                    alert( '<?php _e('Error trying to reset log: ' , 'https-redirection') ?>' + result );
                                 }
                             } );
                 } );
@@ -313,31 +313,31 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
 
             ?>
             <div class="notice notice-success">
-                <p><?php _e("Settings Saved.", 'https_redirection');?></p>
+                <p><?php _e("Settings Saved.", 'https-redirection');?></p>
             </div>
             <?php
         }
         ?>
         <div class="postbox">
-            <h3 class="hndle"><label for="title"><?php _e("Static Resources", 'https_redirection');?></label></h3>
+            <h3 class="hndle"><label for="title"><?php _e("Static Resources", 'https-redirection');?></label></h3>
             <div class="inside">
                 <?php if(!$is_https_redirection_enabled){ ?>
                     <div class="ehssl-yellow-box">
                         <p>
-                            <?php _e("HTTPS redirection is turned off. Turn it on first to change these settings below!", 'https_redirection');?>
+                            <?php _e("HTTPS redirection is turned off. Turn it on first to change these settings below!", 'https-redirection');?>
                         </p>
                     </div>
                 <?php } ?>
                 <form action="" method="POST">
                     <table class="form-table">
                         <tr valign="top">
-                            <th scope="row"><?php _e('Force Resources to Use HTTPS URL', 'https_redirection');?></th>
+                            <th scope="row"><?php _e('Force Resources to Use HTTPS URL', 'https-redirection');?></th>
                             <td>
                                 <label>
                                     <input type="checkbox" <?php echo !$is_https_redirection_enabled ? "disabled" : ''; ?> name="httpsrdrctn_force_resources" value="1" <?php echo (isset($httpsrdrctn_options['force_resources']) && $httpsrdrctn_options['force_resources'] == '1') ? 'checked="checked"' : ''; ?> />
                                 </label>
                                 <br />
-                                <p class="description"><?php _e('When checked, the plugin will force load HTTPS URL for any static resources in your content. Example: if you have have an image embedded in a post with a NON-HTTPS URL, this option will change that to a HTTPS URL.', 'https_redirection');?></p>
+                                <p class="description"><?php _e('When checked, the plugin will force load HTTPS URL for any static resources in your content. Example: if you have have an image embedded in a post with a NON-HTTPS URL, this option will change that to a HTTPS URL.', 'https-redirection');?></p>
                             </td>
                         </tr>
                     </table>
