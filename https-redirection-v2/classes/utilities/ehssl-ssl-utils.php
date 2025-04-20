@@ -155,7 +155,7 @@ class EHSSL_SSL_Utils {
 
 		// Check if manual scan button was clicked. else the method ran using a cron event.
 		if (isset($_POST['ehssl_scan_for_ssl_submit'])){
-			EHSSL_Logger::log( 'Manually Scanning SSL certificate info for domain: ' . $domain, 2 );
+			EHSSL_Logger::log( 'Manually Scanning SSL certificate info for domain: ' . $domain);
 		}
 
 		$cert = self::get_parsed_ssl_info($domain);
@@ -177,7 +177,7 @@ class EHSSL_SSL_Utils {
 		) );
 
 		if ( empty( $posts ) ) {
-			EHSSL_Logger::log( 'Scanning for SSL certificate info...', 1 );
+			EHSSL_Logger::log( 'Scanning for SSL certificate info...');
 
 			$post_id = wp_insert_post( array(
 				'post_title'    => $cert_hash,
@@ -199,7 +199,7 @@ class EHSSL_SSL_Utils {
 
 			EHSSL_Logger::log( 'New certificate info captured. ID: ' . $cert['id']);
 		} else {
-			EHSSL_Logger::log( 'Current SSL info already saved. No new SSL certificate info found.', 1);
+			EHSSL_Logger::log( 'Current SSL info already saved. No new SSL certificate info found.');
 		}
 	}
 
@@ -221,7 +221,7 @@ class EHSSL_SSL_Utils {
 			return;
 		}
 
-		EHSSL_Logger::log( 'Checking if certificate expiry notification email need to be sent...', 1);
+		EHSSL_Logger::log( 'Checking if certificate expiry notification email need to be sent...');
 
 		$expiry_timestamp = $cert['expires_on'];
 
@@ -231,7 +231,7 @@ class EHSSL_SSL_Utils {
 
 		if ( $diff->days > intval($expiry_notification_email_before_days) ) {
 			// Still many days left for expiry. Nothing to do.
-			EHSSL_Logger::log( 'Certificate expiry date is more than ' . $expiry_notification_email_before_days . ' days away. No email will be sent.', 1);
+			EHSSL_Logger::log( 'Certificate expiry date is more than ' . $expiry_notification_email_before_days . ' days away. No email will be sent.');
 			return;
 		}
 

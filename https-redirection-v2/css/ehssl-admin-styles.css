@@ -171,22 +171,22 @@ table.ehssl-tags-hint td.ehssl-tag-descr {
 
 /*----- END Email tags hint ----- */
 
-.ehssl-settings-text-field-cat-1{
+.ehssl-settings-field-cat-1{
     width: 70px;
 }
 
-.ehssl-settings-text-field-cat-2{
+.ehssl-settings-field-cat-2{
     width: 400px;
 }
 
-.ehssl-settings-text-field-cat-3{
+.ehssl-settings-field-cat-3{
     width: 650px;
 }
 
 @media only screen and (max-width: 782px){
-    .ehssl-settings-text-field-cat-1,
-    .ehssl-settings-text-field-cat-2,
-    .ehssl-settings-text-field-cat-3{
+    .ehssl-settings-field-cat-1,
+    .ehssl-settings-field-cat-2,
+    .ehssl-settings-field-cat-3{
         width: 100%;
     }
 }

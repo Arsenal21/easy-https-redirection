@@ -70,7 +70,7 @@ class EHSSL_Email_handler {
 	public static function get_merge_tags_hints() {
 		ob_start()
 		?>
-        <div style="width: 75%">
+        <div class="ehssl-settings-field-cat-3">
             <a href="#" class="ehssl-toggle toggled-off"> <?php _e( 'Click here to toggle email merge tag hints', 'https-redirection' ) ?></a>
             <div class="ehssl-tags-table-cont hidden">
                 <table class="ehssl-tags-hint widefat striped">
