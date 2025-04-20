@@ -213,7 +213,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                                 </label>
                             </th>
                             <td>
-                                <select name="ehssl_expiry_notification_email_content_type" class="ehssl-width-default">
+                                <select name="ehssl_expiry_notification_email_content_type">
                                     <option value="text" <?php echo ($expiry_notification_email_content_type == 'text') ? 'selected' : '' ?>><?php _e('Plain Text', 'https_redirection') ?></option>
                                     <option value="html" <?php echo ($expiry_notification_email_content_type == 'html') ? 'selected' : '' ?>><?php _e('HTML', 'https_redirection') ?></option>
                                 </select>
@@ -230,7 +230,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                             <td>
                                 <input type="number"
                                        name="ehssl_expiry_notification_email_before_days"
-                                       class="ehssl-width-default"
+                                       class="ehssl-settings-text-field-cat-1"
                                        value="<?php esc_attr_e( $expiry_notification_email_before_days ) ?>"
                                        required
                                 />
@@ -247,7 +247,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                             <td>
                                 <input type="text"
                                        name="ehssl_expiry_notification_email_from"
-                                       class="ehssl-width-50"
+                                       class="ehssl-settings-text-field-cat-2"
                                        value="<?php esc_attr_e( $expiry_notification_email_from ) ?>"
                                 />
                                 <br/>
@@ -263,7 +263,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                             <td>
                                 <input type="email"
                                        name="ehssl_expiry_notification_email_to"
-                                       class="ehssl-width-50"
+                                       class="ehssl-settings-text-field-cat-2"
                                        value="<?php esc_attr_e( $expiry_notification_email_to ) ?>"
                                        required
                                 />
@@ -280,7 +280,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                             <td>
                                 <input type="text"
                                        name="ehssl_expiry_notification_email_subject"
-                                       class="ehssl-width-50"
+                                       class="ehssl-settings-text-field-cat-2"
                                        value="<?php esc_attr_e( $expiry_notification_email_sub ) ?>"
                                        required
                                 />
@@ -298,7 +298,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                                 <?php if ($expiry_notification_email_content_type == 'html') {
 	                                add_filter( 'wp_default_editor', array( $this, 'set_default_editor' ) );
                                     ?>
-                                    <div class="ehssl-width-75">
+                                    <div class="ehssl-settings-text-field-cat-3">
                                         <?php
                                         wp_editor(
                                             html_entity_decode( $expiry_notification_email_body ),
@@ -317,7 +317,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                                 } else { ?>
                                     <textarea
                                             name="ehssl_expiry_notification_email_body"
-                                            class="ehssl-width-75"
+                                            class="ehssl-settings-text-field-cat-3"
                                             rows="10"
                                             required
                                     ><?php esc_attr_e( $expiry_notification_email_body ) ?></textarea>

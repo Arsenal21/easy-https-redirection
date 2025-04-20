@@ -171,27 +171,22 @@ table.ehssl-tags-hint td.ehssl-tag-descr {
 
 /*----- END Email tags hint ----- */
 
-.ehssl-width-default {
-    width: fit-content !important;
+.ehssl-settings-text-field-cat-1{
+    width: 70px;
 }
 
-.ehssl-width-25 {
-    width: 25% !important;
+.ehssl-settings-text-field-cat-2{
+    width: 400px;
 }
 
-.ehssl-width-50 {
-    width: 50% !important;
+.ehssl-settings-text-field-cat-3{
+    width: 650px;
 }
 
-.ehssl-width-75 {
-    width: 75% !important;
-}
-
-@media only screen and (max-width: 768px) {
-    .ehssl-width-default,
-    .ehssl-width-25,
-    .ehssl-width-50,
-    .ehssl-width-75 {
-        width: 100% !important;
+@media only screen and (max-width: 782px){
+    .ehssl-settings-text-field-cat-1,
+    .ehssl-settings-text-field-cat-2,
+    .ehssl-settings-text-field-cat-3{
+        width: 100%;
     }
 }
