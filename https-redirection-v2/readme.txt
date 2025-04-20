@@ -4,7 +4,7 @@ Donate link: https://www.tipsandtricks-hq.com/development-center
 Tags: ssl, https, force ssl, insecure content, redirection, automatic redirection, htaccess, https redirection, ssl certificate, secure page, secure, force https
 Requires at least: 6.5
 Tested up to: 6.8
-Stable tag: 1.9.2
+Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -90,8 +90,8 @@ The plugin will store the settings in the database and add all the necessary con
 
 = What should I do if after making changes in the .htaccess file with the help of the plugin my site stops working? =
 
-The.htaccess is located in the site root. With your FTP program or via Сpanel go to the site root, open the .htaccess file and delete the necessary strings manually.
-Please make use of the following information: http://codex.wordpress.org/FTP_Clients
+The.htaccess is located in the site root. With your FTP program or via cPanel go to the site root, open the .htaccess file and delete the necessary strings manually.
+Please make use of the following information: https://codex.wordpress.org/FTP_Clients
 
 = How to use the other language files with the HTTPS Redirection? = 
 
