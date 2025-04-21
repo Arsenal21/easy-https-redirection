@@ -76,7 +76,7 @@ View more details on the [HTTPS Redirection plugin](https://www.tipsandtricks-hq
 
 1. Upload `https-redirection` folder to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Plugin settings are located in 'Settings', 'HTTPS Redirection'.
+3. The plugin settings can be found in the left-hand menu of the Admin Dashboard under 'Easy HTTPS & SSL'.
 
 == Frequently Asked Questions ==
 
