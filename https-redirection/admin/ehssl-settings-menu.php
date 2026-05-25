@@ -7,11 +7,6 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
     // Specify all the tabs of this menu in the following array.
     public $dashboard_menu_tabs = array('general' => 'General', 'mixed-contents' => 'Mixed Contents');
 
-    public function __construct()
-    {
-        $this->render_menu_page();
-    }
-
     public function get_current_tab()
     {
         $tab = isset($_GET['tab']) ? $_GET['tab'] : array_keys($this->dashboard_menu_tabs)[0];
@@ -119,7 +114,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
 
         $is_debug_logging_enabled = isset($settings['enable_debug_logging']) ? esc_attr($settings['enable_debug_logging']) : 0;
 
-        ?>
+        if ( empty($this->is_ssl_installed) ) { ?>
         <div class="ehssl-yellow-box">
             <p>
 			    <?php echo sprintf(__("When you enable the HTTPS redirection, the plugin will force redirect the URL to the HTTPS version of the URL. So before enabling this plugin's feature, visit your site's HTTPS URL %s to make sure the page loads correctly. Otherwise you may get locked out if your SSL certificate is not installed correctly on your site or the HTTPS URL is not working and this plugin is auto redirecting to the HTTPS URL.", 'https-redirection'), '<a href="' . $siteSSLurl . '" target="_blank">' . $siteSSLurl . '</a>'); ?>
@@ -129,6 +124,8 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
 			    <?php _e("If you're using caching plugins similar to W3 Total Cache or WP Super Cache, you need to clear their cache after you enable or disable automatic redirection option. Failing to do so may result in mixed content warning from browser.", 'https-redirection');?>
             </p>
         </div>
+        <?php } ?>
+
         <div class="postbox">
             <h3 class="hndle"><label for="title"><?php _e("HTTPS Redirection", 'https-redirection');?></label></h3>
             <div class="inside">
@@ -158,7 +155,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                                 </tr>
                             </table>
 
-                            <div class="ehssl-enable-automatic-redirection httpsrdrctn-overlay <?php echo (is_ssl() ? 'hidden' : ''); ?>"></div>
+                            <div class="ehssl-enable-automatic-redirection httpsrdrctn-overlay <?php echo ($this->is_ssl_installed ? 'hidden' : ''); ?>"></div>
                         </div>
 
                         <div style="position: relative">

@@ -3,6 +3,16 @@
 /* Parent class for all admin menu classes */
 abstract class EHSSL_Admin_Menu
 {
+    protected $is_ssl_installed;
+
+    public function __construct() {
+        $this->is_ssl_installed = EHSSL_SSL_Utils::is_ssl_installed();
+
+        $this->render_menu_page();
+    }
+
+    abstract public function render_menu_page();
+
     /**
      * Shows postbox for settings menu
      *

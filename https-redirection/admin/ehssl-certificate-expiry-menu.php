@@ -47,7 +47,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
 						case 'expiring-certificates':
 							$this->render_expiring_certificates_tab();
 							break;
-						case 'expiry-notification';
+                        case 'expiry-notification':
 						default:
 							$this->render_email_notification_tab();
 							break;

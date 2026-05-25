@@ -288,4 +288,16 @@ class EHSSL_SSL_Utils {
 		return false;
 	}
 
+	/**
+	 * Check whether ssl certificate is installed and active.
+	 *
+	 * @return bool
+	 */
+	public static function is_ssl_installed() {
+		if (is_ssl() && !empty(EHSSL_SSL_Utils::get_ssl_info(EHSSL_SSL_Utils::get_current_domain()))) {
+			return true;
+		}
+
+		return false;
+	}
 }
