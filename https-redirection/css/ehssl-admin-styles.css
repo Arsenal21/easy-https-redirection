@@ -115,9 +115,6 @@
 }
 
 .rewrite_item_delete_btn, .rewrite_item_add_btn {
-    display: inline-flex !important;
-    align-items: center;
-    justify-content: center;
     padding-left: 6px !important;
     padding-right: 6px !important;
 	cursor: pointer;

@@ -10,11 +10,6 @@ class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
         // 'tab2' => 'Tab Two'
     );
 
-    public function __construct()
-    {
-        $this->render_menu_page();
-    }
-
     public function get_current_tab()
     {
         $tab = isset($_GET['tab']) ? $_GET['tab'] : array_keys($this->dashboard_menu_tabs)[0];
@@ -69,11 +64,7 @@ class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
                     <?php $this->widget_ssl_status(); ?>
                 </div>
                 <div class="ehssl-dashboard-widget-column postbox-container">
-                    <?php
-                    if (is_ssl()) {
-                        $this->widget_ssl_info();
-                    }
-                    ?>
+                    <?php $this->widget_ssl_info(); ?>
                 </div>
                 <div class="ehssl-dashboard-widget-column postbox-container">
                     <!-- Widgets here -->
@@ -107,7 +98,7 @@ class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
 
             <div class="inside">
                 <div style="padding: 12px 0 6px; display: flex; align-items: center; flex-direction: column;">
-                    <?php if (is_ssl()) { ?>
+                    <?php if ($this->is_ssl_installed) { ?>
                         <div style="color: green; height: 5rem">
                             <span class="dashicons dashicons-lock" style="transform: scale(4); transform-origin: top center;"></span>
                         </div>
@@ -128,8 +119,11 @@ class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
     <?php
     }
 
-    public function widget_ssl_info()
-    {
+    public function widget_ssl_info() {
+        if (empty($this->is_ssl_installed)) {
+            return;
+        }
+
         $ssl_info = EHSSL_SSL_Utils::get_parsed_current_ssl_info_for_dashbaord();
     ?>
         <div id="ehssl_dashboard_ssl_info" class="sortable-item postbox" data-item-id="2">

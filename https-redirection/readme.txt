@@ -112,6 +112,10 @@ Here is an example for German language files.
 1. Plugin settings page.
 
 == Changelog ==
+= WIP =
+- New improved SSL checking code added.
+- A small UI fix related to WordPress v7.
+- A PHP deprecation warning issue fixed.
 
 = v2.0.0 =
 - The plugin has gone through significant updates and improvements in this version.
