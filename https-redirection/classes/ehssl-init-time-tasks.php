@@ -7,6 +7,8 @@ class EHSSL_Init_Time_Tasks {
         // Add the init action hook
         add_action('init', array($this, 'early_priority_init_handler'), 0);// Early priority init.
         add_action('init', array($this, 'run_init_time_tasks'));//Normal priority init.
+
+	    include_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-static-resources-scan-update.php';
     }
 
     // Method to run at 'init' action hook.

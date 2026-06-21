@@ -113,6 +113,7 @@ Here is an example for German language files.
 
 == Changelog ==
 = WIP =
+- New feature added to scan and update static resource URLs.
 - New improved SSL checking code added.
 - A small UI fix related to WordPress v7.
 - A PHP deprecation warning issue fixed.
