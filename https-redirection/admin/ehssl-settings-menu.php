@@ -411,7 +411,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                                 <li>
                                     <input
                                             id="<?php echo esc_attr('ehssl-'.$item['name'].'-'.$index) ?>"
-                                            type="checkbox" <?php echo !$is_https_redirection_enabled ? "disabled" : ''; ?>
+                                            type="checkbox"
                                             name="ehssl_post_types[]"
                                             value="<?php echo esc_attr($item['name']); ?>"
                                     />
@@ -428,7 +428,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                                 <li>
                                     <input
                                             id="<?php echo esc_attr('ehssl-'.$item['name'].'-'.$index) ?>"
-                                            type="checkbox" <?php echo !$is_https_redirection_enabled ? "disabled" : ''; ?>
+                                            type="checkbox"
                                             name="ehssl_other_tables[]"
                                             value="<?php echo esc_attr($item['name']); ?>"
                                     />
@@ -445,7 +445,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                                 <li>
                                     <input
                                             id="<?php echo esc_attr('ehssl-'.$item['name'].'-'.$index) ?>"
-                                            type="checkbox" <?php echo !$is_https_redirection_enabled ? "disabled" : ''; ?>
+                                            type="checkbox"
                                             name="ehssl_additional_flags[]"
                                             value="<?php echo esc_attr($item['name']); ?>"
                                     />
@@ -461,7 +461,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                         <button
                                 type="submit"
                                 id="ehssl_static_resources_scan_btn"
-                                class="button-secondary" <?php echo !$is_https_redirection_enabled ? "disabled" : ''; ?>
+                                class="button-secondary"
                         ><?php echo esc_attr($scan_btn_text) ?></button>
                     </p>
 
