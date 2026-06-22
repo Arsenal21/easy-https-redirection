@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 define('EASY_HTTPS_SSL_VERSION', '2.0.0');
-//define('EASY_HTTPS_SSL_DB_VERSION', '1.0');
+define('EASY_HTTPS_SSL_DB_VERSION', '1.0');
 
 // Load the core class.
 include_once ( 'easy-https-ssl-core.php' );

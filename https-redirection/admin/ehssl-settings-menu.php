@@ -344,5 +344,155 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
             </div><!-- end of inside -->
         </div><!-- end of postbox -->
         <?php
-}
+        $post_types = get_post_types(
+                array(
+                        'show_ui' => true,
+                ),
+                'objects'
+        );
+
+        $exclude = array(
+                'attachment',
+                'revision',
+                'nav_menu_item',
+                'custom_css',
+                'customize_changeset',
+                'oembed_cache',
+                'user_request',
+                'wp_block',
+                'wp_template',
+                'wp_template_part',
+                'wp_navigation',
+                'wp_font_family',
+                'wp_font_face',
+        );
+
+        $scannable_post_types = array();
+        foreach ( $post_types as $post_type ) {
+            if ( in_array( $post_type->name, $exclude ) ) {
+                continue;
+            }
+            $scannable_post_types[] = array(
+                    'type' => 'post_type',
+                    'name' => $post_type->name,
+                    'label' => $post_type->label,
+            );
+        }
+
+        $other_tables = array(
+                array(
+                        'name' => 'wp_options_table',
+                        'label' => 'WP Options',
+                ),
+        );
+
+        $flags = array(
+                array(
+                        'name' => 'include_post_meta',
+                        'label' => 'Include Post Meta for Selected Post Types',
+                ),
+        );
+
+        $has_previous_scan_data = EHSSL_Static_Resources_Scan_Update::get_scan_results_count(true) > 0;
+        $rescan_btn_text = __('Re-scan', 'https-redirection');
+        $scan_btn_text = $has_previous_scan_data ? $rescan_btn_text :__('Scan', 'https-redirection');
+        ?>
+
+        <div class="postbox">
+            <h3 class="hndle"><label for="title"><?php _e("Scan and Update Static Resource URLs", 'https-redirection');?></label></h3>
+            <div class="inside">
+                <p class="description"><?php _e('Use this form to scan for non-https URLs and upgrade them to HTTPS. Please take a backup of your database before updating the URLs.', 'https-redirection');?></p>
+                <br>
+                <form action="" method="POST" id="ehssl_static_resources_scan_form">
+                    <div class=""><?php _e('Post Types: ', 'https-redirection')?></div>
+                    <fieldset>
+                        <ul>
+                            <?php foreach ($scannable_post_types as $index => $item) { ?>
+                                <li>
+                                    <input
+                                            id="<?php echo esc_attr('ehssl-'.$item['name'].'-'.$index) ?>"
+                                            type="checkbox" <?php echo !$is_https_redirection_enabled ? "disabled" : ''; ?>
+                                            name="ehssl_post_types[]"
+                                            value="<?php echo esc_attr($item['name']); ?>"
+                                    />
+                                    <label for="<?php echo esc_attr('ehssl-'.$item['name'].'-'.$index) ?>"><?php echo esc_attr($item['label']) ?></label>
+                                </li>
+                            <?php } ?>
+                        </ul>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend><?php _e('Others', 'https-redirection')?></legend>
+                        <ul>
+                            <?php foreach ($other_tables as $index => $item) { ?>
+                                <li>
+                                    <input
+                                            id="<?php echo esc_attr('ehssl-'.$item['name'].'-'.$index) ?>"
+                                            type="checkbox" <?php echo !$is_https_redirection_enabled ? "disabled" : ''; ?>
+                                            name="ehssl_other_tables[]"
+                                            value="<?php echo esc_attr($item['name']); ?>"
+                                    />
+                                    <label for="<?php echo esc_attr('ehssl-'.$item['name'].'-'.$index) ?>"><?php echo esc_attr($item['label']) ?></label>
+                                </li>
+                            <?php } ?>
+                        </ul>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend><?php _e('Additional Flags', 'https-redirection')?></legend>
+                        <ul>
+                            <?php foreach ($flags as $index => $item) { ?>
+                                <li>
+                                    <input
+                                            id="<?php echo esc_attr('ehssl-'.$item['name'].'-'.$index) ?>"
+                                            type="checkbox" <?php echo !$is_https_redirection_enabled ? "disabled" : ''; ?>
+                                            name="ehssl_additional_flags[]"
+                                            value="<?php echo esc_attr($item['name']); ?>"
+                                    />
+                                    <label for="<?php echo esc_attr('ehssl-'.$item['name'].'-'.$index) ?>"><?php echo esc_attr($item['label']) ?></label>
+                                </li>
+                            <?php } ?>
+                        </ul>
+                    </fieldset>
+
+                    <?php wp_nonce_field('ehssl_static_resources_scan_form_nonce');?>
+
+                    <p class="description">
+                        <button
+                                type="submit"
+                                id="ehssl_static_resources_scan_btn"
+                                class="button-secondary" <?php echo !$is_https_redirection_enabled ? "disabled" : ''; ?>
+                        ><?php echo esc_attr($scan_btn_text) ?></button>
+                    </p>
+
+                </form>
+                <div id="ehssl_scan_results" style="margin-top:20px;">
+                    <!-- table renders here -->
+                    <?php
+                    if ($has_previous_scan_data){
+                        EHSSL_Static_Resources_Scan_Update::render_http_scan_result_table();
+                    }
+                    ?>
+
+                </div>
+            </div><!-- end of inside -->
+        </div><!-- end of postbox -->
+        <?php
+        wp_enqueue_script('ehssl_static_resources_scan_update', EASY_HTTPS_SSL_URL . '/js/ehssl-static-resources-scan-update.js', null, EASY_HTTPS_SSL_VERSION, array(
+                'in_footer' => true,
+                'strategy' => 'defer'
+        ));
+
+        wp_localize_script('ehssl_static_resources_scan_update', 'ehssl_static_resources_scan_update_jd_data', array(
+                'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+                'texts' => array(
+                        'nothing_found' => __('Nothing Found!', 'https-redirection'),
+                        'pls_select_an_item' => __('Please select an item to scan!', 'https-redirection'),
+                        'confirm_update' => __('Are you sure? This will permanently update urls in databases.', 'https-redirection'),
+                        'scan_btn_loading' => __('Scanning...', 'https-redirection'),
+                        'rescan_btn' => $rescan_btn_text,
+                        'update_btn_loading' => __('Updating...', 'https-redirection'),
+                ),
+        ));
+    }
 } // End class

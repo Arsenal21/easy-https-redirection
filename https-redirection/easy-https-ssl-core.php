@@ -68,6 +68,7 @@ if ( !class_exists('Easy_HTTPS_SSL') ) {
 
             if (is_admin()) { //Load admin side only files
                 include_once EASY_HTTPS_SSL_PATH. '/admin/ehssl-admin-init.php';
+	            include_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-static-resources-scan-result-table.php';
             } else { 
                 //Load front end side only files
             }
@@ -88,6 +89,9 @@ if ( !class_exists('Easy_HTTPS_SSL') ) {
 
         public static function plugin_activate_handler() {
 	        wp_schedule_event(time(), 'daily', 'ehssl_daily_cron_event');
+
+	        require_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-installation.php';
+	        EHSSL_Installation::run_safe_installer();
         }
 
         public static function plugin_deactivate_handler() {

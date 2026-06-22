@@ -11,8 +11,6 @@ abstract class EHSSL_Admin_Menu
         $this->render_menu_page();
     }
 
-    abstract public function render_menu_page();
-
     /**
      * Shows postbox for settings menu
      *
