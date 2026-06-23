@@ -66,6 +66,8 @@ if ( !class_exists('Easy_HTTPS_SSL') ) {
             include_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-email-handler.php';
             include_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-init-time-tasks.php';
 
+	        require_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-installation.php';
+
             if (is_admin()) { //Load admin side only files
                 include_once EASY_HTTPS_SSL_PATH. '/admin/ehssl-admin-init.php';
 	            include_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-static-resources-scan-result-table.php';
@@ -90,7 +92,6 @@ if ( !class_exists('Easy_HTTPS_SSL') ) {
         public static function plugin_activate_handler() {
 	        wp_schedule_event(time(), 'daily', 'ehssl_daily_cron_event');
 
-	        require_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-installation.php';
 	        EHSSL_Installation::run_safe_installer();
         }
 
@@ -118,13 +119,11 @@ if ( !class_exists('Easy_HTTPS_SSL') ) {
 
         public function do_db_upgrade_check() {
             //Check if DB needs to be updated
-            // if (is_admin()) { 
-            //     if (get_option('ehssl_db_version') != EASY_HTTPS_SSL_DB_VERSION) {
-            //         //include_once ('file-name-installer.php');
-            //         //easy_https_run_db_upgrade();
-            //     }
-            // }
-        }        
+			$existing_db_version = get_option('ehssl_db_version');
+			if ($existing_db_version != EASY_HTTPS_SSL_DB_VERSION) {
+				EHSSL_Installation::run_safe_installer();
+			}
+        }
 
     } // End of class.
 
