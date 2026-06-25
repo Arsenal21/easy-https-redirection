@@ -404,8 +404,8 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                 <p class="description"><?php _e('Use this form to scan for non-https URLs and update them to HTTPS version. Please take a backup of your database before updating the URLs.', 'https-redirection');?></p>
                 <br>
                 <form action="" method="POST" id="ehssl_non_https_resources_scan_form">
-                    <div class=""><?php _e('Post Types: ', 'https-redirection')?></div>
                     <fieldset>
+                        <legend><strong><?php _e('Post Types:', 'https-redirection')?></strong></legend>
                         <ul>
                             <?php foreach ($scannable_post_types as $index => $item) { ?>
                                 <li>
@@ -422,7 +422,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                     </fieldset>
 
                     <fieldset>
-                        <legend><?php _e('Other Database Tables', 'https-redirection')?></legend>
+                        <legend><strong><?php _e('Other Database Tables:', 'https-redirection')?></strong></legend>
                         <ul>
                             <?php foreach ($other_tables as $index => $item) { ?>
                                 <li>
@@ -439,7 +439,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                     </fieldset>
 
                     <fieldset>
-                        <legend><?php _e('Additional Flags', 'https-redirection')?></legend>
+                        <legend><strong><?php _e('Additional Flags:', 'https-redirection')?></strong></legend>
                         <ul>
                             <?php foreach ($flags as $index => $item) { ?>
                                 <li>
@@ -456,7 +456,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                     </fieldset>
 
                     <fieldset>
-                        <legend><?php _e('Scan Type', 'https-redirection')?></legend>
+                        <legend><strong><?php _e('Scan Type:', 'https-redirection')?></strong></legend>
                         <ul>
                             <li>
                                 <label>
@@ -480,7 +480,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                         <button
                                 type="submit"
                                 id="ehssl_non_https_resources_scan_btn"
-                                class="button-secondary"
+                                class="button-primary"
                         ><?php echo esc_attr($scan_btn_text) ?></button>
                     </p>
 
