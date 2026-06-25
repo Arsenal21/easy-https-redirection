@@ -1,9 +1,9 @@
-/* global ehssl_static_resources_scan_update_jd_data */
+/* global ehssl_non_https_resources_scan_update_js_data */
 
 document.addEventListener('DOMContentLoaded', function () {
-    const {ajaxUrl, texts} = ehssl_static_resources_scan_update_jd_data;
-    const scanForm = document.getElementById('ehssl_static_resources_scan_form');
-    const scanBtn = document.getElementById('ehssl_static_resources_scan_btn');
+    const {ajaxUrl, texts} = ehssl_non_https_resources_scan_update_js_data;
+    const scanForm = document.getElementById('ehssl_non_https_resources_scan_form');
+    const scanBtn = document.getElementById('ehssl_non_https_resources_scan_btn');
     const resultsBox = document.getElementById('ehssl_scan_results');
 
     scanForm.addEventListener('submit', async function (e) {
@@ -14,28 +14,9 @@ document.addEventListener('DOMContentLoaded', function () {
         scanBtnText = texts.rescan_btn;
 
         const checked_post_types = scanForm.querySelectorAll('input[name="ehssl_post_types[]"]:checked');
-        const postTypes = [];
-        checked_post_types.forEach(function (item) {
-            postTypes.push(item.value);
-        });
-
         const checked_other_tables = scanForm.querySelectorAll('input[name="ehssl_other_tables[]"]:checked');
-        const otherTables = [];
-        checked_other_tables.forEach(function (item) {
-            otherTables.push(item.value);
-        });
 
-        const checked_flags = scanForm.querySelectorAll('input[name="ehssl_additional_flags[]"]:checked');
-        const flags = [];
-        checked_flags.forEach(function (item) {
-            flags.push(item.value);
-        });
-
-        const nonce_input = scanForm.querySelector('input[name="_wpnonce"]');
-        const nonce = nonce_input?.value;
-
-        if (!postTypes.length && !otherTables.length) {
-            // resultsBox.innerHTML = texts.nothing_found;
+        if (!checked_post_types.length && !checked_other_tables.length) {
             alert(texts.pls_select_an_item);
             scanBtn.disabled = false;
             scanBtn.innerText = scanBtnText;
@@ -45,8 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
         resultsBox.innerHTML = '';
 
         const formData = new FormData(e.target);
-        formData.append('action', 'ehssl_static_resources_scan');
-        formData.append('nonce', nonce);
+        formData.append('action', 'ehssl_non_https_resources_scan');
         formData.append('offset', 0);
         formData.append('total', JSON.stringify([]));
 
@@ -64,10 +44,28 @@ document.addEventListener('DOMContentLoaded', function () {
             scanBtn.textContent = scanBtnText;
         }
 
-        await processBatchScan(formData, onComplete);
+        const onError = (response) => {
+            // return response;
+            let resp_msg;
+
+            if ( response?.message !== undefined) {
+                resp_msg = response.message;
+            } else if ( response?.data?.message !== undefined) {
+                resp_msg = response.data.message;
+            } else {
+                resp_msg = 'Something went wrong';
+            }
+
+            console.log(resp_msg, response);
+            alert(resp_msg);
+            scanBtn.disabled = false;
+            scanBtn.innerText = scanBtnText;
+        }
+
+        await processBatchScan(formData, onComplete, onError);
     });
 
-    async function processBatchScan(formData, onComplete) {
+    async function processBatchScan(formData, onComplete, onError) {
         try {
             let response = await fetch(ajaxUrl, {
                 method: 'POST',
@@ -78,9 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const {success, data} = response;
             if (!success) {
-                // return response;
-                alert('Something went wrong');
-                console.log('Something went wrong', response);
+                onError(response);
                 return;
             }
 
@@ -89,24 +85,30 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!data.completed) {
                 formData.append('total', JSON.stringify(data.total));
                 formData.append('offset', data.next_offset);
-                await processBatchScan(formData, onComplete);
+
+                await processBatchScan(formData, onComplete, onError);
             } else {
                 onComplete(response);
             }
 
         } catch (error) {
-            alert(error.message);
+            onError(error);
         }
     }
 
     async function getScannedResourcesTable(cb) {
         try {
-            const formData = new FormData();
-            formData.append('action', 'ehssl_get_scanned_resources_table');
+            const currentParams = new URLSearchParams(window.location.search);
+            const currentPage = currentParams.get('page');
+            const currentTab = currentParams.get('tab');
 
-            let response = await fetch(ajaxUrl, {
-                method: 'POST',
-                body: formData,
+            const url = new URL(ajaxUrl);
+            url.searchParams.append('action', 'ehssl_get_scanned_resources_table');
+            url.searchParams.append('page', currentPage);
+            url.searchParams.append('tab', currentTab);
+
+            let response = await fetch(url, {
+                method: 'GET',
             })
 
             response = await response.text();
@@ -121,23 +123,25 @@ document.addEventListener('DOMContentLoaded', function () {
      * AJAX pagination
      */
     document.addEventListener('click', function (e) {
-        const link = e.target.closest('.tablenav-pages a');
-        if (!link) {
+        const navLink = e.target.closest('.tablenav-pages a');
+        if (!navLink) {
             return;
         }
         e.preventDefault();
-        const url = new URL(link.href);
-        const paged = url.searchParams.get('paged') || 1;
-        fetch(ajaxUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
 
-            body: new URLSearchParams({
-                action: 'ehssl_load_static_resources_table_page',
-                paged: paged
-            })
+        const currentParams = new URLSearchParams(window.location.search);
+
+        const url = new URL(ajaxUrl);
+        url.searchParams.append('action', 'ehssl_load_static_resources_table_page');
+        url.searchParams.append('page', currentParams.get('page'));
+        url.searchParams.append('tab', currentParams.get('tab'));
+
+        const navLinkUrl = new URL(navLink.href);
+        const paged = navLinkUrl.searchParams.get('paged') || 1;
+        url.searchParams.append('paged', paged);
+
+        fetch(url, {
+            method: 'GET',
         })
             .then(response => response.text())
             .then(html => {
@@ -195,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const selected_ids = [];
 
-            const checkboxes = document.querySelectorAll('input[name="ehssl_static_resources_scan_ids[]"]:checked');
+            const checkboxes = document.querySelectorAll('input[name="ehssl_non_https_resources_scan_ids[]"]:checked');
             checkboxes?.forEach(function (el) {
                 selected_ids.push(el.value);
             });
