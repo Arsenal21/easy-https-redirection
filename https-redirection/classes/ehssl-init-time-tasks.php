@@ -8,7 +8,7 @@ class EHSSL_Init_Time_Tasks {
         add_action('init', array($this, 'early_priority_init_handler'), 0);// Early priority init.
         add_action('init', array($this, 'run_init_time_tasks'));//Normal priority init.
 
-	    include_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-static-resources-scan-update.php';
+	    include_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-non-https-resources-scan-update.php';
     }
 
     // Method to run at 'init' action hook.
@@ -27,12 +27,15 @@ class EHSSL_Init_Time_Tasks {
         //Mixed content fix feature. Do force resource embedded using HTTPS.
         if (isset($httpsrdrctn_options['force_resources']) && $httpsrdrctn_options['force_resources'] == '1') {
             // Handle the appropriate content filters to force the static resources to use HTTPS URL.
-            if (is_admin()) {
-                add_action("admin_init", array($this, "ehssl_start_buffer"));
-            } else {
-                add_action("init", array($this, "ehssl_start_buffer"));
-            }
-            add_action("shutdown", array($this, "ehssl_end_buffer"));
+	        if (is_admin()) {
+		        if (!isset($_GET['page']) || $_GET['page'] != 'ehssl_settings') {
+			        add_action("admin_init", array($this, "ehssl_start_buffer"));
+			        add_action("shutdown", array($this, "ehssl_end_buffer"));
+		        }
+	        } else {
+		        add_action("init", array($this, "ehssl_start_buffer"));
+		        add_action("shutdown", array($this, "ehssl_end_buffer"));
+	        }
         }
 
     }

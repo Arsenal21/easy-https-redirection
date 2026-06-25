@@ -393,17 +393,17 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                 ),
         );
 
-        $has_previous_scan_data = EHSSL_Static_Resources_Scan_Update::get_scan_results_count(true) > 0;
+        $has_previous_scan_data = EHSSL_Non_HTTPS_Resources_Scan_Update::get_scan_results_count(true) > 0;
         $rescan_btn_text = __('Re-scan', 'https-redirection');
         $scan_btn_text = $has_previous_scan_data ? $rescan_btn_text :__('Scan', 'https-redirection');
         ?>
 
         <div class="postbox">
-            <h3 class="hndle"><label for="title"><?php _e("Scan and Update Static Resource URLs", 'https-redirection');?></label></h3>
+            <h3 class="hndle"><label for="title"><?php _e("Scan and Update Non-HTTPS URLs", 'https-redirection');?></label></h3>
             <div class="inside">
-                <p class="description"><?php _e('Use this form to scan for non-https URLs and upgrade them to HTTPS. Please take a backup of your database before updating the URLs.', 'https-redirection');?></p>
+                <p class="description"><?php _e('Use this form to scan for non-https URLs and update them to HTTPS version. Please take a backup of your database before updating the URLs.', 'https-redirection');?></p>
                 <br>
-                <form action="" method="POST" id="ehssl_static_resources_scan_form">
+                <form action="" method="POST" id="ehssl_non_https_resources_scan_form">
                     <div class=""><?php _e('Post Types: ', 'https-redirection')?></div>
                     <fieldset>
                         <ul>
@@ -422,7 +422,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                     </fieldset>
 
                     <fieldset>
-                        <legend><?php _e('Others', 'https-redirection')?></legend>
+                        <legend><?php _e('Other Database Tables', 'https-redirection')?></legend>
                         <ul>
                             <?php foreach ($other_tables as $index => $item) { ?>
                                 <li>
@@ -455,12 +455,31 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                         </ul>
                     </fieldset>
 
-                    <?php wp_nonce_field('ehssl_static_resources_scan_form_nonce');?>
+                    <fieldset>
+                        <legend><?php _e('Scan Type', 'https-redirection')?></legend>
+                        <ul>
+                            <li>
+                                <label>
+                                    <input type="radio" name="ehssl_scan_type" value="scan_static_resources_only" checked>
+                                    <?php _e('Scan Static Resources Only', 'https-redirection')?>
+                                </label>
+                            </li>
+                            <li>
+                                <label>
+                                    <input type="radio" name="ehssl_scan_type" value="scan_all">
+                                    <?php _e('Scan All', 'https-redirection')?>
+                                </label>
+                            </li>
+                        </ul>
+
+                    </fieldset>
+
+                    <?php wp_nonce_field('ehssl_non_https_resources_scan_form_nonce');?>
 
                     <p class="description">
                         <button
                                 type="submit"
-                                id="ehssl_static_resources_scan_btn"
+                                id="ehssl_non_https_resources_scan_btn"
                                 class="button-secondary"
                         ><?php echo esc_attr($scan_btn_text) ?></button>
                     </p>
@@ -470,7 +489,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                     <!-- table renders here -->
                     <?php
                     if ($has_previous_scan_data){
-                        EHSSL_Static_Resources_Scan_Update::render_http_scan_result_table();
+                        EHSSL_Non_HTTPS_Resources_Scan_Update::render_http_scan_result_table();
                     }
                     ?>
 
@@ -478,12 +497,12 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
             </div><!-- end of inside -->
         </div><!-- end of postbox -->
         <?php
-        wp_enqueue_script('ehssl_static_resources_scan_update', EASY_HTTPS_SSL_URL . '/js/ehssl-static-resources-scan-update.js', null, EASY_HTTPS_SSL_VERSION, array(
+        wp_enqueue_script('ehssl_non_https_resources_scan_update', EASY_HTTPS_SSL_URL . '/js/ehssl-static-resources-scan-update.js', null, EASY_HTTPS_SSL_VERSION, array(
                 'in_footer' => true,
                 'strategy' => 'defer'
         ));
 
-        wp_localize_script('ehssl_static_resources_scan_update', 'ehssl_static_resources_scan_update_jd_data', array(
+        wp_localize_script('ehssl_non_https_resources_scan_update', 'ehssl_non_https_resources_scan_update_js_data', array(
                 'ajaxUrl' => admin_url( 'admin-ajax.php' ),
                 'texts' => array(
                         'nothing_found' => __('Nothing Found!', 'https-redirection'),

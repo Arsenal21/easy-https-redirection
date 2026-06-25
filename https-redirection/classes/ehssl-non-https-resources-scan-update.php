@@ -1,6 +1,6 @@
 <?php
 
-class EHSSL_Static_Resources_Scan_Update {
+class EHSSL_Non_HTTPS_Resources_Scan_Update {
 
     public $batch_size = 100;
 
@@ -12,15 +12,17 @@ class EHSSL_Static_Resources_Scan_Update {
 
     public $flags;
 
+    private $scan_type = 'scan_static_resources_only';
+
     public function __construct() {
-        add_action( 'wp_ajax_ehssl_static_resources_scan', array( $this, 'handle_static_resources_scan' ) );
-        add_action( 'wp_ajax_ehssl_get_scanned_resources_table', array( $this, 'handle_get_static_resources_table' ) );
-        add_action( 'wp_ajax_ehssl_load_static_resources_table_page', array( $this, 'handle_load_static_resources_table_page' ) );
+        add_action( 'wp_ajax_ehssl_non_https_resources_scan', array( $this, 'handle_non_https_resources_scan' ) );
+        add_action( 'wp_ajax_ehssl_get_scanned_resources_table', array( $this, 'handle_get_non_https_resources_table' ) );
+        add_action( 'wp_ajax_ehssl_load_static_resources_table_page', array( $this, 'handle_load_non_https_resources_table_page' ) );
         add_action( 'wp_ajax_ehssl_update_http_urls', array( $this, 'handle_update_http_urls' ) );
     }
 
-    public function handle_static_resources_scan() {
-        if ( ! check_ajax_referer( 'ehssl_static_resources_scan_form_nonce', 'nonce', false ) ) {
+    public function handle_non_https_resources_scan() {
+        if ( ! check_ajax_referer( 'ehssl_non_https_resources_scan_form_nonce', false, false ) ) {
             wp_send_json_error(
                     array(
                             'message' => __( 'Nonce verification failed!', 'https-redirection' ),
@@ -36,6 +38,10 @@ class EHSSL_Static_Resources_Scan_Update {
 
         $flags       = isset( $_POST['ehssl_additional_flags'] ) ? $_POST['ehssl_additional_flags'] : array();
         $this->flags = $flags;
+
+        if ( isset( $_POST['ehssl_scan_type'] ) ) {
+            $this->scan_type = sanitize_text_field( $_POST['ehssl_scan_type'] );
+        }
 
         $total = isset( $_POST['total'] ) ? json_decode( ( stripslashes( $_POST['total'] ) ), true ) : array();
 
@@ -89,7 +95,10 @@ class EHSSL_Static_Resources_Scan_Update {
     public function count_scannable_items() {
         global $wpdb;
 
-        $result = array();
+        $result = array(
+            'ehssl_post_types' => 0,
+            'ehssl_other_tables' => 0,
+        );
 
         try {
             $post_types = isset( $_POST['ehssl_post_types'] ) ? $_POST['ehssl_post_types'] : array();
@@ -124,7 +133,7 @@ class EHSSL_Static_Resources_Scan_Update {
         return $result;
     }
 
-    public function handle_get_static_resources_table() {
+    public function handle_get_non_https_resources_table() {
         try {
             self::render_http_scan_result_table();
             wp_die();
@@ -156,7 +165,8 @@ class EHSSL_Static_Resources_Scan_Update {
 
             foreach ( $post_table_columns as $p_col ) {
                 $content = $post->$p_col;
-                $this->find_matches_recursively( $content, $matches[$p_col] );
+                $scan_static_resources_only = $this->scan_type == 'scan_static_resources_only';
+                $this->find_matches( $content, $matches[$p_col], $scan_static_resources_only );
             }
 
             $cols_map = array();
@@ -193,7 +203,8 @@ class EHSSL_Static_Resources_Scan_Update {
                             continue;
                         }
 
-                        $this->find_matches_recursively( $meta_value, $meta_matches );
+                        $scan_static_resources_only = $this->scan_type == 'scan_static_resources_only';
+                        $this->find_matches( $meta_value, $meta_matches, $scan_static_resources_only);
 
                         if ( empty( $meta_matches[0] ) ) {
                             continue;
@@ -250,7 +261,8 @@ class EHSSL_Static_Resources_Scan_Update {
 
             foreach ( $table_columns as $col ) {
                 $content = $option->$col;
-                $this->find_matches( $content, $matches[$col] ); // TODO
+                $scan_static_resources_only = $this->scan_type == 'scan_static_resources_only';
+                $this->find_matches( $content, $matches[$col], $scan_static_resources_only );
             }
 
             $cols_map = array();
@@ -272,41 +284,69 @@ class EHSSL_Static_Resources_Scan_Update {
         }
     }
 
-    public function find_matches( $haystack, &$result ) {
+    public function find_matches( $haystack, &$result, $scan_static_resources_only ) {
+        if ( ! $scan_static_resources_only ) {
+            // Match any non-http urls
+            preg_match_all(
+                    '#http://[^\s"\'<>{}|\\\\^`]+#i',
+                    $haystack,
+                    $result
+            );
+
+            return;
+        }
+
+        /*
+         * Match URLs from:
+         * - img[src]
+         * - script[src]
+         * - link[href]
+         * - iframe[src]
+         * - source[src]
+         * - video[src]
+         * - audio[src]
+         * - object[data]
+         * - video[poster]
+         */
         preg_match_all(
-                '#http://[^\s"\'<>{}|\\\\^`]+#i',
+                '/<(?:img|script|link|iframe|source|video|audio|object)\b[^>]*\b(?:src|href|data|poster)\s*=\s*["\']\Khttp:\/\/[^"\']+/i',
                 $haystack,
                 $result
         );
-    }
 
-    /**
-     * Makes sure it properly scans serialized data.
-     */
-    public function find_matches_recursively( $haystack, &$result ) {
-        $haystack = maybe_unserialize( $haystack );
+        /*
+         * Match URLs from srcset attributes.
+         */
+        preg_match_all(
+                '/\bsrcset\s*=\s*["\']([^"\']+)["\']/i',
+                $haystack,
+                $srcset_matches
+        );
 
-        if ( is_array( $haystack ) ) {
-            foreach ( $haystack as $key => $value ) {
-                $haystack[ $key ] = $this->find_matches_recursively( $value, $result );
-            }
+        foreach ( $srcset_matches[1] as $srcset ) {
+            preg_match_all(
+                    '#http://[^\s,]+#i',
+                    $srcset,
+                    $matches
+            );
 
-            return $haystack;
+
+            array_push( $result[0], ...$matches[0] );
         }
 
-        if ( is_object( $haystack ) ) {
-            foreach ( $haystack as $key => $value ) {
-                $haystack->$key = $this->find_matches_recursively( $value, $result );
-            }
+        /*
+         * Match URLs from CSS url(...)
+         * Examples:
+         * background-image:url(http://example.com/bg.jpg)
+         * background:url('http://example.com/bg.jpg')
+         */
+        preg_match_all(
+                '#url\s*\(\s*[\'"]?\Khttp://[^)"\'\s]+#i',
+                $haystack,
+                $css_urls
+        );
 
-            return $haystack;
-        }
-
-        if ( is_string( $haystack ) ) {
-            $this->find_matches($haystack, $result);
-        }
-
-        return $haystack;
+        array_push( $result[0], ...$css_urls[0] );
     }
 
     public function save_scan_result() {
@@ -429,7 +469,7 @@ class EHSSL_Static_Resources_Scan_Update {
         return $wpdb->query( $query );
     }
 
-    public function handle_load_static_resources_table_page() {
+    public function handle_load_non_https_resources_table_page() {
         self::render_http_scan_result_table();
 
         wp_die();
@@ -440,7 +480,7 @@ class EHSSL_Static_Resources_Scan_Update {
         $table->prepare_items();
         ?>
         <div class="wrap" id="nhs-table-container">
-            <form method="post" id="ehssl_static_resources_table_form">
+            <form method="post" id="ehssl_non_https_resources_table_form">
                 <?php $table->display(); ?>
                 <input type="hidden" name="ehssl_update_all_http_urls_nonce" value="<?php echo esc_attr( wp_create_nonce( 'ehssl_update_all_http_urls' ) ); ?>">
             </form>
@@ -655,4 +695,4 @@ class EHSSL_Static_Resources_Scan_Update {
 
 }
 
-new EHSSL_Static_Resources_Scan_Update();
+new EHSSL_Non_HTTPS_Resources_Scan_Update();

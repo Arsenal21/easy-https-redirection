@@ -34,11 +34,11 @@ class EHSSL_Static_Resources_Scan_Result_Table extends WP_List_Table {
 
         $offset = ( $current_page - 1 ) * $per_page;
 
-        $total_items = EHSSL_Static_Resources_Scan_Update::get_scan_results_count(true);
+        $total_items = EHSSL_Non_HTTPS_Resources_Scan_Update::get_scan_results_count(true);
 
         $this->total_items_count = $total_items;
 
-        $this->items = EHSSL_Static_Resources_Scan_Update::get_scan_results_chunk( $offset, $per_page, array(), true);
+        $this->items = EHSSL_Non_HTTPS_Resources_Scan_Update::get_scan_results_chunk( $offset, $per_page, array(), true);
 
         $this->_column_headers = array(
                 $this->get_columns(),
@@ -89,14 +89,14 @@ class EHSSL_Static_Resources_Scan_Result_Table extends WP_List_Table {
 
     public function column_cb( $item ) {
         return sprintf(
-                '<input type="checkbox" name="ehssl_static_resources_scan_ids[]" value="%d" />',
+                '<input type="checkbox" name="ehssl_non_https_resources_scan_ids[]" value="%d" />',
                 $item['id']
         );
     }
 
     public function get_bulk_actions() {
         return array(
-                'update_to_https' => __( 'Update to HTTPs', 'http-redirection' ),
+                'update_to_https' => __( 'Update to HTTPS Version', 'http-redirection' ),
         );
     }
 

@@ -70,7 +70,7 @@ if ( !class_exists('Easy_HTTPS_SSL') ) {
 
             if (is_admin()) { //Load admin side only files
                 include_once EASY_HTTPS_SSL_PATH. '/admin/ehssl-admin-init.php';
-	            include_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-static-resources-scan-result-table.php';
+	            include_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-non-https-resources-scan-result-table.php';
             } else { 
                 //Load front end side only files
             }
