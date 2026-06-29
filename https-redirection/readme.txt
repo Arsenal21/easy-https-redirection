@@ -112,12 +112,13 @@ Here is an example for German language files.
 1. Plugin settings page.
 
 == Changelog ==
+
 = WIP =
 - New feature added to scan and update static resource URLs.
 - New improved SSL checking code added.
-- A small UI fix related to WordPress v7.
-- A PHP deprecation warning issue fixed.
-- New Strict Transport Security feature added for HTTPS redirection.
+- WordPress 7 related UI fix.
+- Fixed a small PHP deprecation warning.
+- Added support for sending the HTTP Strict Transport Security (HSTS) response header via the plugin settings.
 
 = v2.0.0 =
 - The plugin has gone through significant updates and improvements in this version.

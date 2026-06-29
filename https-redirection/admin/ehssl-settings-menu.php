@@ -196,31 +196,32 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
 
                         <hr>
 
-                        <h3 style="font-size: 14px"><?php _e('Strict Transport Security (optional)'); ?></h3>
+                        <h3 style="font-size: 16px"><?php _e('HTTP Strict Transport Security (HSTS) (Optional)', 'https-redirection'); ?></h3>
+                        <p class="description"><?php _e("Only enable the HSTS option if your entire website is fully accessible over HTTPS.", 'https-redirection');?></p>
                         <div style="position: relative">
                             <table class="form-table">
                                 <tr>
-                                    <th scope="row"><?php _e('Enable Strict Transport Security:', 'https-redirection');?></th>
-                                    <td>
+                                    <th scope="row"><?php _e('Enable HTTP Strict Transport Security (HSTS):', 'https-redirection');?></th>
+                                    <td>                                        
                                         <input type="checkbox" id="https-hsts-checkbox" name="hsts_enabled" <?php echo $hsta_enabled ? "checked" : ''; ?> min="0" />
-                                        <p class="description"><?php _e("Use this option to enable sending Strict-Transport-Security header.", 'https-redirection');?></p>
+                                        <p class="description"><?php _e("Once a visitor accesses your site over HTTPS, their browser will automatically use HTTPS for future visits for the configured period.", 'https-redirection');?></p>
 
                                         <div class="description" style="position: relative;">
                                             <p class="description">
                                                 <?php _e('Max age (in seconds):', 'https-redirection');?>
                                                 <input type="number" id="ehssl-hsts-max-age" name="hsts_max_age" value="<?php echo esc_attr($hsta_max_age); ?>" style="width: 140px"/>
-                                                <?php _e(' Determines how long the browser should enforce HTTPS-only. Default 31536000 seconds (1 year).', 'https-redirection');?>
+                                                <?php _e(' Specifies how long browsers should remember to use HTTPS only. The recommended value is 31536000 seconds (1 year).', 'https-redirection');?>
                                             </p>
                                             <p class="description">
                                                 <input type="checkbox" id="ehssl-hsts-include-sub-domain" name="hsts_include_sub_domains" <?php echo $hsta_include_sub_domains ? "checked" : ''; ?> />
-                                                <?php printf(__("Include 'includeSubDomains' directive to apply this for all subdomains.", 'https-redirection'), $siteSSLurl);?>
+                                                <?php printf(__("Apply the HSTS policy to all subdomains of this site.", 'https-redirection'), $siteSSLurl);?>
                                             </p>
                                             <p class="description">
                                                 <input type="checkbox" id="https-hsts-preload" name="hsts_preload" <?php echo $hsta_preload ? "checked" : ''; ?> />
                                                 <?php
                                                 printf(
-                                                    __("Include 'preload' directive to help include this domain in browsers' built-in HSTS preload lists. NOTE: This flag alone does nothing by itself, you need to manually submit your domain to the preload list %s.", 'https-redirection'),
-                                                    '<a href="https://hstspreload.org/#submission-form" target="_blank">here</a>'
+                                                    __("Include the preload directive. This alone does not add your site to browser preload lists, you must also manually submit your domain using the %s.", 'https-redirection'),
+                                                    '<a href="https://hstspreload.org/#submission-form" target="_blank">link here</a>'
                                                 );
                                                 ?>
                                             </p>
