@@ -67,6 +67,11 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
 		    $settings['https'] = isset($_REQUEST['httpsrdrctn_https']) ? $_REQUEST['httpsrdrctn_https'] : 0;
 		    $settings['https_domain'] = isset($_REQUEST['httpsrdrctn_https_domain']) ? $_REQUEST['httpsrdrctn_https_domain'] : 0;
 
+		    $settings['hsts_enabled'] = isset($_REQUEST['hsts_enabled']) ? 1 : 0;
+		    $settings['hsts_max_age'] = isset($_REQUEST['hsts_max_age']) ? absint(sanitize_text_field($_REQUEST['hsts_max_age'])) : 0;
+		    $settings['hsts_include_sub_domains'] = isset($_REQUEST['hsts_include_sub_domains']) ? 1 : 0;
+		    $settings['hsts_preload'] = isset($_REQUEST['hsts_preload']) ? 1 : 0;
+
 		    if (isset($_REQUEST['httpsrdrctn_https_pages_array'])) {
 			    $settings['https_pages_array'] = array();
 			    // var_dump($httpsrdrctn_options['https_pages_array']);
@@ -98,6 +103,11 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
 
 	    }
 	    $siteSSLurl = get_home_url(null, '', 'https');
+
+        $hsta_enabled = isset($settings['hsts_enabled']) && !empty($settings['hsts_enabled']) ? 1 : 0;
+        $hsta_max_age = isset($settings['hsts_max_age']) ? absint(sanitize_text_field($settings['hsts_max_age'])) : 0;
+        $hsta_include_sub_domains = isset($settings['hsts_include_sub_domains']) && !empty($settings['hsts_include_sub_domains']) ? 1 : 0;
+        $hsta_preload = isset($settings['hsts_preload']) && !empty($settings['hsts_preload']) ? 1 : 0;
 
         // Save data for settings page.
         if (isset($_POST['ehssl_debug_log_form_submit']) && check_admin_referer('ehssl_debug_settings_nonce')) {
@@ -184,6 +194,46 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                             <div class="ehssl-apply-redirection-on httpsrdrctn-overlay <?php echo ($settings['https'] == 1 ? 'hidden' : ''); ?>"></div>
                         </div>
 
+                        <hr>
+
+                        <h3 style="font-size: 14px"><?php _e('Strict Transport Security (optional)'); ?></h3>
+                        <div style="position: relative">
+                            <table class="form-table">
+                                <tr>
+                                    <th scope="row"><?php _e('Enable Strict Transport Security:', 'https-redirection');?></th>
+                                    <td>
+                                        <input type="checkbox" id="https-hsts-checkbox" name="hsts_enabled" <?php echo $hsta_enabled ? "checked" : ''; ?> min="0" />
+                                        <p class="description"><?php _e("Use this option to enable sending Strict-Transport-Security header.", 'https-redirection');?></p>
+
+                                        <div class="description" style="position: relative;">
+                                            <p class="description">
+                                                <?php _e('Max age (in seconds):', 'https-redirection');?>
+                                                <input type="number" id="ehssl-hsts-max-age" name="hsts_max_age" value="<?php echo esc_attr($hsta_max_age); ?>" style="width: 140px"/>
+                                                <?php _e(' Determines how long the browser should enforce HTTPS-only. Default 31536000 seconds (1 year).', 'https-redirection');?>
+                                            </p>
+                                            <p class="description">
+                                                <input type="checkbox" id="ehssl-hsts-include-sub-domain" name="hsts_include_sub_domains" <?php echo $hsta_include_sub_domains ? "checked" : ''; ?> />
+                                                <?php printf(__("Include 'includeSubDomains' directive to apply this for all subdomains.", 'https-redirection'), $siteSSLurl);?>
+                                            </p>
+                                            <p class="description">
+                                                <input type="checkbox" id="https-hsts-preload" name="hsts_preload" <?php echo $hsta_preload ? "checked" : ''; ?> />
+                                                <?php
+                                                printf(
+                                                    __("Include 'preload' directive to help include this domain in browsers' built-in HSTS preload lists. NOTE: This flag alone does nothing by itself, you need to manually submit your domain to the preload list %s.", 'https-redirection'),
+                                                    '<a href="https://hstspreload.org/#submission-form" target="_blank">here</a>'
+                                                );
+                                                ?>
+                                            </p>
+
+                                            <div class="ehssl-apply-hsts-directives httpsrdrctn-overlay <?php echo ($hsta_enabled ? 'hidden' : ''); ?>"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <div class="ehssl-apply-hsts httpsrdrctn-overlay <?php echo ($settings['https'] == 1 && $settings['https_domain'] == 1 ? 'hidden' : ''); ?>"></div>
+                        </div>
+
                         <input type="hidden" name="httpsrdrctn_form_submit" value="submit" />
 
                         <p class="submit">
@@ -197,6 +247,30 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                                 jQuery('div.ehssl-apply-redirection-on.httpsrdrctn-overlay').fadeOut('fast');
                             } else {
                                 jQuery('div.ehssl-apply-redirection-on.httpsrdrctn-overlay').fadeIn('fast');
+                            }
+                        });
+
+                        jQuery('input#httpsrdrctn-checkbox').on('change', function() {
+                            if (jQuery(this).is(':checked') && jQuery('input[name="httpsrdrctn_https_domain"]:checked').val() == 1) {
+                                jQuery('div.ehssl-apply-hsts.httpsrdrctn-overlay').fadeOut('fast');
+                            } else {
+                                jQuery('div.ehssl-apply-hsts.httpsrdrctn-overlay').fadeIn('fast');
+                            }
+                        });
+
+                        jQuery('input[name="httpsrdrctn_https_domain"]').on('change', function() {
+                            if (jQuery(this).val() == 1 && jQuery('input#httpsrdrctn-checkbox').is(':checked')) {
+                                jQuery('div.ehssl-apply-hsts.httpsrdrctn-overlay').fadeOut('fast');
+                            } else {
+                                jQuery('div.ehssl-apply-hsts.httpsrdrctn-overlay').fadeIn('fast');
+                            }
+                        });
+
+                        jQuery('input#https-hsts-checkbox').change(function() {
+                            if (jQuery(this).is(':checked')) {
+                                jQuery('div.ehssl-apply-hsts-directives.httpsrdrctn-overlay').fadeOut('fast');
+                            } else {
+                                jQuery('div.ehssl-apply-hsts-directives.httpsrdrctn-overlay').fadeIn('fast');
                             }
                         });
                     </script>
