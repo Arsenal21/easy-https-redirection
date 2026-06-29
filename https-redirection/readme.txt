@@ -117,6 +117,7 @@ Here is an example for German language files.
 - New improved SSL checking code added.
 - A small UI fix related to WordPress v7.
 - A PHP deprecation warning issue fixed.
+- New Strict Transport Security feature added for HTTPS redirection.
 
 = v2.0.0 =
 - The plugin has gone through significant updates and improvements in this version.

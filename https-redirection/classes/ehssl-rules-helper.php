@@ -113,6 +113,10 @@ class EHSSL_Htaccess
             $rules .= 'RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]' . PHP_EOL;
 
             $rules .= '</IfModule>' . PHP_EOL;
+
+	        // Add HTTP Strict Transport Security rules if enabled.
+			$rules .= $this->get_hsts_rules();
+
         } else { //HTTPS Redirection on a Few Pages ONLY
             if (empty($httpsrdrctn_options['https_pages_array'])) {
                 //No specific page has been configured
@@ -157,6 +161,38 @@ class EHSSL_Htaccess
 
         return $rules;
     }
+
+	public function get_hsts_rules(){
+		$httpsrdrctn_options = get_option('httpsrdrctn_options', array());
+		$enable_hsts = isset($httpsrdrctn_options['hsts_enabled']) && !empty($httpsrdrctn_options['hsts_enabled']) ? true : false;
+
+		$hsts_rule = '';
+		if ($enable_hsts) {
+			$hsts_max_age = isset($httpsrdrctn_options['hsts_max_age']) && !empty($httpsrdrctn_options['hsts_max_age']) ? absint(sanitize_text_field($httpsrdrctn_options['hsts_max_age'])) : 31536000;
+			$hsts_include_subdomains = isset($httpsrdrctn_options['hsts_include_sub_domains']) && !empty($httpsrdrctn_options['hsts_include_sub_domains']) ? true : false;
+			$hsts_preload = isset($httpsrdrctn_options['hsts_preload']) && !empty($httpsrdrctn_options['hsts_preload']) ? true : false;
+
+			// Example: Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+			$header = 'Header always set Strict-Transport-Security "%s"';
+
+			$hsts_flags = array();
+			$hsts_flags[] = 'max-age='.$hsts_max_age;
+
+			if (!empty($hsts_include_subdomains)){
+				$hsts_flags[] = 'includeSubDomains';
+			}
+
+			if (!empty($hsts_preload)){
+				$hsts_flags[] = 'preload';
+			}
+
+			$hsts_rule = '<IfModule mod_headers.c>' . PHP_EOL;
+			$hsts_rule .= sprintf($header, implode('; ', $hsts_flags)) . PHP_EOL;
+			$hsts_rule .= '</IfModule>' . PHP_EOL;
+		}
+
+		return $hsts_rule;
+	}
 
     public function delete_from_htaccess($section = 'HTTPS Redirection Plugin')
     {
