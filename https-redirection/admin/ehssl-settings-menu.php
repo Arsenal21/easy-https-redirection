@@ -490,7 +490,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
                                             name="ehssl_post_types[]"
                                             value="<?php echo esc_attr($item['name']); ?>"
                                     />
-                                    <label for="<?php echo esc_attr('ehssl-'.$item['name'].'-'.$index) ?>"><?php echo esc_attr($item['label']) ?></label>
+                                    <label for="<?php echo esc_attr('ehssl-'.$item['name'].'-'.$index) ?>"><?php echo esc_attr($item['label']) . ' ('.esc_attr($item['name']).')' ?></label>
                                 </li>
                             <?php } ?>
                         </ul>
