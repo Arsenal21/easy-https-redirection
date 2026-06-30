@@ -3,8 +3,8 @@ Contributors: Tips and Tricks HQ
 Donate link: https://www.tipsandtricks-hq.com/development-center
 Tags: ssl, https, force ssl, insecure content, redirection, automatic redirection, htaccess, https redirection, ssl certificate, secure page, secure, force https
 Requires at least: 6.5
-Tested up to: 6.8
-Stable tag: 2.0.0
+Tested up to: 7.0
+Stable tag: 2.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,6 +52,19 @@ This plugin has an option that will allow you to force load those static files u
 
 This will help you make the webpage fully compatible with SSL.
 
+=== Mixed Content Scanner & Database URL Fixer ===
+
+After switching to HTTPS, your pages can still trigger browser "mixed content" warnings if old HTTP URLs remain saved in your database (in post content, custom post types, post meta, or WordPress options). This plugin includes a built-in scanner to find and update those insecure URLs to their HTTPS version - no manual database editing required.
+
+Available from the **Mixed Contents** settings tab, the scanner lets you:
+
+* **Scan selected post types** - Choose exactly which post types to scan and update, including posts, pages, and any custom post types registered by your other plugins (products, orders, downloads, subscriptions, and more).
+* **Update other database tables** - Optionally include the WordPress options table in the scan.
+* **Include post meta** - Extend the scan to post meta for the selected post types.
+* **Choose your scan scope** - Run a quick "Scan Static Resources Only" pass, or a thorough "Scan All" to catch every non-HTTPS reference.
+
+This makes cleaning up legacy HTTP links straightforward, helping you achieve a fully secure padlock with no mixed content errors.
+
 === SSL Certificate Expiry Notification ===
 
 This plugin includes a feature that allows you to receive email notifications when your SSL certificate is about to expire. It helps ensure your website remains secure and accessible over HTTPS.
@@ -60,6 +73,19 @@ You can configure the recipient email address and specify how many days in advan
 
 This feature is especially useful for site owners who may not frequently check their SSL status, or for those managing multiple websites. By receiving timely alerts, you can renew your SSL certificate in advance and prevent potential downtime or security warnings.
 
+=== HTTP Strict Transport Security (HSTS) Support ===
+
+Easy HTTPS Redirection includes built-in support for sending the HTTP Strict Transport Security (HSTS) response header.
+
+HSTS instructs compatible web browsers to automatically access your website over HTTPS after a visitor has successfully visited your secure site. This helps strengthen your site's HTTPS enforcement and reduces the risk of users accidentally accessing the HTTP version of your website.
+
+The plugin allows you to:
+
+* Enable or disable the HSTS response header with a simple checkbox.
+* Configure the HSTS max-age value.
+* Apply the HSTS policy to all subdomains using the `includeSubDomains` directive.
+* Include the `preload` directive for sites that intend to submit their domain to the browser HSTS preload list.
+
 === Features ===
 * Automatically redirect all HTTP traffic to HTTPS
 * Option to force HTTPS on the entire site
@@ -67,8 +93,10 @@ This feature is especially useful for site owners who may not frequently check t
 * Helps search engines index the secure versions of your pages
 * Improves site security and user trust
 * Force load static files (images, js, css etc) using a HTTPS URL
+* Built-in mixed content scanner to find and update non-HTTPS URLs across post content, post meta, custom post types, and WordPress options
 * SSL certificate expiry notification - Option to send SSL expiry notifications to a specific email address
 * Easily see which SSL certificates on your site are approaching their expiry date.
+* HTTP Strict Transport Security (HSTS) support with configurable max-age, includeSubDomains, and preload options.
 
 View more details on the [HTTPS Redirection plugin](https://www.tipsandtricks-hq.com/wordpress-easy-https-redirection-plugin) page.
 
@@ -113,12 +141,11 @@ Here is an example for German language files.
 
 == Changelog ==
 
-= WIP =
-- New feature added to scan and update static resource URLs.
-- New improved SSL checking code added.
+= v2.0.1 =
+- New feature: Mixed content scanner tool to find and update non-HTTPS URLs.
+- Added support for sending the HTTP Strict Transport Security (HSTS) response header via the plugin settings.
 - WordPress 7 related UI fix.
 - Fixed a small PHP deprecation warning.
-- Added support for sending the HTTP Strict Transport Security (HSTS) response header via the plugin settings.
 
 = v2.0.0 =
 - The plugin has gone through significant updates and improvements in this version.

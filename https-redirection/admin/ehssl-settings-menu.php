@@ -476,7 +476,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
         <div class="postbox">
             <h3 class="hndle"><label for="title"><?php _e("Scan and Update Non-HTTPS URLs", 'https-redirection');?></label></h3>
             <div class="inside">
-                <p class="description"><?php _e('Use this form to scan for non-https URLs and update them to HTTPS version. Please take a backup of your database before updating the URLs.', 'https-redirection');?></p>
+                <p class="description"><?php _e('Use this tool to scan for non-https URLs and update them to HTTPS version. Please take a backup of your database before updating the URLs.', 'https-redirection');?></p>
                 <br>
                 <form action="" method="POST" id="ehssl_non_https_resources_scan_form">
                     <fieldset>
