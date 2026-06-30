@@ -173,7 +173,7 @@ class EHSSL_Htaccess
 			$hsts_preload = isset($httpsrdrctn_options['hsts_preload']) && !empty($httpsrdrctn_options['hsts_preload']) ? true : false;
 
 			// Example: Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-			$header = 'Header always set Strict-Transport-Security "%s"';
+			$header = 'Header always set Strict-Transport-Security "%s" env=HTTPS';
 
 			$hsts_flags = array();
 			$hsts_flags[] = 'max-age='.$hsts_max_age;
