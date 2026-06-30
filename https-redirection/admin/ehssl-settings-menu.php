@@ -68,7 +68,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
 		    $settings['https_domain'] = isset($_REQUEST['httpsrdrctn_https_domain']) ? $_REQUEST['httpsrdrctn_https_domain'] : 0;
 
 		    $settings['hsts_enabled'] = isset($_REQUEST['hsts_enabled']) ? 1 : 0;
-		    $settings['hsts_max_age'] = isset($_REQUEST['hsts_max_age']) ? absint(sanitize_text_field($_REQUEST['hsts_max_age'])) : 0;
+		    $settings['hsts_max_age'] = isset($_REQUEST['hsts_max_age']) && !empty($_REQUEST['hsts_max_age']) ? absint(sanitize_text_field($_REQUEST['hsts_max_age'])) : 31536000;
 		    $settings['hsts_include_sub_domains'] = isset($_REQUEST['hsts_include_sub_domains']) ? 1 : 0;
 		    $settings['hsts_preload'] = isset($_REQUEST['hsts_preload']) ? 1 : 0;
 
@@ -105,7 +105,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
 	    $siteSSLurl = get_home_url(null, '', 'https');
 
         $hsta_enabled = isset($settings['hsts_enabled']) && !empty($settings['hsts_enabled']) ? 1 : 0;
-        $hsta_max_age = isset($settings['hsts_max_age']) ? absint(sanitize_text_field($settings['hsts_max_age'])) : 0;
+        $hsta_max_age = isset($settings['hsts_max_age']) && !empty($settings['hsts_max_age']) ? absint(sanitize_text_field($settings['hsts_max_age'])) : 31536000;
         $hsta_include_sub_domains = isset($settings['hsts_include_sub_domains']) && !empty($settings['hsts_include_sub_domains']) ? 1 : 0;
         $hsta_preload = isset($settings['hsts_preload']) && !empty($settings['hsts_preload']) ? 1 : 0;
 
