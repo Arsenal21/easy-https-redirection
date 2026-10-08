@@ -220,6 +220,18 @@ class EHSSL_Admin_Init
     }
 
     public function handle_save_dashboard_sorting_order(){
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( array(
+                'message' => __( 'You do not have permission to perform this action.', 'https-redirection' ),
+            ), 403 );
+        }
+
+        if ( ! check_ajax_referer( 'ehssl_save_dashboard_order', 'nonce', false ) ) {
+            wp_send_json_error( array(
+                'message' => __( 'Nonce verification failed!', 'https-redirection' ),
+            ), 403 );
+        }
+
         global $httpsrdrctn_options;
 
         if (isset($_POST['ehssl_sort_order']) && ! empty($_POST['ehssl_sort_order'])) {

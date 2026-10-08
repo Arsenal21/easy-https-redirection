@@ -1,7 +1,7 @@
 /* global ehssl_non_https_resources_scan_update_js_data */
 
 document.addEventListener('DOMContentLoaded', function () {
-    const {ajaxUrl, texts} = ehssl_non_https_resources_scan_update_js_data;
+    const {ajaxUrl, resultsNonce, texts} = ehssl_non_https_resources_scan_update_js_data;
     const scanForm = document.getElementById('ehssl_non_https_resources_scan_form');
     const scanBtn = document.getElementById('ehssl_non_https_resources_scan_btn');
     const resultsBox = document.getElementById('ehssl_scan_results');
@@ -104,6 +104,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const url = new URL(ajaxUrl);
             url.searchParams.append('action', 'ehssl_get_scanned_resources_table');
+            url.searchParams.append('nonce', resultsNonce);
             url.searchParams.append('page', currentPage);
             url.searchParams.append('tab', currentTab);
 
@@ -133,6 +134,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const url = new URL(ajaxUrl);
         url.searchParams.append('action', 'ehssl_load_static_resources_table_page');
+        url.searchParams.append('nonce', resultsNonce);
         url.searchParams.append('page', currentParams.get('page'));
         url.searchParams.append('tab', currentParams.get('tab'));
 

@@ -141,6 +141,10 @@ Here is an example for German language files.
 
 == Changelog ==
 
+= WIP =
+* Security: Added capability and nonce checks to mixed-content scanner AJAX actions to prevent unauthorized access to scan results and URL updates. Thanks to Mohammed Abd Alrahman for reporting this issue.
+* Security: Added capability and nonce checks to dashboard widget order saving.
+
 = v2.0.1 =
 - New feature: Mixed content scanner tool to find and update non-HTTPS URLs.
 - Added support for sending the HTTP Strict Transport Security (HSTS) response header via the plugin settings.

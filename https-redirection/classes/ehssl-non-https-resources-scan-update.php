@@ -21,14 +21,22 @@ class EHSSL_Non_HTTPS_Resources_Scan_Update {
         add_action( 'wp_ajax_ehssl_update_http_urls', array( $this, 'handle_update_http_urls' ) );
     }
 
-    public function handle_non_https_resources_scan() {
-        if ( ! check_ajax_referer( 'ehssl_non_https_resources_scan_form_nonce', false, false ) ) {
-            wp_send_json_error(
-                    array(
-                            'message' => __( 'Nonce verification failed!', 'https-redirection' ),
-                    )
-            );
+    private function check_ajax_permissions( $nonce_action, $nonce_field ) {
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( array(
+                'message' => __( 'You do not have permission to perform this action.', 'https-redirection' ),
+            ), 403 );
         }
+
+        if ( ! check_ajax_referer( $nonce_action, $nonce_field, false ) ) {
+            wp_send_json_error( array(
+                'message' => __( 'Nonce verification failed!', 'https-redirection' ),
+            ), 403 );
+        }
+    }
+
+    public function handle_non_https_resources_scan() {
+        $this->check_ajax_permissions( 'ehssl_non_https_resources_scan_form_nonce', false );
 
         $post_types       = isset( $_POST['ehssl_post_types'] ) ? $_POST['ehssl_post_types'] : array();
         $this->post_types = $post_types;
@@ -134,6 +142,8 @@ class EHSSL_Non_HTTPS_Resources_Scan_Update {
     }
 
     public function handle_get_non_https_resources_table() {
+        $this->check_ajax_permissions( 'ehssl_scan_results', 'nonce' );
+
         try {
             self::render_http_scan_result_table();
             wp_die();
@@ -470,12 +480,18 @@ class EHSSL_Non_HTTPS_Resources_Scan_Update {
     }
 
     public function handle_load_non_https_resources_table_page() {
+        $this->check_ajax_permissions( 'ehssl_scan_results', 'nonce' );
+
         self::render_http_scan_result_table();
 
         wp_die();
     }
 
     public static function render_http_scan_result_table() {
+        if ( ! current_user_can( 'manage_options' ) ) {
+            return;
+        }
+
         $table = new EHSSL_Static_Resources_Scan_Result_Table();
         $table->prepare_items();
         ?>
@@ -489,13 +505,7 @@ class EHSSL_Non_HTTPS_Resources_Scan_Update {
     }
 
     public function handle_update_http_urls() {
-        if ( ! check_ajax_referer( 'ehssl_update_all_http_urls', 'nonce', false ) ) {
-            wp_send_json_error(
-                    array(
-                            'message' => __( 'Nonce verification failed!', 'https-redirection' ),
-                    )
-            );
-        }
+        $this->check_ajax_permissions( 'ehssl_update_all_http_urls', 'nonce' );
 
         $limit = $this->batch_size;
         $offset = isset( $_POST['offset'] ) ? absint( $_POST['offset'] ) : 0;

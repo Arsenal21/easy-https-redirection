@@ -579,6 +579,7 @@ class EHSSL_Settings_Menu extends EHSSL_Admin_Menu
 
         wp_localize_script('ehssl_non_https_resources_scan_update', 'ehssl_non_https_resources_scan_update_js_data', array(
                 'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+                'resultsNonce' => wp_create_nonce( 'ehssl_scan_results' ),
                 'texts' => array(
                         'nothing_found' => __('Nothing Found!', 'https-redirection'),
                         'pls_select_an_item' => __('Please select an item to scan!', 'https-redirection'),
