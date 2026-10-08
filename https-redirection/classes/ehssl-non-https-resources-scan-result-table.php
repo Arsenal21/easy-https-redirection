@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
@@ -78,7 +82,7 @@ class EHSSL_Static_Resources_Scan_Result_Table extends WP_List_Table {
                 } elseif ($item['source_table'] == $wpdb->options) {
                     $output = $item['source_uid'] . " (WP Option)";
                 } else {
-                    $output = __('Unknown', 'http-redirection');
+                    $output = __('Unknown', 'https-redirection');
                 }
 
                 return $output;
@@ -96,7 +100,7 @@ class EHSSL_Static_Resources_Scan_Result_Table extends WP_List_Table {
 
     public function get_bulk_actions() {
         return array(
-                'update_to_https' => __( 'Update to HTTPS Version', 'http-redirection' ),
+                'update_to_https' => __( 'Update to HTTPS Version', 'https-redirection' ),
         );
     }
 
@@ -126,7 +130,7 @@ class EHSSL_Static_Resources_Scan_Result_Table extends WP_List_Table {
                     class="button"
                     id="ehssl_update_all_found_http_urls"
             >
-                <?php _e('Update All URLs', 'https-redirection'); ?>
+                <?php esc_html_e('Update All URLs', 'https-redirection'); ?>
             </button>
 
         </div>

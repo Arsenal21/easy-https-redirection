@@ -105,15 +105,7 @@ class EHSSL_Logger
 
     public static function reset_log_file($file_name = '')
     {
-        if (empty($file_name)) {
-            $file_name = self::$default_log_file;
-        }
-
-        $debug_log_file = self::$log_folder_path . '/' . $file_name;
-        $content = self::get_debug_timestamp() . ' ' . self::$log_reset_marker;
-        $fp = fopen($debug_log_file, 'w');
-        fwrite($fp, $content);
-        fclose($fp);
+        return self::write_to_file( self::get_debug_timestamp() . ' ' . self::$log_reset_marker, $file_name, true );
     }
 
     /**

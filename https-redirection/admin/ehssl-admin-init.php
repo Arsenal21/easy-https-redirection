@@ -190,9 +190,10 @@ class EHSSL_Admin_Init
 
         $filename = EHSSL_Logger::get_log_file();
         if (file_exists($filename)) {
-            $logfile = fopen(EHSSL_Logger::get_log_file(), 'rb');
-            header('Content-Type: text/plain');
-            fpassthru($logfile);
+            $logfile = EHSSL_Utils::get_filesystem()->get_contents( $filename );
+            header( 'Content-Type: text/plain; charset=UTF-8' );
+            header( 'X-Content-Type-Options: nosniff' );
+            echo esc_html( false === $logfile ? '' : $logfile );
         }
         die;
     }
@@ -261,7 +262,7 @@ class EHSSL_Admin_Init
             $output .= '</p>';
             $output .= '</div>';
 
-            echo $output;
+            echo wp_kses_post( $output );
         }
     }
 

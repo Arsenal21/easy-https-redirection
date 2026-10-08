@@ -10,60 +10,17 @@ class EHSSL_Htaccess
 
     public function write_to_htaccess()
     {
-        //clean up old rules first
-        if ($this->delete_from_htaccess() == -1) {
-            return -1; //unable to write to the file
-        }
-
-        $htaccess = ABSPATH . '.htaccess';
-        //get the subdirectory if it is installed in one
-        $siteurl = explode('/', get_option('siteurl'));
-        if (isset($siteurl[3])) {
-            $dir = '/' . $siteurl[3] . '/';
-        } else {
-            $dir = '/';
-        }
-
-        if (!$f = @fopen($htaccess, 'a+')) {
-            @chmod($htaccess, 0644);
-            if (!$f = @fopen($htaccess, 'a+')) {
-                return -1;
-            }
-        }
-
-        //backup_a_file($htaccess); //TODO - should we back up htaccess file?
-
-        @ini_set('auto_detect_line_endings', true);
-        $ht = explode(PHP_EOL, implode('', file($htaccess))); //parse each line of file into array
-
         $rules = $this->getrules();
-        if ($rules == -1) {
+        if ( -1 === $rules || -1 === $this->delete_from_htaccess() ) {
             return -1;
         }
-
-        $rulesarray = explode(PHP_EOL, $rules);
-        $contents = array_merge($rulesarray, $ht);
-
-        if (!$f = @fopen($htaccess, 'w+')) {
-            return -1; //we can't write to the file
+        $filesystem = EHSSL_Utils::get_filesystem();
+        $htaccess = ABSPATH . '.htaccess';
+        $contents = $filesystem->get_contents( $htaccess );
+        if ( false === $contents ) {
+            return -1;
         }
-
-        $blank = false;
-
-        //write each line to file
-        foreach ($contents as $insertline) {
-            if (trim($insertline) == '') {
-                if ($blank == false) {
-                    fwrite($f, PHP_EOL . trim($insertline));
-                }
-                $blank = true;
-            } else {
-                $blank = false;
-                fwrite($f, PHP_EOL . trim($insertline));
-            }
-        }
-        @fclose($f);
-        return 1; //success
+        return EHSSL_Utils::write_file( $htaccess, $rules . $contents ) ? 1 : -1;
     }
 
     public function getrules()
@@ -197,37 +154,34 @@ class EHSSL_Htaccess
     public function delete_from_htaccess($section = 'HTTPS Redirection Plugin')
     {
         $htaccess = ABSPATH . '.htaccess';
-
-        @ini_set('auto_detect_line_endings', true);
-        if (!file_exists($htaccess)) {
-            $ht = @fopen($htaccess, 'a+');
-            @fclose($ht);
+        $filesystem = EHSSL_Utils::get_filesystem();
+        if ( ! $filesystem->exists( $htaccess ) ) {
+            return EHSSL_Utils::write_file( $htaccess, '' ) ? 1 : -1;
         }
-        $ht_contents = explode(PHP_EOL, implode('', file($htaccess))); //parse each line of file into array
-        if ($ht_contents) { //as long as there are lines in the file
-            $state = true;
-            if (!$f = @fopen($htaccess, 'w+')) {
-                @chmod($htaccess, 0644);
-                if (!$f = @fopen($htaccess, 'w+')) {
-                    return -1;
-                }
-            }
-
-            foreach ($ht_contents as $n => $markerline) { //for each line in the file
-                if (strpos($markerline, '# BEGIN ' . $section) !== false) { //if we're at the beginning of the section
-                    $state = false;
-                }
-                if ($state == true) { //as long as we're not in the section keep writing
-                    fwrite($f, trim($markerline) . PHP_EOL);
-                }
-                if (strpos($markerline, '# END ' . $section) !== false) { //see if we're at the end of the section
-                    $state = true;
-                }
-            }
-            @fclose($f);
-            return 1;
+        $contents = $filesystem->get_contents( $htaccess );
+        if ( false === $contents ) {
+            return -1;
         }
-        return 1;
+
+        // Preserve other plugins' rules and their original whitespace.
+        $lines = preg_split( '/(?<=\n)/', $contents );
+        $inside_section = false;
+        $remaining = '';
+        foreach ( $lines as $line ) {
+            if ( false !== strpos( $line, '# BEGIN ' . $section ) ) {
+                $inside_section = true;
+            }
+            if ( ! $inside_section ) {
+                $remaining .= $line;
+            }
+            if ( false !== strpos( $line, '# END ' . $section ) ) {
+                $inside_section = false;
+            }
+        }
+        if ( $inside_section ) {
+            return -1; // Do not discard unrelated rules if the closing marker is missing.
+        }
+        return EHSSL_Utils::write_file( $htaccess, $remaining ) ? 1 : -1;
     }
 
 }

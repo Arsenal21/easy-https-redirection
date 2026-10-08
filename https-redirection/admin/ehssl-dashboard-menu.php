@@ -24,7 +24,7 @@ class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
         $current_tab = $this->get_current_tab();
         foreach ($this->dashboard_menu_tabs as $tab_key => $tab_caption) {
             $active = $current_tab == $tab_key ? 'nav-tab-active' : '';
-            echo '<a class="nav-tab ' . $active . '" href="?page=' . $this->menu_page_slug . '&tab=' . $tab_key . '">' . $tab_caption . '</a>';
+            echo '<a class="nav-tab ' . esc_attr( $active ) . '" href="?page=' . esc_attr( $this->menu_page_slug ) . '&tab=' . esc_attr( $tab_key ) . '">' . esc_html( $tab_caption ) . '</a>';
         }
     }
 
@@ -36,7 +36,7 @@ class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
         $tab = $this->get_current_tab();
         ?>
         <div class="wrap">
-            <h2><?php _e("Dashboard", 'https-redirection') ?></h2>
+            <h2><?php esc_html_e("Dashboard", 'https-redirection') ?></h2>
             <h2 class="nav-tab-wrapper"><?php $this->render_page_tabs(); ?></h2>
             <div id="poststuff">
                 <div id="post-body">
@@ -93,7 +93,7 @@ class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
     ?>
         <div id="ehssl_dashboard_ssl_status" class="sortable-item postbox"  data-item-id="1">
             <div class="postbox-header handle">
-                <h2><?php _e("SSL Status", 'https-redirection'); ?></h2>
+                <h2><?php esc_html_e("SSL Status", 'https-redirection'); ?></h2>
             </div>
 
             <div class="inside">
@@ -103,14 +103,14 @@ class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
                             <span class="dashicons dashicons-lock" style="transform: scale(4); transform-origin: top center;"></span>
                         </div>
                         <div>
-                            <?php _e('Your site is protected!', 'https-redirection') ?>
+                            <?php esc_html_e('Your site is protected!', 'https-redirection') ?>
                         </div>
                     <?php } else { ?>
                         <div style="color: #cc0000; height: 5rem">
                             <span class="dashicons dashicons-dismiss" style="transform: scale(4); transform-origin: top center;"></span>
                         </div>
                         <div>
-                            <?php _e('No SSL found!', 'https-redirection') ?>
+                            <?php esc_html_e('No SSL found!', 'https-redirection') ?>
                         </div>
                     <?php } ?>
                 </div>
@@ -128,7 +128,7 @@ class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
     ?>
         <div id="ehssl_dashboard_ssl_info" class="sortable-item postbox" data-item-id="2">
             <div class="postbox-header handle">
-                <h2><?php _e("SSL Information", 'https-redirection'); ?></h2>
+                <h2><?php esc_html_e("SSL Information", 'https-redirection'); ?></h2>
             </div>
             <div class="inside">
                 <table>
@@ -136,7 +136,7 @@ class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
                         <tr valign="top" style="margin: 24px 0;">
                             <td scope="row">
                                 <b style="font-weight: bold;">
-                                    <?php _e($section, 'https-redirection'); ?>
+                                    <?php echo esc_html($section); ?>
                                 </b>
                             </td>
                             <th></th>
@@ -144,9 +144,9 @@ class EHSSL_Dashboard_Menu extends EHSSL_Admin_Menu
                         </tr>
                         <?php foreach ($fields as $field => $value) { ?>
                             <tr valign="top">
-                                <td><?php _e($field, 'https-redirection'); ?></td>
+                                <td><?php echo esc_html($field); ?></td>
                                 <td> : </td>
-                                <td><?php echo $value ?></td>
+                                <td><?php echo esc_html( $value ) ?></td>
                             </tr>
                         <?php } ?>
                     <?php } ?>

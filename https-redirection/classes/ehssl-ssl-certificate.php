@@ -150,14 +150,14 @@ class EHSSL_SSL_Certificate
     {
         // Check and create the acme-challenge directory if it doesn't exist.
         if (!is_dir($acme_challenge_dir_path)) {
-            if (!mkdir($acme_challenge_dir_path, 0755, true)) {
+            if (!wp_mkdir_p($acme_challenge_dir_path)) {
                 EHSSL_Logger::log("Failed to create the acme-challenge directory");
                 return new WP_Error("1001", __("Failed to create the acme-challenge directory", 'https-redirection'));
             }
         }
 
         if (!is_dir($certificate_dir_path)) {
-            if (!mkdir($certificate_dir_path, 0755, true)) {
+            if (!wp_mkdir_p($certificate_dir_path)) {
                 EHSSL_Logger::log("Failed to create the certificate directory");
                 return new WP_Error("1002", __("Failed to create the certificate directory", 'https-redirection'));
             }

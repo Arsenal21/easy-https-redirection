@@ -3,7 +3,7 @@ Contributors: Tips and Tricks HQ
 Donate link: https://www.tipsandtricks-hq.com/development-center
 Tags: ssl, https, force ssl, insecure content, redirection, automatic redirection, htaccess, https redirection, ssl certificate, secure page, secure, force https
 Requires at least: 6.5
-Tested up to: 7.0
+Tested up to: 7.1
 Stable tag: 2.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -144,6 +144,7 @@ Here is an example for German language files.
 = WIP =
 * Security: Added capability and nonce checks to mixed-content scanner AJAX actions to prevent unauthorized access to scan results and URL updates. Thanks to Mohammed Abd Alrahman for reporting this issue.
 * Security: Added capability and nonce checks to dashboard widget order saving.
+* Plugin check reported error issues fixed.
 
 = v2.0.1 =
 - New feature: Mixed content scanner tool to find and update non-HTTPS URLs.

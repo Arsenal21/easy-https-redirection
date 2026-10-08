@@ -2,6 +2,25 @@
 
 class EHSSL_Utils
 {
+    /**
+     * Access local plugin logs and server configuration through the WP filesystem API.
+     */
+    public static function get_filesystem() {
+        static $filesystem;
+        if ( ! isset( $filesystem ) ) {
+            require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
+            require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
+            $filesystem = new WP_Filesystem_Direct( null );
+        }
+        return $filesystem;
+    }
+
+    public static function write_file( $path, $contents ) {
+        $filesystem = self::get_filesystem();
+        $mode = $filesystem->exists( $path ) ? octdec( $filesystem->getchmod( $path ) ) : 0644;
+        return $filesystem->put_contents( $path, $contents, $mode );
+    }
+
     public static function httpsrdrctn_force_https_embeds($content)
     {
         $files_to_check = array('jpg', 'jpeg', 'gif', 'png', 'js', 'css');
@@ -31,14 +50,14 @@ class EHSSL_Utils
 		$url = apply_filters( 'wpec_before_redirect_to_url', $url );
 		if ( empty( $url ) ) {
 			echo '<strong>';
-			_e( 'Error! The URL value is empty. Please specify a correct URL value to redirect to!', 'wp-express-checkout' );
+			esc_html_e( 'Error! The URL value is empty. Please specify a correct URL value to redirect to!', 'https-redirection' );
 			echo '</strong>';
 			exit;
 		}
 		if ( ! headers_sent() ) {
 			header( 'Location: ' . $url );
 		} else {
-			echo '<meta http-equiv="refresh" content="' . $delay . ';url=' . $url . '" />';
+			echo '<meta http-equiv="refresh" content="' . absint( $delay ) . ';url=' . esc_url( $url ) . '" />';
 		}
 
 		if ( $exit == '1' ) {//exit
@@ -54,7 +73,7 @@ class EHSSL_Utils
         $home_url = get_home_url();        
 
         // Parse the URL to extract components
-        $parsed_url = parse_url($home_url);
+        $parsed_url = wp_parse_url($home_url);
 
         // Get the host part of the URL
         $domain = isset($parsed_url['host']) ? $parsed_url['host'] : '';
@@ -78,13 +97,21 @@ class EHSSL_Utils
 
 
     public static function is_domain_accessible($url) {
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_init -- Retain the cURL connectivity probe.
         $ch = curl_init($url);
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_setopt -- Retain the cURL connectivity probe.
         curl_setopt($ch, CURLOPT_HEADER, true);    // we want headers
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_setopt -- Retain the cURL connectivity probe.
         curl_setopt($ch, CURLOPT_NOBODY, true);    // we don't need body
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_setopt -- Retain the cURL connectivity probe.
         curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_setopt -- Retain the cURL connectivity probe.
         curl_setopt($ch, CURLOPT_TIMEOUT,10);
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_exec -- Retain the cURL connectivity probe.
         $output = curl_exec($ch);
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_getinfo -- Retain the cURL connectivity probe.
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_close -- Retain the cURL connectivity probe.
         curl_close($ch);
 
         return ($httpcode >= 200 && $httpcode < 400);

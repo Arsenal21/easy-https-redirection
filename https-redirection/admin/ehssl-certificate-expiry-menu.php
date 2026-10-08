@@ -26,7 +26,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
 		$current_tab = $this->get_current_tab();
 		foreach ( $this->dashboard_menu_tabs as $tab_key => $tab_caption ) {
 			$active = $current_tab == $tab_key ? 'nav-tab-active' : '';
-			echo '<a class="nav-tab ' . $active . '" href="?page=' . $this->menu_page_slug . '&tab=' . $tab_key . '">' . $tab_caption . '</a>';
+			echo '<a class="nav-tab ' . esc_attr( $active ) . '" href="?page=' . esc_attr( $this->menu_page_slug ) . '&tab=' . esc_attr( $tab_key ) . '">' . esc_html( $tab_caption ) . '</a>';
 		}
 	}
 
@@ -38,7 +38,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
 
 		?>
         <div class="wrap">
-            <h2><?php _e( "Certificate Expiry", 'https-redirection' ) ?></h2>
+            <h2><?php esc_html_e( "Certificate Expiry", 'https-redirection' ) ?></h2>
             <h2 class="nav-tab-wrapper"><?php $this->render_page_tabs(); ?></h2>
             <div id="poststuff">
                 <div id="post-body">
@@ -69,7 +69,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
 
 			EHSSL_SSL_Utils::check_and_save_current_cert_info();
 
-			echo '<div class="notice notice-success"><p>'. __('SSL certificate scan completed successfully.', 'https-redirection') .'</p></div>';
+			echo '<div class="notice notice-success"><p>'. esc_html__('SSL certificate scan completed successfully.', 'https-redirection') .'</p></div>';
 		}
 
 		if ( isset( $_POST['ehssl_delete_all_cert_info_submit'] ) ){
@@ -81,9 +81,9 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
 			$is_deleted = EHSSL_SSL_Utils::delete_all_certificate_info();
 
             if ($is_deleted){
-			    echo '<div class="notice notice-success"><p>'. __('SSL certificate info was deleted successfully.', 'https-redirection') .'</p></div>';
+			    echo '<div class="notice notice-success"><p>'. esc_html__('SSL certificate info was deleted successfully.', 'https-redirection') .'</p></div>';
             } else {
-			    echo '<div class="notice notice-info"><p>'. __('No saved SSL certificate info was detected for deletion.', 'https-redirection') .'</p></div>';
+			    echo '<div class="notice notice-info"><p>'. esc_html__('No saved SSL certificate info was detected for deletion.', 'https-redirection') .'</p></div>';
             }
 		}
 
@@ -91,19 +91,19 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
 		?>
         <div class="postbox">
             <h3 class="hndle">
-                <label for="title"><?php _e( "Certificates", 'https-redirection' ); ?></label>
+                <label for="title"><?php esc_html_e( "Certificates", 'https-redirection' ); ?></label>
             </h3>
             <div class="inside">
                 <?php if (!empty($certs_info)) { ?>
                 <table class="widefat striped">
                     <thead>
                     <tr>
-                        <th><?php _e('ID', 'https-redirection') ?></th>
-                        <th><?php _e('Label', 'https-redirection') ?></th>
-                        <th><?php _e('Issuer', 'https-redirection') ?></th>
-                        <th><?php _e('Issued on', 'https-redirection') ?></th>
-                        <th><?php _e('Expires on', 'https-redirection') ?></th>
-                        <th><?php _e('Status', 'https-redirection') ?></th>
+                        <th><?php esc_html_e('ID', 'https-redirection') ?></th>
+                        <th><?php esc_html_e('Label', 'https-redirection') ?></th>
+                        <th><?php esc_html_e('Issuer', 'https-redirection') ?></th>
+                        <th><?php esc_html_e('Issued on', 'https-redirection') ?></th>
+                        <th><?php esc_html_e('Expires on', 'https-redirection') ?></th>
+                        <th><?php esc_html_e('Status', 'https-redirection') ?></th>
                     </tr>
                     </thead>
                     <?php foreach ($certs_info as $cert){
@@ -112,18 +112,18 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
 	                    $formatted_ssl_status = ucfirst(EHSSL_SSL_Utils::get_certificate_status($cert['expires_on']));
                         ?>
                         <tr>
-                            <td><?php esc_attr_e($cert['id']) ?></td>
-                            <td><?php esc_attr_e($cert['label']) ?></td>
-                            <td><?php esc_attr_e($cert['issuer']) ?></td>
-                            <td><?php esc_attr_e($formatted_issued_on_date) ?></td>
-                            <td><?php esc_attr_e($formatted_expires_on) ?></td>
-                            <td><?php esc_attr_e($formatted_ssl_status) ?></td>
+                            <td><?php echo esc_attr($cert['id']) ?></td>
+                            <td><?php echo esc_attr($cert['label']) ?></td>
+                            <td><?php echo esc_attr($cert['issuer']) ?></td>
+                            <td><?php echo esc_attr($formatted_issued_on_date) ?></td>
+                            <td><?php echo esc_attr($formatted_expires_on) ?></td>
+                            <td><?php echo esc_attr($formatted_ssl_status) ?></td>
                         </tr>
                     <?php } ?>
                 </table>
                 <?php } else { ?>
                 <p class="description">
-                    <?php _e('No SSL certificate information found. Click the Scan button to search for installed certificates.', 'https-redirection') ?>
+                    <?php esc_html_e('No SSL certificate information found. Click the Scan button to search for installed certificates.', 'https-redirection') ?>
                 </p>
                 <?php } ?>
             </div><!-- end of inside -->
@@ -131,17 +131,17 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
 
         <div class="postbox">
             <h3 class="hndle">
-                <label for="title"><?php _e( "Certificate Actions", 'https-redirection' ); ?></label>
+                <label for="title"><?php esc_html_e( "Certificate Actions", 'https-redirection' ); ?></label>
             </h3>
             <div class="inside">
                 <div class="">
                     <form action="" method="post">
-                        <div><?php _e('Click the Scan button to manually scan for available SSL certificates.', 'https-redirection') ?></div>
+                        <div><?php esc_html_e('Click the Scan button to manually scan for available SSL certificates.', 'https-redirection') ?></div>
                         <br>
-                        <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('ehssl_scan_for_ssl_nonce') ?>">
+                        <input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce('ehssl_scan_for_ssl_nonce') ) ?>">
                         <input type="submit"
                                class="button-primary"
-                               value="<?php _e('Scan Now', 'https-redirection') ?>"
+                               value="<?php esc_attr_e('Scan Now', 'https-redirection') ?>"
                                name="ehssl_scan_for_ssl_submit"
                         >
                     </form>
@@ -150,14 +150,14 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                 <br>
 
                 <div class="">
-                    <form action="" method="post" onsubmit="return confirm('<?php _e('Do you really want to delete all saved SSL info?', 'https-redirection') ?>');">
-                        <div><?php _e('Delete all SSL certificate records from the table.', 'https-redirection') ?></div>
+                    <form action="" method="post" onsubmit="return confirm(<?php echo esc_attr( wp_json_encode( __( 'Do you really want to delete all saved SSL info?', 'https-redirection' ) ) ); ?>);">
+                        <div><?php esc_html_e('Delete all SSL certificate records from the table.', 'https-redirection') ?></div>
                         <br>
-                        <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('ehssl_delete_all_cert_info_nonce') ?>">
+                        <input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce('ehssl_delete_all_cert_info_nonce') ) ?>">
                         <input type="submit"
                                class="button-secondary"
                                style="border-color: #CC0000; color: #CC0000"
-                               value="<?php _e('Delete All SSL Info', 'https-redirection') ?>"
+                               value="<?php esc_attr_e('Delete All SSL Info', 'https-redirection') ?>"
                                name="ehssl_delete_all_cert_info_submit"
                         >
                     </form>
@@ -184,7 +184,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
 
 			?>
             <div class="notice notice-success">
-                <p><?php _e( "Settings Saved.", 'https-redirection' ); ?></p>
+                <p><?php esc_html_e( "Settings Saved.", 'https-redirection' ); ?></p>
             </div>
 			<?php
 		}
@@ -222,7 +222,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
 		?>
         <div class="postbox">
             <h3 class="hndle">
-                <label for="title"><?php _e( "Notification Email Settings", 'https-redirection' ); ?></label>
+                <label for="title"><?php esc_html_e( "Notification Email Settings", 'https-redirection' ); ?></label>
             </h3>
             <div class="inside">
                 <form method="post" action="">
@@ -230,7 +230,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                         <tr valign="top">
                             <th scope="row">
                                 <label>
-									<?php _e( 'Enable Certificate Expiry Notification', 'https-redirection' ); ?>
+									<?php esc_html_e( 'Enable Certificate Expiry Notification', 'https-redirection' ); ?>
                                 </label>
                             </th>
                             <td>
@@ -240,95 +240,95 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                                     <?php echo !empty($expiry_notification_enabled) ? 'checked="checked"' : '' ?>
                                 />
                                 <br/>
-                                <p class="description"><?php _e( "Enable this option to send SSL certificate expiry notifications.", 'https-redirection' ); ?></p>
+                                <p class="description"><?php esc_html_e( "Enable this option to send SSL certificate expiry notifications.", 'https-redirection' ); ?></p>
                             </td>
                         </tr>
                         <tr valign="top">
                             <th scope="row">
                                 <label>
-									<?php _e( 'Email Content Type', 'https-redirection' ); ?>
+									<?php esc_html_e( 'Email Content Type', 'https-redirection' ); ?>
                                 </label>
                             </th>
                             <td>
                                 <select name="ehssl_expiry_notification_email_content_type">
-                                    <option value="text" <?php echo ($expiry_notification_email_content_type == 'text') ? 'selected' : '' ?>><?php _e('Plain Text', 'https-redirection') ?></option>
-                                    <option value="html" <?php echo ($expiry_notification_email_content_type == 'html') ? 'selected' : '' ?>><?php _e('HTML', 'https-redirection') ?></option>
+                                    <option value="text" <?php echo ($expiry_notification_email_content_type == 'text') ? 'selected' : '' ?>><?php esc_html_e('Plain Text', 'https-redirection') ?></option>
+                                    <option value="html" <?php echo ($expiry_notification_email_content_type == 'html') ? 'selected' : '' ?>><?php esc_html_e('HTML', 'https-redirection') ?></option>
                                 </select>
                                 <br/>
-                                <p class="description"><?php _e( "Choose whether the SSL expiry notification email should be sent in plain text or HTML format.", 'https-redirection' ); ?></p>
+                                <p class="description"><?php esc_html_e( "Choose whether the SSL expiry notification email should be sent in plain text or HTML format.", 'https-redirection' ); ?></p>
                             </td>
                         </tr>
                         <tr valign="top">
                             <th scope="row">
                                 <label>
-									<?php _e( 'Notification Email Before Days', 'https-redirection' ); ?>
+									<?php esc_html_e( 'Notification Email Before Days', 'https-redirection' ); ?>
                                 </label>
                             </th>
                             <td>
                                 <input type="number"
                                        name="ehssl_expiry_notification_email_before_days"
                                        class="ehssl-settings-field-cat-1"
-                                       value="<?php esc_attr_e( $expiry_notification_email_before_days ) ?>"
+                                       value="<?php echo esc_attr($expiry_notification_email_before_days ) ?>"
                                        required
                                 />
                                 <br/>
-                                <p class="description"><?php _e( "Set how many days in advance the expiry email should be sent. Default is 7 days.", 'https-redirection' ); ?></p>
+                                <p class="description"><?php esc_html_e( "Set how many days in advance the expiry email should be sent. Default is 7 days.", 'https-redirection' ); ?></p>
                             </td>
                         </tr>
                         <tr valign="top">
                             <th scope="row">
                                 <label>
-									<?php _e( 'Notification Email From', 'https-redirection' ); ?>
+									<?php esc_html_e( 'Notification Email From', 'https-redirection' ); ?>
                                 </label>
                             </th>
                             <td>
                                 <input type="text"
                                        name="ehssl_expiry_notification_email_from"
                                        class="ehssl-settings-field-cat-2"
-                                       value="<?php esc_attr_e( $expiry_notification_email_from ) ?>"
+                                       value="<?php echo esc_attr($expiry_notification_email_from ) ?>"
                                 />
                                 <br/>
-                                <p class="description"><?php _e( "The email address used as the 'From' address in the notification email.", 'https-redirection' ); ?></p>
+                                <p class="description"><?php esc_html_e( "The email address used as the 'From' address in the notification email.", 'https-redirection' ); ?></p>
                             </td>
                         </tr>
                         <tr valign="top">
                             <th scope="row">
                                 <label>
-									<?php _e( 'Notification Email To', 'https-redirection' ); ?>
+									<?php esc_html_e( 'Notification Email To', 'https-redirection' ); ?>
                                 </label>
                             </th>
                             <td>
                                 <input type="email"
                                        name="ehssl_expiry_notification_email_to"
                                        class="ehssl-settings-field-cat-2"
-                                       value="<?php esc_attr_e( $expiry_notification_email_to ) ?>"
+                                       value="<?php echo esc_attr($expiry_notification_email_to ) ?>"
                                        required
                                 />
                                 <br/>
-                                <p class="description"><?php _e( "Email address where expiry notifications will be sent.", 'https-redirection' ); ?></p>
+                                <p class="description"><?php esc_html_e( "Email address where expiry notifications will be sent.", 'https-redirection' ); ?></p>
                             </td>
                         </tr>
                         <tr valign="top">
                             <th scope="row">
                                 <label>
-									<?php _e( 'Notification Email Subject', 'https-redirection' ); ?>
+									<?php esc_html_e( 'Notification Email Subject', 'https-redirection' ); ?>
                                 </label>
                             </th>
                             <td>
                                 <input type="text"
                                        name="ehssl_expiry_notification_email_subject"
                                        class="ehssl-settings-field-cat-2"
-                                       value="<?php esc_attr_e( $expiry_notification_email_sub ) ?>"
+                                       value="<?php echo esc_attr($expiry_notification_email_sub ) ?>"
                                        required
                                 />
                                 <br/>
-                                <p class="description"><?php _e( "Certificate expiry notification email subject.", 'https-redirection' ); ?></p>
+                                <p class="description"><?php esc_html_e( "Certificate expiry notification email subject.", 'https-redirection' ); ?></p>
                             </td>
                         </tr>
                         <tr valign="top">
                             <th scope="row">
                                 <label>
-									<?php _e( 'Notification Email Body', 'https-redirection' ); ?>
+									<?php esc_html_e( 'Notification Email Body', 'https-redirection' ); ?>
                                 </label>
                             </th>
                             <td>
@@ -357,11 +357,11 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
                                             class="ehssl-settings-field-cat-3"
                                             rows="10"
                                             required
-                                    ><?php esc_attr_e( $expiry_notification_email_body ) ?></textarea>
+                                    ><?php echo esc_attr($expiry_notification_email_body ) ?></textarea>
                                     <br/>
                                 <?php } ?>
-                                <p class="description"><?php _e( "Certificate expiry notification email body.", 'https-redirection' ); ?></p>
-                                <?php echo EHSSL_Email_handler::get_merge_tags_hints() ?>
+                                <p class="description"><?php esc_html_e( "Certificate expiry notification email body.", 'https-redirection' ); ?></p>
+                                <?php echo wp_kses_post( EHSSL_Email_handler::get_merge_tags_hints() ) ?>
                             </td>
                         </tr>
                     </table>
@@ -369,7 +369,7 @@ class EHSSL_Certificate_Expiry_Menu extends EHSSL_Admin_Menu {
 					<?php wp_nonce_field( 'ehssl_expiry_notification_settings_nonce' ); ?>
                     <p class="submit">
                         <input type="submit" name="ehssl_expiry_notification_settings_form_submit"
-                               class="button-primary" value="<?php _e( 'Save Changes' ) ?>"/>
+                               class="button-primary" value="<?php esc_attr_e( 'Save Changes', 'https-redirection' ) ?>"/>
                     </p>
                 </form>
             </div><!-- end of inside -->
