@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
 if ( !class_exists('Easy_HTTPS_SSL') ) {
     class Easy_HTTPS_SSL
     {

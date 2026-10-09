@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
 class EHSSL_Non_HTTPS_Resources_Scan_Update {
 
     public $batch_size = 100;
@@ -21,14 +25,22 @@ class EHSSL_Non_HTTPS_Resources_Scan_Update {
         add_action( 'wp_ajax_ehssl_update_http_urls', array( $this, 'handle_update_http_urls' ) );
     }
 
-    public function handle_non_https_resources_scan() {
-        if ( ! check_ajax_referer( 'ehssl_non_https_resources_scan_form_nonce', false, false ) ) {
-            wp_send_json_error(
-                    array(
-                            'message' => __( 'Nonce verification failed!', 'https-redirection' ),
-                    )
-            );
+    private function check_ajax_permissions( $nonce_action, $nonce_field ) {
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( array(
+                'message' => __( 'You do not have permission to perform this action.', 'https-redirection' ),
+            ), 403 );
         }
+
+        if ( ! check_ajax_referer( $nonce_action, $nonce_field, false ) ) {
+            wp_send_json_error( array(
+                'message' => __( 'Nonce verification failed!', 'https-redirection' ),
+            ), 403 );
+        }
+    }
+
+    public function handle_non_https_resources_scan() {
+        $this->check_ajax_permissions( 'ehssl_non_https_resources_scan_form_nonce', false );
 
         $post_types       = isset( $_POST['ehssl_post_types'] ) ? $_POST['ehssl_post_types'] : array();
         $this->post_types = $post_types;
@@ -104,11 +116,9 @@ class EHSSL_Non_HTTPS_Resources_Scan_Update {
             $post_types = isset( $_POST['ehssl_post_types'] ) ? $_POST['ehssl_post_types'] : array();
             if ( ! empty( $post_types ) ) {
                 $post_types_placeholders = implode( ',', array_fill( 0, count( $post_types ), '%s' ) );
-                $query                   = $wpdb->prepare(
-                        'SELECT COUNT(*) FROM ' . $wpdb->posts . ' WHERE post_type IN (' . $post_types_placeholders . ')',
-                        array( ...$post_types ) );
-
-                $count = $wpdb->get_var( $query );
+                $count = $wpdb->get_var( $wpdb->prepare(
+                        "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type IN ($post_types_placeholders)",
+                        array( ...$post_types ) ) );
                 if ( ! empty( $count ) ) {
                     $result['ehssl_post_types'] = (int) $count;
                 }
@@ -117,10 +127,9 @@ class EHSSL_Non_HTTPS_Resources_Scan_Update {
 
             $other_tables = isset( $_POST['ehssl_other_tables'] ) ? $_POST['ehssl_other_tables'] : array();
             if ( ! empty( $other_tables ) ) {
-                $query = $wpdb->prepare( "SELECT COUNT(*) FROM " . $wpdb->options . " WHERE option_name NOT LIKE %s AND option_name NOT LIKE %s ",
+                $count = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM " . $wpdb->options . " WHERE option_name NOT LIKE %s AND option_name NOT LIKE %s ",
                         array( '_transient_%', '_site_transient_%' ),
-                );
-                $count = $wpdb->get_var( $query );
+                ) );
                 if ( ! empty( $count ) ) {
                     $result['ehssl_other_tables'] = (int) $count;
                 }
@@ -134,11 +143,13 @@ class EHSSL_Non_HTTPS_Resources_Scan_Update {
     }
 
     public function handle_get_non_https_resources_table() {
+        $this->check_ajax_permissions( 'ehssl_scan_results', 'nonce' );
+
         try {
             self::render_http_scan_result_table();
             wp_die();
         } catch ( Exception $e ) {
-            wp_die( $e->getMessage() );
+            wp_die( esc_html( $e->getMessage() ) );
         }
     }
 
@@ -150,13 +161,8 @@ class EHSSL_Non_HTTPS_Resources_Scan_Update {
         $limit      = $this->batch_size;
 
         $post_types_placeholders = implode( ',', array_fill( 0, count( $post_types ), '%s' ) );
-        $query                   = $wpdb->prepare( 'SELECT ID, post_content, post_excerpt 
-                                        FROM ' . $wpdb->posts . ' 
-                                        WHERE post_type IN (' . $post_types_placeholders . ') 
-                                        LIMIT %d OFFSET %d',
-                array( ...$post_types, $limit, $offset ) );
-
-        $posts = $wpdb->get_results( $query );
+        $posts = $wpdb->get_results( $wpdb->prepare( "SELECT ID, post_content, post_excerpt FROM {$wpdb->posts} WHERE post_type IN ($post_types_placeholders) LIMIT %d OFFSET %d",
+                array( ...$post_types, $limit, $offset ) ) );
 
         $post_table_columns = array( 'post_content', 'post_excerpt' );
 
@@ -246,13 +252,12 @@ class EHSSL_Non_HTTPS_Resources_Scan_Update {
 
         $limit = $this->batch_size;
 
-        $query   = $wpdb->prepare( "SELECT option_name, option_value 
+        $options = $wpdb->get_results( $wpdb->prepare( "SELECT option_name, option_value
             FROM " . $wpdb->options . " 
             WHERE option_name NOT LIKE %s AND option_name NOT LIKE %s 
             LIMIT %d OFFSET %d",
                 array( '_transient_%', '_site_transient_%', $limit, $offset ),
-        );
-        $options = $wpdb->get_results( $query );
+        ) );
 
         $table_columns = array( 'option_value' );
 
@@ -350,93 +355,58 @@ class EHSSL_Non_HTTPS_Resources_Scan_Update {
     }
 
     public function save_scan_result() {
-        $new_results = $this->scan_results;
-
         global $wpdb;
-
-        $placeholders = array();
-        $values       = array();
-
-        foreach ( $new_results as $row ) {
-            $placeholders[] = '(%s,%s,%s,%s)';
-            array_push(
-                    $values,
-                    $row['source_table'],
-                    $row['source_uid'],
-                    isset( $row['cols_map'] ) ? serialize( $row['cols_map'] ) : array(),
-                    isset( $row['meta_map'] ) ? serialize( $row['meta_map'] ) : array(),
+        $inserted = 0;
+        foreach ( $this->scan_results as $row ) {
+            $result = $wpdb->insert(
+                $wpdb->prefix . 'ehssl_resource_scan_tbl',
+                array(
+                    'source_table' => $row['source_table'],
+                    'source_uid'   => $row['source_uid'],
+                    'cols_map'     => maybe_serialize( isset( $row['cols_map'] ) ? $row['cols_map'] : array() ),
+                    'meta_map'     => maybe_serialize( isset( $row['meta_map'] ) ? $row['meta_map'] : array() ),
+                ),
+                array( '%s', '%s', '%s', '%s' )
             );
+            if ( false === $result ) {
+                return false;
+            }
+            $inserted += $result;
         }
-
-        $query = "INSERT INTO {$wpdb->prefix}ehssl_resource_scan_tbl (source_table, source_uid, cols_map, meta_map) VALUES " . implode( ',', $placeholders );
-
-        $query = $wpdb->prepare( $query, $values );
-
-        return $wpdb->query( $query );
+        return $inserted;
     }
 
     public static function get_scan_results_count( $skip_fixed = false ) {
         global $wpdb;
-        $query =  "SELECT COUNT(*) FROM {$wpdb->prefix}ehssl_resource_scan_tbl";
-
-        if ( $skip_fixed ) {
-            $query .= " WHERE fixed != %d";
-            $query = $wpdb->prepare( $query, 1 );
-        }
-
-        $count = $wpdb->get_var( $query );
-
-        return (int) $count;
+        return (int) $wpdb->get_var( $wpdb->prepare(
+            "SELECT COUNT(*) FROM {$wpdb->prefix}ehssl_resource_scan_tbl WHERE (%d = 0 OR fixed != 1)",
+            (int) $skip_fixed
+        ) );
     }
 
     public static function get_scan_results_chunk( $offset = 0, $limit = 10, $where = array(), $skip_fixed = false ) {
         global $wpdb;
 
-        $sql          = "SELECT * FROM {$wpdb->prefix}ehssl_resource_scan_tbl";
-        $where_parts  = array();
-        $prepare_args = array();
-
-        if ($skip_fixed) {
-            $where_parts[] = "fixed != 1";
-        }
-
-        foreach ( $where as $column => $ids ) {
-
-            $column = sanitize_key( $column );
-
-            if ( empty( $ids ) || ! is_array( $ids ) ) {
-                continue;
+        // Only the scan-row ID is a supported selection filter.
+        if ( isset( $where['id'] ) ) {
+            if ( ! is_array( $where['id'] ) ) {
+                return array();
             }
-
-            $ids = array_map( 'absint', $ids );
-            $ids = array_filter( $ids );
-
+            $ids = array_values( array_filter( array_map( 'absint', $where['id'] ) ) );
             if ( empty( $ids ) ) {
-                continue;
+                return array();
             }
-
             $placeholders = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
-
-            $where_parts[] = "`{$column}` IN ({$placeholders})";
-
-            $prepare_args = array_merge(
-                    $prepare_args,
-                    $ids
-            );
+            return $wpdb->get_results( $wpdb->prepare(
+                "SELECT * FROM {$wpdb->prefix}ehssl_resource_scan_tbl WHERE (%d = 0 OR fixed != 1) AND id IN ($placeholders) ORDER BY id LIMIT %d OFFSET %d",
+                array_merge( array( (int) $skip_fixed ), $ids, array( $limit, $offset ) )
+            ), ARRAY_A );
         }
 
-        if ( ! empty( $where_parts ) ) {
-            $sql .= ' WHERE ' . implode( ' AND ', $where_parts );
-        }
-
-        $sql .= ' LIMIT %d OFFSET %d';
-
-        $prepare_args[] = (int) $limit;
-        $prepare_args[] = (int) $offset;
-
-        $query = $wpdb->prepare( $sql, $prepare_args );
-
-        return $wpdb->get_results( $query, ARRAY_A );
+        return $wpdb->get_results( $wpdb->prepare(
+            "SELECT * FROM {$wpdb->prefix}ehssl_resource_scan_tbl WHERE (%d = 0 OR fixed != 1) ORDER BY id LIMIT %d OFFSET %d",
+            (int) $skip_fixed, $limit, $offset
+        ), ARRAY_A );
     }
 
     public function mark_items_fixed( &$batch ) {
@@ -455,27 +425,30 @@ class EHSSL_Non_HTTPS_Resources_Scan_Update {
 
         $placeholders = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
 
-        $sql = "UPDATE {$wpdb->prefix}ehssl_resource_scan_tbl SET `fixed` = 1 WHERE `id` IN ({$placeholders})";
-
-        $query = $wpdb->prepare( $sql, $ids );
-
-        $wpdb->query( $query );
+        $wpdb->query( $wpdb->prepare(
+            "UPDATE {$wpdb->prefix}ehssl_resource_scan_tbl SET fixed = 1 WHERE id IN ($placeholders)",
+            $ids
+        ) );
     }
 
     public function clear_scan_results() {
         global $wpdb;
-        $query = $wpdb->prepare( "DELETE FROM {$wpdb->prefix}ehssl_resource_scan_tbl;" );
-
-        return $wpdb->query( $query );
+        return $wpdb->query( "DELETE FROM {$wpdb->prefix}ehssl_resource_scan_tbl" );
     }
 
     public function handle_load_non_https_resources_table_page() {
+        $this->check_ajax_permissions( 'ehssl_scan_results', 'nonce' );
+
         self::render_http_scan_result_table();
 
         wp_die();
     }
 
     public static function render_http_scan_result_table() {
+        if ( ! current_user_can( 'manage_options' ) ) {
+            return;
+        }
+
         $table = new EHSSL_Static_Resources_Scan_Result_Table();
         $table->prepare_items();
         ?>
@@ -489,13 +462,7 @@ class EHSSL_Non_HTTPS_Resources_Scan_Update {
     }
 
     public function handle_update_http_urls() {
-        if ( ! check_ajax_referer( 'ehssl_update_all_http_urls', 'nonce', false ) ) {
-            wp_send_json_error(
-                    array(
-                            'message' => __( 'Nonce verification failed!', 'https-redirection' ),
-                    )
-            );
-        }
+        $this->check_ajax_permissions( 'ehssl_update_all_http_urls', 'nonce' );
 
         $limit = $this->batch_size;
         $offset = isset( $_POST['offset'] ) ? absint( $_POST['offset'] ) : 0;
@@ -579,8 +546,7 @@ class EHSSL_Non_HTTPS_Resources_Scan_Update {
         if (! empty( $cols_map ) ) {
 
             global $wpdb;
-            $query = $wpdb->prepare( "SELECT ID, post_content, post_excerpt FROM {$wpdb->posts} WHERE ID = %d", $post_id );
-            $post  = $wpdb->get_row( $query );
+            $post = $wpdb->get_row( $wpdb->prepare( "SELECT ID, post_content, post_excerpt FROM {$wpdb->posts} WHERE ID = %d", $post_id ) );
             if ( empty( $post ) ) {
                 return;
             }

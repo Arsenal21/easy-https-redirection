@@ -3,7 +3,7 @@
 class EHSSL_SSL_Utils {
 
 	public static function get_current_domain() {
-		return parse_url( home_url(), PHP_URL_HOST );
+		return wp_parse_url( home_url(), PHP_URL_HOST );
 	}
 
 	/**
@@ -173,6 +173,7 @@ class EHSSL_SSL_Utils {
 			'title'          => $cert_hash,
 			'posts_per_page' => 1, // We only need one post
 			'exact'          => true, // Ensure an exact title match
+			// phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.SuppressFilters_suppress_filters -- Include all stored certificate records regardless of query filters.
 			'suppress_filters' => true, // Bypass filters for more predictable results
 		) );
 
@@ -241,6 +242,7 @@ class EHSSL_SSL_Utils {
 			'title'          => $cert_hash,
 			'posts_per_page' => 1, // We only need one post
 			'exact'          => true, // Ensure an exact title match
+			// phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.SuppressFilters_suppress_filters -- Include all stored certificate records regardless of query filters.
 			'suppress_filters' => true, // Bypass filters for more predictable results
 		) );
 
