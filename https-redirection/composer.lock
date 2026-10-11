@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "aa8bc11e61ebd4a871b292e48e205cd8",
+    "content-hash": "a942e260ae15e905bb0f05d759d68c17",
     "packages": [
         {
             "name": "afosto/yaac",
-            "version": "v1.5.2",
+            "version": "v1.5.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/afosto/yaac.git",
-                "reference": "3c09d1a8ae7df6ba0ec23c9ccf641b3295219de7"
+                "reference": "4c351a219cc5c61d8943ada740fd4bbf2df46558"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/afosto/yaac/zipball/3c09d1a8ae7df6ba0ec23c9ccf641b3295219de7",
-                "reference": "3c09d1a8ae7df6ba0ec23c9ccf641b3295219de7",
+                "url": "https://api.github.com/repos/afosto/yaac/zipball/4c351a219cc5c61d8943ada740fd4bbf2df46558",
+                "reference": "4c351a219cc5c61d8943ada740fd4bbf2df46558",
                 "shasum": ""
             },
             "require": {
@@ -50,13 +50,14 @@
                 "afosto",
                 "encrypt",
                 "lets",
+                "letsencrypt",
                 "v2"
             ],
             "support": {
                 "issues": "https://github.com/afosto/yaac/issues",
-                "source": "https://github.com/afosto/yaac/tree/v1.5.2"
+                "source": "https://github.com/afosto/yaac/tree/v1.5.5"
             },
-            "time": "2023-05-02T15:11:17+00:00"
+            "time": "2026-07-25T10:47:50+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -812,12 +813,12 @@
             },
             "type": "library",
             "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/contracts",
+                    "name": "symfony/contracts"
+                },
                 "branch-alias": {
                     "dev-main": "3.0-dev"
-                },
-                "thanks": {
-                    "name": "symfony/contracts",
-                    "url": "https://github.com/symfony/contracts"
                 }
             },
             "autoload": {
@@ -864,10 +865,10 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform": {},
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
 }

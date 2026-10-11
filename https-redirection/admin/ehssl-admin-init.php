@@ -12,6 +12,7 @@ class EHSSL_Admin_Init
     public function __construct()
     {
         $this->admin_includes();
+        add_action('admin_post_ehssl_download_cert', array('EHSSL_Certificate_Storage', 'download'));
         add_action('admin_print_scripts', array($this, 'admin_menu_page_scripts'));
         add_action('admin_print_styles', array($this, 'admin_menu_page_styles'));
         add_action('admin_menu', array($this, 'create_admin_menus'));
