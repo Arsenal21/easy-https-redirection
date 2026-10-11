@@ -1,4 +1,7 @@
 <?php
+
+require_once EASY_HTTPS_SSL_PATH . "/classes/ehssl-certificate-storage.php";
+
 class EHSSL_SSL_Certificate
 {
 
@@ -14,32 +17,38 @@ class EHSSL_SSL_Certificate
         EHSSL_Logger::log("Starting SSL certificate generation process...");
         $well_known_dir_path = ABSPATH . ".well-known";
         $acme_challenge_dir_path = $well_known_dir_path . "/acme-challenge";
-        $certificate_dir_path = $well_known_dir_path . "/certificate";
-        $upload_dir = wp_upload_dir();
-
-        EHSSL_Logger::log("Creating directories for acme-challenge & certificate files");
-        EHSSL_Logger::log("Certificate Directory: " . $certificate_dir_path);
-        EHSSL_Logger::log("Acme-Challenge Directory: " . $acme_challenge_dir_path);
-        $certificate_directories = $this->create_directories($acme_challenge_dir_path, $certificate_dir_path);
-        if (is_wp_error($certificate_directories)) {
-            return $certificate_directories;
-        }
-
-        // Instantiate the YAAC client.
-        // Save account keys in .well-kown/account.
-        $adapter = new League\Flysystem\Local\LocalFilesystemAdapter($well_known_dir_path . "/account");
-        $filesystem = new League\Flysystem\Filesystem($adapter);
-
-        $mode = $live_mode ? Afosto\Acme\Client::MODE_LIVE : Afosto\Acme\Client::MODE_STAGING;
-        EHSSL_Logger::log("Initiating Certificate Request for " . strtoupper($mode) . " Mode.");
-
-        $client = new Afosto\Acme\Client([
-            'username' => $email,
-            'fs'       => $filesystem,
-            'mode'     => $mode,
-        ]);
-
+        $challenge_files = array();
+        $old_mask = umask(0077);
         try {
+            if (!is_dir($well_known_dir_path) && (!wp_mkdir_p($well_known_dir_path) || !chmod($well_known_dir_path, 0755))) {
+                throw new RuntimeException('Could not create the .well-known directory.');
+            }
+            $storage = EHSSL_Certificate_Storage::prepare();
+            $certificate_dir_path = $storage . '/certificate';
+            if (is_link($certificate_dir_path) || is_link($storage . '/account')) {
+                throw new RuntimeException('Refusing to use symbolic links for certificate storage.');
+            }
+            $certificate_directories = $this->create_directories($acme_challenge_dir_path, $certificate_dir_path);
+            if (is_wp_error($certificate_directories)) {
+                return $certificate_directories;
+            }
+            $visibility = new League\Flysystem\UnixVisibility\PortableVisibilityConverter(0600, 0600, 0700, 0700);
+            $adapter = new League\Flysystem\Local\LocalFilesystemAdapter($storage . '/account', $visibility);
+            $filesystem = new League\Flysystem\Filesystem($adapter, array('visibility' => 'private', 'directory_visibility' => 'private'));
+
+            $mode = $live_mode ? Afosto\Acme\Client::MODE_LIVE : Afosto\Acme\Client::MODE_STAGING;
+            EHSSL_Logger::log("Initiating Certificate Request for " . strtoupper($mode) . " Mode.");
+
+            $config = [
+                'username' => $email,
+                'fs'       => $filesystem,
+                'mode'     => $mode,
+            ];
+
+            require_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-acme-client.php';
+
+            $client = new EHSSL_ACME_Client($config);
+
             $domains = array();
             $domain = EHSSL_Utils::get_domain();
             $domain_variant = EHSSL_Utils::get_domain_variant($domain);
@@ -64,7 +73,12 @@ class EHSSL_SSL_Certificate
             EHSSL_Logger::log("Saving authorizations & performing Self tests");
             foreach ($authorizations as $authorization) {
                 $file = $authorization->getFile();
-                file_put_contents($acme_challenge_dir_path . "/" . $file->getFilename(), $file->getContents());
+                if (!$file || !preg_match('/\A[A-Za-z0-9_-]+\z/', $file->getFilename())) {
+                    throw new RuntimeException('Invalid HTTP challenge token.');
+                }
+                $challenge_path = $acme_challenge_dir_path . '/' . $file->getFilename();
+                $challenge_files[] = $challenge_path;
+                EHSSL_Certificate_Storage::write($challenge_path, $file->getContents(), 0644);
 
                 // Self-test.
                 // After exposing the challenges (made accessible through HTTP or DNS) we should perform a self test just to be sure it works before asking Let's Encrypt to validate ownership.
@@ -77,7 +91,9 @@ class EHSSL_SSL_Certificate
             // Request validation.
             EHSSL_Logger::log("Request validation");
             foreach ($authorizations as $authorization) {
-                $client->validate($authorization->getHttpChallenge(), 15);
+                if (!$client->validate($authorization->getHttpChallenge(), 15)) {
+                    throw new RuntimeException('ACME challenge validation failed.');
+                }
             }
 
             if ($client->isReady($order)) {
@@ -86,10 +102,10 @@ class EHSSL_SSL_Certificate
                 $certificate = $client->getCertificate($order);
 
                 EHSSL_Logger::log("Saving certificates in certificate directory.");
-                file_put_contents($certificate_dir_path . '/certificate.crt', $certificate->getCertificate());
-                file_put_contents($certificate_dir_path . '/cabundle.crt', $certificate->getIntermediate());
-                file_put_contents($certificate_dir_path . '/private.pem', $certificate->getPrivateKey());
-                file_put_contents($certificate_dir_path . '/certificate_expiry.txt', $certificate->getExpiryDate()->format('Y-m-d H:i:s'));
+                EHSSL_Certificate_Storage::write($certificate_dir_path . '/certificate.crt', $certificate->getCertificate(false));
+                EHSSL_Certificate_Storage::write($certificate_dir_path . '/cabundle.crt', $certificate->getIntermediate());
+                EHSSL_Certificate_Storage::write($certificate_dir_path . '/private.pem', $certificate->getPrivateKey());
+                EHSSL_Certificate_Storage::write($certificate_dir_path . '/certificate_expiry.txt', $certificate->getExpiryDate()->format('Y-m-d H:i:s'));
 
                 // Updating certificate expiry date.
                 EHSSL_Logger::log("Updating certificate expirty date in db.");
@@ -102,17 +118,27 @@ class EHSSL_SSL_Certificate
             }
             EHSSL_Logger::log("SSL Certificate installation failed.");
             return new WP_Error("1003", __("SSL Certificate installation failed. Check the logs for details.", 'https-redirection'));
-        } catch (Exception $ex) {
+        } catch (\Throwable $ex) {
             EHSSL_Logger::log("Exception Raised:" . $ex->getMessage());
             return new WP_Error("1004", $ex->getMessage());
+        } finally {
+            umask($old_mask);
+            foreach ($challenge_files as $challenge_path) {
+                if (file_exists($challenge_path) && !unlink($challenge_path)) {
+                    EHSSL_Logger::log('Could not remove an ACME challenge file.');
+                }
+            }
         }
     }
 
 
     public static function get_certificate_urls()
     {
-        $well_known_dir_path = ABSPATH . '.well-known';
-        $certificate_dir_path = $well_known_dir_path . "/certificate";
+        try {
+            $certificate_dir_path = EHSSL_Certificate_Storage::directory() . '/certificate';
+        } catch (Throwable $error) {
+            return new WP_Error('file_not_found', $error->getMessage());
+        }
 
         $certificate_file = $certificate_dir_path . '/certificate.crt';
         $ca_bundle = $certificate_dir_path . '/cabundle.crt';
@@ -124,23 +150,15 @@ class EHSSL_SSL_Certificate
             return new WP_Error('file_not_found', __('Certificate or private key file not found. Please generate a certificate first!', 'https-redirection'));
         }
 
-        // Convert file system paths to URLs.
-        // $well_known_dir_path = realpath('.well-known');
-        $well_known_dir_url = site_url('.well-known');
-        $certificate_dir_url = $well_known_dir_url . '/certificate';
-
         return array(
             "certificate.crt" => array(
                 'path' => realpath($certificate_file),
-                'url' => $certificate_dir_url . '/certificate.crt',
             ),
             "cabundle.crt" => array(
                 'path' => realpath($ca_bundle),
-                'url' => $certificate_dir_url . '/cabundle.crt',
             ),
             "private.pem" => array(
                 'path' => realpath($private_key_file),
-                'url' => $certificate_dir_url . '/private.pem',
             )
         );
     }
@@ -150,7 +168,7 @@ class EHSSL_SSL_Certificate
     {
         // Check and create the acme-challenge directory if it doesn't exist.
         if (!is_dir($acme_challenge_dir_path)) {
-            if (!wp_mkdir_p($acme_challenge_dir_path)) {
+            if (!wp_mkdir_p($acme_challenge_dir_path) || !chmod($acme_challenge_dir_path, 0755)) {
                 EHSSL_Logger::log("Failed to create the acme-challenge directory");
                 return new WP_Error("1001", __("Failed to create the acme-challenge directory", 'https-redirection'));
             }
@@ -163,6 +181,9 @@ class EHSSL_SSL_Certificate
             }
         }
 
+        if (!chmod($certificate_dir_path, 0700)) {
+            return new WP_Error('storage_permissions', 'Could not restrict certificate directory permissions.');
+        }
         return true;
     }
 }

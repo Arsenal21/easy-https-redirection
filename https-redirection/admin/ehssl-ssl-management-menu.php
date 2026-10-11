@@ -71,6 +71,10 @@ class EHSSL_SSL_MGMT_Menu extends EHSSL_Admin_Menu
 
         global $httpsrdrctn_options;
 
+        if (!current_user_can('manage_options')) {
+            wp_die(esc_html__('You are not allowed to manage SSL certificates.', 'https-redirection'));
+        }
+
         // Save data for tab 1
         if (isset($_POST['ehssl_get_ssl_form_submit']) && check_admin_referer('ehssl_get_ssl_nonce')) {
             $httpsrdrctn_options['ehssl_email_for_ssl_certificate'] = isset($_POST['ehssl_email_for_ssl_certificate']) ? sanitize_email($_POST['ehssl_email_for_ssl_certificate']) : get_option('admin_email');
@@ -100,8 +104,8 @@ class EHSSL_SSL_MGMT_Menu extends EHSSL_Admin_Menu
                     $certificate_urls = EHSSL_SSL_Certificate::get_certificate_urls();
 
                     echo "<ul>";
-                    foreach ($certificate_urls as $key => $url) {
-                        echo '<li><a href="' . esc_url( $url['url'] ) . '">' . esc_html( $key ) . '</a></li>';
+                    foreach (is_wp_error($certificate_urls) ? array() : $certificate_urls as $key => $url) {
+                        echo '<li><a href="' . esc_url( EHSSL_Certificate_Storage::download_url($key) ) . '">' . esc_html( $key ) . '</a></li>';
                     }
                     echo "</ul>";
                     ?>
@@ -120,6 +124,14 @@ class EHSSL_SSL_MGMT_Menu extends EHSSL_Admin_Menu
         <div class="postbox">
             <h3 class="hndle"><label for="title">Get SSL</label></h3>
             <div class="inside">
+                <?php if (isset($_SERVER['SERVER_SOFTWARE']) && stripos($_SERVER['SERVER_SOFTWARE'], 'nginx') !== false) { ?>
+                <p><?php esc_html_e('Certificate storage must block direct web access. Apache and IIS deny files are created automatically. Nginx hosts require a server deny rule for .well-known/ehssl-* folders before generation.', 'https-redirection'); ?></p>
+                <code>
+                location ~ "/\.well-known/ehssl-[a-f0-9]{64}(?:/|$)" { 
+                    deny all;
+                }
+                </code>
+                <?php } ?>
                 <form method="post" action="">
                     <p>
                         SSL certificate will be generated for the domain:<br>
@@ -191,10 +203,10 @@ class EHSSL_SSL_MGMT_Menu extends EHSSL_Admin_Menu
                                     <tr>
                                         <th><?php echo esc_attr($key) ?></th>
                                         <td>
-                                            <input type="text" style="width: 80%; margin-right: 4px" readonly value="<?php echo esc_url($file['path']); ?>" /><button class="button-primary"><?php esc_html_e('Copy File Path', 'https-redirection') ?></button>
+                                            <input type="text" style="width: 80%; margin-right: 4px" readonly value="<?php echo esc_attr($file['path']); ?>" /><button class="button-primary"><?php esc_html_e('Copy File Path', 'https-redirection') ?></button>
                                         </td>
                                         <td>
-                                            <a href='<?php echo esc_url($file['url'])?>' class="button-secondary"><?php esc_html_e('Download File', 'https-redirection') ?></a>
+                                            <a href='<?php echo esc_url(EHSSL_Certificate_Storage::download_url($key))?>' class="button-secondary"><?php esc_html_e('Download File', 'https-redirection') ?></a>
                                             <a href='#' class="button-secondary"><?php esc_html_e('Copy File Content', 'https-redirection') ?></a>
                                         </td>
                                     </tr>

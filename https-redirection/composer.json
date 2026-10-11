@@ -1,8 +1,5 @@
 {
     "require": {
-        "afosto/yaac": "^1.5"
-    },
-    "replace": {
-        "afosto/yaac": "self.version"
+        "afosto/yaac": "^1.5.5"
     }
 }
