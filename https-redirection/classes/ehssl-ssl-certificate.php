@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 require_once EASY_HTTPS_SSL_PATH . "/classes/ehssl-certificate-storage.php";
 
 class EHSSL_SSL_Certificate
@@ -20,10 +24,11 @@ class EHSSL_SSL_Certificate
         $challenge_files = array();
         $old_mask = umask(0077);
         try {
+            // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_chmod -- Local ACME storage requires exact Unix permissions and checked failures without remote filesystem credentials.
             if (!is_dir($well_known_dir_path) && (!wp_mkdir_p($well_known_dir_path) || !chmod($well_known_dir_path, 0755))) {
                 throw new RuntimeException('Could not create the .well-known directory.');
             }
-            $storage = EHSSL_Certificate_Storage::prepare();
+            $storage = EHSSL_Certificate_Storage::prepare_storage();
             $certificate_dir_path = $storage . '/certificate';
             if (is_link($certificate_dir_path) || is_link($storage . '/account')) {
                 throw new RuntimeException('Refusing to use symbolic links for certificate storage.');
@@ -124,7 +129,11 @@ class EHSSL_SSL_Certificate
         } finally {
             umask($old_mask);
             foreach ($challenge_files as $challenge_path) {
-                if (file_exists($challenge_path) && !unlink($challenge_path)) {
+                if (file_exists($challenge_path)) {
+                    wp_delete_file($challenge_path);
+                    clearstatcache(true, $challenge_path);
+                }
+                if (file_exists($challenge_path)) {
                     EHSSL_Logger::log('Could not remove an ACME challenge file.');
                 }
             }
@@ -168,6 +177,7 @@ class EHSSL_SSL_Certificate
     {
         // Check and create the acme-challenge directory if it doesn't exist.
         if (!is_dir($acme_challenge_dir_path)) {
+            // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_chmod -- Local ACME storage requires exact Unix permissions and checked failures without remote filesystem credentials.
             if (!wp_mkdir_p($acme_challenge_dir_path) || !chmod($acme_challenge_dir_path, 0755)) {
                 EHSSL_Logger::log("Failed to create the acme-challenge directory");
                 return new WP_Error("1001", __("Failed to create the acme-challenge directory", 'https-redirection'));
@@ -181,6 +191,7 @@ class EHSSL_SSL_Certificate
             }
         }
 
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_chmod -- Local ACME storage requires exact Unix permissions and checked failures without remote filesystem credentials.
         if (!chmod($certificate_dir_path, 0700)) {
             return new WP_Error('storage_permissions', 'Could not restrict certificate directory permissions.');
         }

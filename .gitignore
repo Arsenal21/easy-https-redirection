@@ -4,3 +4,6 @@ https-redirection-v2.zip
 https-redirection.zip
 
 .idea
+
+# TODO: Need to remove this when ssl management feature is ready.
+https-redirection/vendor 
