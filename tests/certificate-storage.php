@@ -15,6 +15,8 @@ class WP_Error {
 }
 function get_option($key, $default = false) { global $options; return $options[$key] ?? $default; }
 function add_option($key, $value, $unused = '', $autoload = null) { global $options; if (!isset($options[$key])) { $options[$key] = $value; } }
+function wp_delete_file($path) { unlink($path); }
+function wp_parse_url($url, $component = -1) { return parse_url($url, $component); }
 function wp_mkdir_p($path) { return is_dir($path) || mkdir($path, 0755, true); }
 function site_url($path) { return 'https://example.org/' . $path; }
 function set_url_scheme($url, $scheme) { return preg_replace('/^https?/', $scheme, $url); }
@@ -47,31 +49,31 @@ function expect_error($call, $text) {
 function check($condition, $message) { if (!$condition) { throw new RuntimeException($message); } }
 try {
     expect_error(function () { EHSSL_Certificate_Storage::directory(); }, 'not initialized');
-    $directory = EHSSL_Certificate_Storage::prepare();
+    $directory = EHSSL_Certificate_Storage::prepare_storage();
     check($directory === EHSSL_Certificate_Storage::directory(true), 'Storage name changed.');
     check(strpos(file_get_contents($directory . '/.htaccess'), 'Require all denied') !== false, 'Missing deny rule.');
     check(!glob($directory . '/access-test-*'), 'Access probe left behind.');
     foreach (array(200, 301, 302, 404, 500, new WP_Error()) as $status) {
         $http_status = $status;
-        expect_error(function () { EHSSL_Certificate_Storage::prepare(); }, 'could not be verified');
+        expect_error(function () { EHSSL_Certificate_Storage::prepare_storage(); }, 'could not be verified');
         check(!glob($directory . '/access-test-*'), 'Failed probe left behind.');
     }
     $http_status = 403;
     $http_status = 404;
     $control_mode = 'valid';
-    EHSSL_Certificate_Storage::prepare();
+    EHSSL_Certificate_Storage::prepare_storage();
     check(!glob(ABSPATH . '.well-known/ehssl-control-*'), 'Public control left behind.');
     $control_mode = 'wrong-body';
-    expect_error(function () { EHSSL_Certificate_Storage::prepare(); }, 'public control file');
+    expect_error(function () { EHSSL_Certificate_Storage::prepare_storage(); }, 'public control file');
     check(!glob(ABSPATH . '.well-known/ehssl-control-*'), 'Failed public control left behind.');
     $control_mode = '';
     $http_status = 403;
     $http_responses = array(new WP_Error());
-    expect_error(function () { EHSSL_Certificate_Storage::prepare(); }, 'cURL error 60');
+    expect_error(function () { EHSSL_Certificate_Storage::prepare_storage(); }, 'cURL error 60');
     $http_responses = array(404);
-    expect_error(function () { EHSSL_Certificate_Storage::prepare(); }, 'HTTP returned HTTP 404');
+    expect_error(function () { EHSSL_Certificate_Storage::prepare_storage(); }, 'HTTP returned HTTP 404');
     $http_responses = array(array('status' => 302, 'location' => 'https://example.org/login'), 403);
-    expect_error(function () { EHSSL_Certificate_Storage::prepare(); }, 'could not be verified');
+    expect_error(function () { EHSSL_Certificate_Storage::prepare_storage(); }, 'could not be verified');
     $http_responses = array();
     check((fileperms($directory) & 0777) === 0700, 'Wrong storage directory permissions.');
     foreach ($http_requests as $request) {

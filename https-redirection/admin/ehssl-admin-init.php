@@ -12,7 +12,7 @@ class EHSSL_Admin_Init
     public function __construct()
     {
         $this->admin_includes();
-        add_action('admin_post_ehssl_download_cert', array('EHSSL_Certificate_Storage', 'download'));
+        // add_action('admin_post_ehssl_download_cert', array('EHSSL_Certificate_Storage', 'download')); // TODO: Need to uncomment when ssl management feature is ready, might need a reposition also.
         add_action('admin_print_scripts', array($this, 'admin_menu_page_scripts'));
         add_action('admin_print_styles', array($this, 'admin_menu_page_styles'));
         add_action('admin_menu', array($this, 'create_admin_menus'));
@@ -28,7 +28,7 @@ class EHSSL_Admin_Init
         include_once 'ehssl-admin-menu.php';
         include_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-rules-helper.php';
 
-	    // TODO: Need to work on this later.
+	    // TODO: Need to uncomment when ssl management feature is ready.
         // require_once EASY_HTTPS_SSL_PATH."/vendor/autoload.php";
         // include_once EASY_HTTPS_SSL_PATH . '/classes/ehssl-ssl-certificate.php';
     }
@@ -66,7 +66,7 @@ class EHSSL_Admin_Init
         add_submenu_page(EHSSL_MAIN_MENU_SLUG, __('Settings', 'https-redirection'), __('Settings', 'https-redirection'), EHSSL_MANAGEMENT_PERMISSION, EHSSL_SETTINGS_MENU_SLUG, array($this, 'handle_settings_menu_rendering'));
         add_submenu_page(EHSSL_MAIN_MENU_SLUG, __('Certificate Expiry', 'https-redirection'), __('Certificate Expiry', 'https-redirection'), EHSSL_MANAGEMENT_PERMISSION, EHSSL_CERTIFICATE_EXPIRY_MENU_SLUG, array($this, 'handle_certificate_expiry_menu_rendering'));
 
-		// TODO: Need to work on this menu.
+		// TODO: Need to uncomment when ssl management feature is ready.
 		// add_submenu_page(EHSSL_MAIN_MENU_SLUG, __('SSL Management', 'https-redirection'), __('SSL Management', 'https-redirection'), EHSSL_MANAGEMENT_PERMISSION, EHSSL_SSL_MGMT_MENU_SLUG, array($this, 'handle_ssl_mgmt_menu_rendering'));
         
         //Keeping the old settings menu for now for backwards compatibility. There is a link to the new settings page in the old settings menu.

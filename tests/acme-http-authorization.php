@@ -1,4 +1,5 @@
 <?php
+define('ABSPATH', __DIR__ . '/');
 // Run with: php tests/acme-http-authorization.php
 require_once __DIR__ . '/../https-redirection/vendor/autoload.php';
 require_once __DIR__ . '/../https-redirection/classes/ehssl-acme-client.php';

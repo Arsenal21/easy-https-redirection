@@ -21,6 +21,8 @@ class EHSSL_Utils {
 function get_option($name, $default = false) { global $options; return $options[$name] ?? $default; }
 function add_option($name, $value, $unused = '', $autoload = false) { global $options; $options[$name] = $value; }
 function update_option($name, $value) { global $options; $options[$name] = $value; }
+function wp_delete_file($path) { unlink($path); }
+function wp_parse_url($url, $component = -1) { return parse_url($url, $component); }
 function wp_mkdir_p($directory) { return is_dir($directory) || mkdir($directory, 0755, true); }
 function is_wp_error($value) { return $value instanceof WP_Error; }
 function site_url($path) { return 'https://example.org/' . $path; }

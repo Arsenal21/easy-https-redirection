@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 class EHSSL_Certificate_Storage {
     
     public static function directory($create = false) {
@@ -15,8 +19,9 @@ class EHSSL_Certificate_Storage {
         return ABSPATH . '.well-known/' . $name;
     }
 
-    public static function prepare() {
+    public static function prepare_storage() {
         $directory = self::directory(true);
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_chmod -- Local ACME storage requires exact Unix permissions and checked failures without remote filesystem credentials.
         if (is_link(ABSPATH . '.well-known') || is_link($directory) || !wp_mkdir_p($directory) || !chmod($directory, 0700)) {
             throw new RuntimeException('Could not create certificate storage.');
         }
@@ -34,7 +39,7 @@ class EHSSL_Certificate_Storage {
             self::write($probe, bin2hex(random_bytes(32)), 0644);
             $url = site_url('.well-known/' . basename($directory) . '/' . $probe_name);
             // HTTP is always public; also check HTTPS when configured for this site.
-            foreach (array_unique(array('http', parse_url($url, PHP_URL_SCHEME))) as $scheme) {
+            foreach (array_unique(array('http', wp_parse_url($url, PHP_URL_SCHEME))) as $scheme) {
                 $probe_url = set_url_scheme($url, $scheme);
                 $checked_scheme = $scheme;
                 $response = wp_remote_get($probe_url, array('timeout' => 15, 'redirection' => 0));
@@ -72,11 +77,16 @@ class EHSSL_Certificate_Storage {
                             $next_step .= ' The test URL is accessible or returns a page instead of an access denial.';
                         }
                     }
+                    // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception text is data; the admin error renderer escapes it with esc_html().
                     throw new RuntimeException('Certificate storage access could not be verified as blocked. ' . $details . ' ' . $next_step);
                 }
             }
         } finally {
-            if (file_exists($probe) && !unlink($probe)) {
+            if (file_exists($probe)) {
+                wp_delete_file($probe);
+                clearstatcache(true, $probe);
+            }
+            if (file_exists($probe)) {
                 throw new RuntimeException('Could not remove certificate storage access test.');
             }
         }
@@ -95,7 +105,11 @@ class EHSSL_Certificate_Storage {
                 && wp_remote_retrieve_response_code($response) === 200
                 && hash_equals($contents, (string) wp_remote_retrieve_body($response));
         } finally {
-            if (file_exists($path) && !unlink($path)) {
+            if (file_exists($path)) {
+                wp_delete_file($path);
+                clearstatcache(true, $path);
+            }
+            if (file_exists($path)) {
                 throw new RuntimeException('Could not remove certificate storage public control file.');
             }
         }
@@ -107,6 +121,7 @@ class EHSSL_Certificate_Storage {
         }
         $old_mask = umask(0077);
         try {
+            // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_chmod -- Local ACME storage requires exact Unix permissions and checked failures without remote filesystem credentials.
             if (file_put_contents($path, $contents, LOCK_EX) !== strlen($contents) || !chmod($path, $permissions)) {
                 throw new RuntimeException('Could not securely save certificate storage file.');
             }
@@ -124,6 +139,7 @@ class EHSSL_Certificate_Storage {
             wp_die('You are not allowed to download certificate files.', '', array('response' => 403));
         }
         check_admin_referer('ehssl_download_cert');
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Strict allowlist below rejects altered filenames; sanitizing could turn invalid input into an allowed filename.
         $name = isset($_GET['file']) && is_string($_GET['file']) ? wp_unslash($_GET['file']) : '';
         if (!in_array($name, array('certificate.crt', 'cabundle.crt', 'private.pem'), true)) {
             wp_die('Invalid certificate filename.', '', array('response' => 400));
@@ -134,6 +150,7 @@ class EHSSL_Certificate_Storage {
             if (!$path || dirname($path) !== $directory . '/certificate' || !is_file($path) || !is_readable($path)) {
                 throw new RuntimeException('Certificate file not found.');
             }
+            // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- Stream the allowlisted local file after capability, nonce, and path checks.
             $stream = fopen($path, 'rb');
             if ($stream === false) {
                 throw new RuntimeException('Certificate file could not be opened.');
@@ -147,6 +164,7 @@ class EHSSL_Certificate_Storage {
         header('Content-Disposition: attachment; filename="' . $name . '"');
         header('X-Content-Type-Options: nosniff');
         fpassthru($stream);
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- Close the authenticated download stream opened above.
         fclose($stream);
         exit;
     }
